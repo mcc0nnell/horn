@@ -2,30 +2,76 @@
 
 Horn is an executable visual language for mapped argument. You do not look at a poster. You enter one.
 
-This repository is the **document kernel**: a portable `.horn.json` format, a validator, and the first slice — twelve claims from the Chinese Room cluster, authored in Horn’s language. It is not a game engine, not a graph viewer, and not RUSTBELT.
+This repository is becoming a portable implementation of Horn's argumentation-mapping method: semantic argument structure, authored cartography, validation, rendering, and derived projections. It is not a game engine, not a generic graph viewer, and not RUSTBELT.
 
-## Product
+## The language
 
-A Horn document is a mural. Claims have authored geometry. Relations have kinds (`supports`, `disputes`, `warrants`, `addresses`, `interprets-as`) and may carry authored vector routes. Spatial arrangement is the argument’s grammar — not a layout of a graph.
+Horn is not a new programming syntax. Its language is the set of distinctions used to turn discourse into an inspectable argument:
 
-A historical renderer must never replace Horn’s roads with endpoint-to-endpoint graph edges. Historical relations require preserved route geometry; authored documents may remain temporarily unrouted while being constructed, but finished routes are persisted as document data.
+```text
+sources
+  ↓
+identify claims
+  ↓
+select claims
+  ↓
+write / normalize claims
+  ↓
+issue + focus claim
+  ↓
+positions / grounds / warrants / backing / rebuttals
+  ↓
+supports / disputes / warrants / backs
+  ↓
+argument streams + subarguments
+  ↓
+authored cartography
+```
+
+The repository now separates the semantic argument from its visual realization.
+
+### `horn-argument/0.1`
+
+`schema/horn-argument-0.1.schema.json` is the geometry-free semantic IR. It records the issue question and issue type, sources, atomic claims, argumentative roles, relations, the focus claim, streams, and subarguments.
+
+The core claim roles follow Horn's argumentation-mapping method:
+
+- `position`
+- `grounds`
+- `warrant`
+- `backing`
+- `rebuttal`
+
+`src/argument.ts` provides the corresponding TypeScript model and cross-reference validator.
+
+See [`docs/adr/0007-horn-has-a-semantic-argument-layer.md`](docs/adr/0007-horn-has-a-semantic-argument-layer.md).
+
+### `horn-document/0.1`
+
+A Horn document is authored cartography. Claims have geometry. Relations have kinds (`supports`, `disputes`, `warrants`, `addresses`, `interprets-as`) and may carry authored vector routes. Spatial arrangement is the argument's grammar — not an automatic layout of a graph.
+
+A semantic argument may inform a Horn document, but the transition is an authoring act. Historical geometry remains evidence and must never be replaced with synthetic endpoint-to-endpoint graph edges.
 
 See [`docs/adr/0003-relation-geometry-is-authored.md`](docs/adr/0003-relation-geometry-is-authored.md).
 
-Horn keeps two provenance layers distinct:
+## Provenance
 
-- **Layer A · Mapped** — the printed debate. Every debate node cites the work it maps (for example Turing 1950 or Searle 1980).
+Horn keeps semantic/source provenance and cartographic provenance distinct.
+
+For cartographic documents the existing two layers remain:
+
+- **Layer A · Mapped** — the printed debate. Every debate node cites the work it maps.
 - **Layer B · Cartographic** — how the document was drawn. This is document-level provenance and is inherited by the mural; a node cites Layer B directly only when a cartographic note applies specifically to that node.
 
-Historical maps freeze geometry. Authored maps are marked *after Horn* and must never be silently mixed into a historical document. A historical document contains no authored nodes and no `after` metadata. An authored document must declare `after` and contain at least one explicitly authored node.
+Historical maps freeze geometry. Authored maps are marked *after Horn* and must never be silently mixed into a historical document.
 
 `horn-document/0.1` has a small core vocabulary plus an explicit `x-*` extension namespace. New relation or node kinds never arrive by accident: source-faithful additions join the core deliberately; experimental additions stay namespaced until promoted.
 
 ## Projections
 
-Horn is the authored truth. Other systems consume it through derived projection manifests rather than by rewriting Horn documents.
+Horn source artifacts remain authoritative. Other systems consume them through derived projections rather than rewriting Horn into target-specific ontologies.
 
-`horn-projection/0.1` names one source Horn document, one target, and the source node/relation identities selected for that target. `src/projection.ts` resolves those identities and rejects stale document references, unknown identities, and relations whose endpoints fall outside the selected node set.
+The first projection interchange, `horn-projection/0.1`, currently selects node/relation identities from a `horn-document/0.1` cartographic document. `src/projection.ts` resolves those identities and rejects stale source references, unknown identities, and incomplete relation closures.
 
 ```ts
 import { resolveHornProjection } from "./src/projection";
@@ -43,7 +89,9 @@ const projection = resolveHornProjection(document, {
 });
 ```
 
-A projection does not define target semantics. RUSTBELT decides how a selected Horn identity becomes executable state or operations; an analysis tool decides how it becomes analysis input; a renderer decides how it becomes presentation. None of those outputs become Horn authority merely because they were derived from Horn.
+A projection does not define target semantics. RUSTBELT decides how selected Horn identities become executable state or operations. Analysis tools and renderers define their own interpretations. None of those outputs acquire Horn authority merely because they were derived from Horn.
+
+A later projection revision may select directly from `horn-argument/0.1`; ADR-0007 establishes the semantic layer first rather than prematurely generalizing the manifest.
 
 See [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md).
 
@@ -89,11 +137,11 @@ npm run check
 
 [`maps/chinese-room-slice.horn.json`](maps/chinese-room-slice.horn.json) — twelve nodes on a 2600×1960 poster. Turing supports from the left; Searle disputes from the right; the systems reply sits under the focus claim. Node 12 is an authored gloss, visually distinct.
 
-This is an authored reconstruction in Horn’s visual language, **not a facsimile** of a MacroVU sheet, and not a substitute for the original posters.
+This is an authored reconstruction in Horn's visual language, **not a facsimile** of a MacroVU sheet, and not a substitute for the original posters.
 
 ## Document invariants
 
-The runtime validator checks what JSON Schema alone cannot express cleanly:
+The cartographic validator checks what JSON Schema alone cannot express cleanly:
 
 - unique node, relation, region, citation, and claim-number identities
 - positive finite canvas and geometry
@@ -110,19 +158,22 @@ See [`docs/adr/0002-horn-document-invariants.md`](docs/adr/0002-horn-document-in
 
 ## Not RUSTBELT
 
-RUSTBELT is a closed Java 21 kernel. Horn does not live there and RUSTBELT does not become Horn. Their explicit seam is a derived projection: Horn describes the authored graph; a projection selects source identities; RUSTBELT may interpret that selection into its own typed IR and deterministic kernel.
+RUSTBELT is a closed Java 21 kernel. Horn does not live there and RUSTBELT does not become Horn.
 
-See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md) and [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md).
+Horn owns argument meaning and authored cartography. A projection may select Horn identities. A target adapter may then interpret that selection into RUSTBELT's own typed IR and deterministic kernel.
+
+See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md), [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md), and [`docs/adr/0007-horn-has-a-semantic-argument-layer.md`](docs/adr/0007-horn-has-a-semantic-argument-layer.md).
 
 ## Layout
 
-```
-maps/          canonical documents (.horn.json)
-schema/        horn-document/0.1 + horn-projection/0.1
-src/           TypeScript types + validators + projection resolver
+```text
+maps/          authored cartographic documents (.horn.json)
+schema/        horn-argument/0.1 + horn-document/0.1 + horn-projection/0.1
+src/argument*  semantic argument types + validator
+src/           cartographic types + validator + projection resolver
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
 docs/adr/      architectural decisions
 ```
 
-Code: Apache-2.0. Horn’s original posters remain his / MacroVU’s. This repo does not republish them.
+Code: Apache-2.0. Horn's original posters remain his / MacroVU's. This repo does not republish them.
