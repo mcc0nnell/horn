@@ -48,12 +48,7 @@ function argumentFixture(): HornArgument {
         kind: "supports",
         from: "grounds-smoke",
         to: "position-fire",
-      },
-      {
-        id: "warrant-licenses-support",
-        kind: "warrants",
-        from: "warrant-smoke-means-fire",
-        to: "position-fire",
+        warrantClaimId: "warrant-smoke-means-fire",
       },
       {
         id: "backing-supports-warrant",
@@ -116,6 +111,28 @@ test("preserves source provenance as a semantic invariant", () => {
   assert.ok(
     validateHornArgument(argument).some(
       (problem) => problem.code === "unknown-claim-source",
+    ),
+  );
+});
+
+test("requires a support warrant to name a warrant claim", () => {
+  const argument = argumentFixture();
+  argument.relations[0]!.warrantClaimId = "grounds-smoke";
+
+  assert.ok(
+    validateHornArgument(argument).some(
+      (problem) => problem.code === "warrant-role-mismatch",
+    ),
+  );
+});
+
+test("requires backing to point from backing to warrant", () => {
+  const argument = argumentFixture();
+  argument.relations[1]!.from = "grounds-smoke";
+
+  assert.ok(
+    validateHornArgument(argument).some(
+      (problem) => problem.code === "backing-role-mismatch",
     ),
   );
 });
