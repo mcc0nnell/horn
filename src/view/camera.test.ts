@@ -9,6 +9,13 @@ test("starts at the full authored canvas", () => {
   assert.equal(viewBoxToString(camera.viewBox), "0 0 1000 500");
 });
 
+test("rejects a max zoom smaller than the full mural", () => {
+  assert.throws(
+    () => new HornCamera({ width: 1000, height: 500 }, { maxZoom: 0.5 }),
+    /maxZoom must be at least 1/,
+  );
+});
+
 test("zooms around the current center without changing canvas geometry", () => {
   const camera = new HornCamera({ width: 1000, height: 500 });
   assert.deepEqual(camera.zoom(2), {
