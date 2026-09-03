@@ -42,11 +42,37 @@ export type ClaimOrigin = "debate" | "authored";
 export type CitationLayer = "mapped" | "cartographic";
 export type HornExtensions = Record<string, unknown>;
 
+export type Point = {
+  x: number;
+  y: number;
+};
+
 export type Rect = {
   x: number;
   y: number;
   w: number;
   h: number;
+};
+
+export type HornPathCommand =
+  | { op: "M"; x: number; y: number }
+  | { op: "L"; x: number; y: number }
+  | { op: "Q"; x1: number; y1: number; x: number; y: number }
+  | {
+      op: "C";
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+      x: number;
+      y: number;
+    }
+  | { op: "Z" };
+
+export type HornRoute = {
+  commands: HornPathCommand[];
+  labelGeometry?: Rect;
+  extensions?: HornExtensions;
 };
 
 export type Citation = {
@@ -82,6 +108,7 @@ export type HornRelation = {
   from: string;
   to: string;
   label: string;
+  route?: HornRoute;
   extensions?: HornExtensions;
 };
 
