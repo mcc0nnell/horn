@@ -52,7 +52,13 @@
     },
     "citations": {
       "type": "array",
-      "items": { "$ref": "#/$defs/citation" }
+      "items": { "$ref": "#/$defs/citation" },
+      "contains": {
+        "type": "object",
+        "properties": { "layer": { "const": "cartographic" } },
+        "required": ["layer"]
+      },
+      "minContains": 1
     },
     "readingPath": {
       "type": "array",
