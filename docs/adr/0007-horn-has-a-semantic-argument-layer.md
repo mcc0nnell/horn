@@ -1,6 +1,6 @@
 # ADR-0007: Horn has a semantic argument layer before cartography
 
-Status: Proposed
+Status: Accepted
 
 ## Context
 
@@ -29,7 +29,8 @@ A geometry-free semantic argument artifact. It records:
 - sources used to construct the argument;
 - atomic claims;
 - each claim's argumentative role: position, grounds, warrant, backing, or rebuttal;
-- support, dispute, warrant, and backing relationships;
+- support, dispute, and backing relationships;
+- warrants attached to the support moves they license;
 - the focus claim;
 - argument streams and subarguments;
 - source provenance and normalization notes where available.
@@ -95,6 +96,8 @@ The core semantic claim roles are:
 
 These names intentionally follow the handbook rather than replacing them with generic graph vocabulary.
 
+A warrant is not a free-standing semantic edge. It belongs to a support move. `horn-argument/0.1` therefore attaches `warrantClaimId` to the relevant `supports` relation. `backs` relations run from backing claims to warrant claims. See ADR-0008.
+
 ## Structural rules
 
 The first semantic model encodes several handbook-derived constraints:
@@ -113,13 +116,19 @@ The handbook also gives editorial and cartographic guidance — for example, pre
 
 Claims in a `horn-argument/0.1` artifact have stable identifiers. An authored `horn-document/0.1` representation should preserve those identities when a document node represents the same semantic claim.
 
+Ordinary support and dispute relation identities should survive cartography as well. A semantic warrant may be realized cartographically as a separate `warrants` road, while remaining semantically attached to the support move it licenses.
+
+`src/correspondence.ts` validates that contract.
+
 This lets geometry, rendering, analysis, and executable projections refer to the same semantic object without copying its meaning into competing ontologies.
 
 ## Relationship to projections
 
 ADR-0006 remains valid, but projections now sit after semantic argument structure and, when needed, after cartography.
 
-A consumer interested only in meaning may project from a Horn argument artifact. A consumer that depends on authored spatial relationships may project from a Horn document. A target adapter must state which source representation it consumes.
+A consumer interested only in meaning may eventually project from a Horn argument artifact. A consumer that depends on authored spatial relationships may project from a Horn document. A target adapter must state which source representation it consumes.
+
+The first projection format remains document-based while the semantic layer stabilizes.
 
 RUSTBELT remains a target, not part of Horn's semantic model.
 
