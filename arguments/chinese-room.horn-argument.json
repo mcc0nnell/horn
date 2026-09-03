@@ -110,10 +110,15 @@
     }
   ],
   "relations": [
-    { "id": "r-c2-c1", "kind": "supports", "from": "c2-imitation-game", "to": "c1-machines-can-think" },
+    {
+      "id": "r-c2-c1",
+      "kind": "supports",
+      "from": "c2-imitation-game",
+      "to": "c1-machines-can-think",
+      "warrantClaimId": "w1-behavior-sufficient"
+    },
     { "id": "r-c3-c1", "kind": "supports", "from": "c3-substrate-independent", "to": "c1-machines-can-think" },
     { "id": "r-g1-c2", "kind": "supports", "from": "g1-universal-machine", "to": "c2-imitation-game" },
-    { "id": "r-w1-c1", "kind": "warrants", "from": "w1-behavior-sufficient", "to": "c1-machines-can-think" },
     { "id": "r-c5-g2", "kind": "supports", "from": "c5-chinese-room", "to": "g2-man-is-the-program" },
     { "id": "r-g2-c4", "kind": "supports", "from": "g2-man-is-the-program", "to": "c4-syntax-not-semantics" },
     { "id": "r-c4-c6", "kind": "supports", "from": "c4-syntax-not-semantics", "to": "c6-simulate-not-think" },
