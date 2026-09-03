@@ -1,4 +1,9 @@
-import type { HornDocument, Rect } from "./types";
+import type {
+  HornDocument,
+  HornPathCommand,
+  HornRoute,
+  Rect,
+} from "./types";
 
 export type HornIssue = {
   code: string;
@@ -11,6 +16,21 @@ function finitePositive(value: number): boolean {
 
 function finiteNonNegative(value: number): boolean {
   return Number.isFinite(value) && value >= 0;
+}
+
+function pointInsideCanvas(
+  x: number,
+  y: number,
+  canvas: HornDocument["canvas"],
+): boolean {
+  return (
+    Number.isFinite(x) &&
+    Number.isFinite(y) &&
+    x >= 0 &&
+    y >= 0 &&
+    x <= canvas.width &&
+    y <= canvas.height
+  );
 }
 
 function validateRect(
@@ -37,6 +57,94 @@ function validateRect(
       code: "geometry-outside-canvas",
       message: `${subject} extends outside the canvas`,
     });
+  }
+}
+
+function controlPointsAreFinite(command: HornPathCommand): boolean {
+  switch (command.op) {
+    case "Q":
+      return Number.isFinite(command.x1) && Number.isFinite(command.y1);
+    case "C":
+      return (
+        Number.isFinite(command.x1) &&
+        Number.isFinite(command.y1) &&
+        Number.isFinite(command.x2) &&
+        Number.isFinite(command.y2)
+      );
+    default:
+      return true;
+  }
+}
+
+function commandEndpoint(
+  command: HornPathCommand,
+): { x: number; y: number } | undefined {
+  switch (command.op) {
+    case "M":
+    case "L":
+    case "Q":
+    case "C":
+      return { x: command.x, y: command.y };
+    case "Z":
+      return undefined;
+  }
+}
+
+function validateRoute(
+  issues: HornIssue[],
+  route: HornRoute,
+  canvas: HornDocument["canvas"],
+  relationId: string,
+): void {
+  if (route.commands.length < 2) {
+    issues.push({
+      code: "route-too-short",
+      message: `Relation ${relationId} route needs a move plus at least one drawing command`,
+    });
+    return;
+  }
+
+  if (route.commands[0]?.op !== "M") {
+    issues.push({
+      code: "route-missing-move",
+      message: `Relation ${relationId} route must begin with M`,
+    });
+  }
+
+  if (!route.commands.some((command) => ["L", "Q", "C"].includes(command.op))) {
+    issues.push({
+      code: "route-not-drawable",
+      message: `Relation ${relationId} route has no drawable segment`,
+    });
+  }
+
+  route.commands.forEach((command, index) => {
+    if (!controlPointsAreFinite(command)) {
+      issues.push({
+        code: "invalid-route-control-point",
+        message: `Relation ${relationId} route command ${index} has a non-finite control point`,
+      });
+    }
+
+    const endpoint = commandEndpoint(command);
+    if (
+      endpoint &&
+      !pointInsideCanvas(endpoint.x, endpoint.y, canvas)
+    ) {
+      issues.push({
+        code: "route-outside-canvas",
+        message: `Relation ${relationId} route command ${index} ends outside the canvas`,
+      });
+    }
+  });
+
+  if (route.labelGeometry) {
+    validateRect(
+      issues,
+      route.labelGeometry,
+      canvas,
+      `Relation ${relationId} label`,
+    );
   }
 }
 
@@ -198,6 +306,17 @@ export function validateHornDocument(doc: HornDocument): HornIssue[] {
         code: "self-relation",
         message: `Relation ${rel.id} points a node at itself`,
       });
+    }
+
+    if (doc.authority === "historical" && !rel.route) {
+      issues.push({
+        code: "missing-relation-geometry",
+        message: `Historical relation ${rel.id} has no authored route`,
+      });
+    }
+
+    if (rel.route) {
+      validateRoute(issues, rel.route, doc.canvas, rel.id);
     }
   }
 
