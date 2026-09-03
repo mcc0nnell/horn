@@ -32,36 +32,16 @@
         "explanation"
       ]
     },
-    "sources": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/source" }
-    },
-    "claims": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/claim" }
-    },
-    "relations": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/relation" }
-    },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "claims": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/claim" } },
+    "relations": { "type": "array", "items": { "$ref": "#/$defs/relation" } },
     "focusClaimId": { "type": "string", "minLength": 1 },
-    "streams": {
-      "type": "array",
-      "minItems": 1,
-      "items": { "$ref": "#/$defs/stream" }
-    },
-    "subarguments": {
-      "type": "array",
-      "items": { "$ref": "#/$defs/subargument" }
-    },
+    "streams": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/stream" } },
+    "subarguments": { "type": "array", "items": { "$ref": "#/$defs/subargument" } },
     "extensions": { "$ref": "#/$defs/extensions" }
   },
   "$defs": {
-    "extensions": {
-      "type": "object",
-      "additionalProperties": true
-    },
+    "extensions": { "type": "object", "additionalProperties": true },
     "source": {
       "type": "object",
       "required": ["id", "citation"],
@@ -75,9 +55,7 @@
       },
       "additionalProperties": false
     },
-    "claimRole": {
-      "enum": ["position", "grounds", "warrant", "backing", "rebuttal"]
-    },
+    "claimRole": { "enum": ["position", "grounds", "warrant", "backing", "rebuttal"] },
     "claim": {
       "type": "object",
       "required": ["id", "role", "statement", "sourceIds"],
@@ -91,18 +69,14 @@
           "items": { "type": "string", "minLength": 1 },
           "uniqueItems": true
         },
-        "origin": {
-          "enum": ["source-explicit", "source-implied", "cartographer-authored"]
-        },
+        "origin": { "enum": ["source-explicit", "source-implied", "cartographer-authored"] },
         "normalizationNote": { "type": "string" },
         "sourceLocator": { "type": "string" },
         "extensions": { "$ref": "#/$defs/extensions" }
       },
       "additionalProperties": false
     },
-    "relationKind": {
-      "enum": ["supports", "disputes", "warrants", "backs"]
-    },
+    "relationKind": { "enum": ["supports", "disputes", "backs"] },
     "relation": {
       "type": "object",
       "required": ["id", "kind", "from", "to"],
@@ -111,9 +85,16 @@
         "kind": { "$ref": "#/$defs/relationKind" },
         "from": { "type": "string", "minLength": 1 },
         "to": { "type": "string", "minLength": 1 },
+        "warrantClaimId": { "type": "string", "minLength": 1 },
         "label": { "type": "string" },
         "extensions": { "$ref": "#/$defs/extensions" }
       },
+      "allOf": [
+        {
+          "if": { "required": ["warrantClaimId"] },
+          "then": { "properties": { "kind": { "const": "supports" } } }
+        }
+      ],
       "additionalProperties": false
     },
     "stream": {
