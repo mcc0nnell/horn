@@ -1,0 +1,146 @@
+(* HORN 0.2 draft EBNF *)
+
+document        = version_decl, { top_level_decl } ;
+
+version_decl    = "horn", version, ";" ;
+version         = number, ".", number ;
+
+top_level_decl  = source_decl
+                | passage_decl
+                | debate_decl
+                | space_decl ;
+
+source_decl     = "source", identifier, "{",
+                    { source_field },
+                  "}" ;
+
+source_field    = "title", ":", string, ";"
+                | "author", ":", string, ";"
+                | "year", ":", integer, ";"
+                | "uri", ":", string, ";"
+                | "publisher", ":", string, ";"
+                | "note", ":", string, ";" ;
+
+passage_decl    = "passage", identifier, "{",
+                    "source", ":", identifier, ";",
+                    [ "locator", ":", string, ";" ],
+                    "text", ":", string, ";",
+                  "}" ;
+
+debate_decl     = "debate", identifier, "{",
+                    issue_decl,
+                    { claim_decl },
+                    focus_decl,
+                    { relation_decl },
+                    { stream_decl },
+                    { context_decl },
+                    { subdebate_decl },
+                    [ display_decl ],
+                  "}" ;
+
+issue_decl      = "issue", identifier, "{",
+                    "type", ":", issue_type, ";",
+                    "question", ":", string, ";",
+                  "}" ;
+
+issue_type      = "fact"
+                | "action"
+                | "terminology"
+                | "ethics"
+                | "law"
+                | "goal"
+                | "means"
+                | "explanation" ;
+
+claim_decl      = "claim", identifier, "{",
+                    "text", ":", string, ";",
+                    [ "alias", ":", string, ";" ],
+                    [ "role", ":", claim_role, ";" ],
+                    [ "derivation", ":", derivation, ";" ],
+                    [ "editorial_state", ":", editorial_state, ";" ],
+                    [ "evidence_state", ":", evidence_state, ";" ],
+                    { evidence_ref },
+                    { note_field },
+                  "}" ;
+
+claim_role      = "position"
+                | "ground"
+                | "warrant"
+                | "backing"
+                | "rebuttal" ;
+
+derivation      = "extracted"
+                | "summarized"
+                | "synthesized"
+                | "inferred" ;
+
+editorial_state = "draft"
+                | "review"
+                | "publishable" ;
+
+evidence_state  = "missing"
+                | "partial"
+                | "grounded"
+                | "verify" ;
+
+evidence_ref    = "evidence", ":", identifier, ";" ;
+note_field      = "note", ":", string, ";" ;
+
+focus_decl      = "focus", ":", identifier, ";" ;
+
+relation_decl   = relation_kind, identifier, "->", identifier, ";" ;
+relation_kind   = "supports" | "disputes" ;
+
+stream_decl     = "stream", identifier, "{",
+                    { "include", ":", identifier, ";" },
+                  "}" ;
+
+context_decl    = "context", identifier, "{",
+                    "kind", ":", context_kind, ";",
+                    "text", ":", string, ";",
+                    { evidence_ref },
+                  "}" ;
+
+context_kind    = "definition"
+                | "history"
+                | "presupposition"
+                | "proposal"
+                | "editorial_note" ;
+
+subdebate_decl  = "subdebate", identifier, "{",
+                    issue_decl,
+                    { claim_decl },
+                    focus_decl,
+                    { relation_decl },
+                    { stream_decl },
+                    { context_decl },
+                    [ display_decl ],
+                  "}" ;
+
+display_decl    = "display", "{",
+                    [ "title_mode", ":", title_mode, ";" ],
+                  "}" ;
+
+title_mode      = "title_is_claim" | "topic_title" ;
+
+space_decl      = "space", identifier, "{",
+                    { arena_decl | debate_ref },
+                  "}" ;
+
+arena_decl      = "arena", identifier, "{",
+                    { debate_ref },
+                  "}" ;
+
+debate_ref      = "debate_ref", ":", identifier, ";" ;
+
+identifier      = letter, { letter | digit | "_" | "-" } ;
+integer         = digit, { digit } ;
+number          = digit, { digit } ;
+string          = quoted_string | triple_quoted_string ;
+
+quoted_string   = '"', { character - '"' }, '"' ;
+triple_quoted_string = '"""', { character }, '"""' ;
+
+letter          = "A"…"Z" | "a"…"z" | "_" ;
+digit           = "0"…"9" ;
+character       = ? any Unicode scalar value ? ;
