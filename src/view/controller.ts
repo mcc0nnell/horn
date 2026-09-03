@@ -12,6 +12,7 @@ export type HornCameraControllerOptions = {
 export type HornCameraController = {
   camera: HornCamera;
   focusNode: (nodeId: string) => HornViewBox;
+  setViewBox: (viewBox: HornViewBox) => HornViewBox;
   reset: () => HornViewBox;
   destroy: () => void;
 };
@@ -87,6 +88,8 @@ export function attachHornCamera(
   };
 
   const reset = (): HornViewBox => apply(camera.reset());
+  const setViewBox = (viewBox: HornViewBox): HornViewBox =>
+    apply(camera.set(viewBox));
 
   const focusNode = (nodeId: string): HornViewBox => {
     const node = doc.nodes.find((candidate) => candidate.id === nodeId);
@@ -220,5 +223,5 @@ export function attachHornCamera(
     svg.removeEventListener("keydown", onKeyDown);
   };
 
-  return { camera, focusNode, reset, destroy };
+  return { camera, focusNode, setViewBox, reset, destroy };
 }
