@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-projection-0.1.schema.json",
+  "title": "Horn projection manifest",
+  "type": "object",
+  "required": ["id", "version", "source", "target", "nodes", "relations"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "version": { "const": "horn-projection/0.1" },
+    "source": {
+      "type": "object",
+      "required": ["documentId", "documentVersion"],
+      "properties": {
+        "documentId": { "type": "string", "minLength": 1 },
+        "documentVersion": { "const": "horn-document/0.1" }
+      },
+      "additionalProperties": false
+    },
+    "target": { "type": "string", "minLength": 1 },
+    "nodes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "relations": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "extensions": {
+      "type": "object",
+      "patternProperties": {
+        "^x-.+": {}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
