@@ -82,6 +82,13 @@ export function validateHornDocument(doc: HornDocument): HornIssue[] {
     citationById.set(citation.id, citation);
   }
 
+  if (!doc.citations.some((citation) => citation.layer === "cartographic")) {
+    issues.push({
+      code: "missing-layer-b",
+      message: "Document has no cartographic (Layer B) provenance",
+    });
+  }
+
   const nodeIds = new Set<string>();
   const nodeNumbers = new Set<number>();
   let authoredNodeCount = 0;
@@ -136,20 +143,14 @@ export function validateHornDocument(doc: HornDocument): HornIssue[] {
         .filter((layer): layer is "mapped" | "cartographic" => layer !== undefined),
     );
 
-    if (node.origin === "debate") {
-      if (!layers.has("mapped")) {
-        issues.push({
-          code: "missing-layer-a",
-          message: `Debate node ${node.id} has no mapped (Layer A) citation`,
-        });
-      }
-      if (!layers.has("cartographic")) {
-        issues.push({
-          code: "missing-layer-b",
-          message: `Debate node ${node.id} has no cartographic (Layer B) citation`,
-        });
-      }
-    } else if (!layers.has("cartographic")) {
+    if (node.origin === "debate" && !layers.has("mapped")) {
+      issues.push({
+        code: "missing-layer-a",
+        message: `Debate node ${node.id} has no mapped (Layer A) citation`,
+      });
+    }
+
+    if (node.origin === "authored" && !layers.has("cartographic")) {
       issues.push({
         code: "missing-cartographic-provenance",
         message: `Authored node ${node.id} has no cartographic citation`,
