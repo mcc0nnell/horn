@@ -37,6 +37,21 @@ If an authored relation has no route yet, the renderer omits it and emits an `un
 
 See [`docs/adr/0004-renderer-is-pure.md`](docs/adr/0004-renderer-is-pure.md).
 
+## Camera
+
+`src/view/` turns the rendered mural into a place you can enter without touching document geometry. The camera changes only the SVG `viewBox`.
+
+```ts
+import { attachHornCamera } from "./src/view";
+
+const controller = attachHornCamera(svg, document);
+controller.focusNode("c5-chinese-room");
+```
+
+Interaction is intentionally conventional: pointer drag pans, wheel/trackpad zooms around the cursor, double-click focuses a node, arrow keys pan, `+` / `-` zoom, and `0` / `Home` resets to the full mural.
+
+See [`docs/adr/0005-camera-moves-the-window.md`](docs/adr/0005-camera-moves-the-window.md).
+
 Run the local contract checks with:
 
 ```sh
@@ -80,6 +95,7 @@ maps/          canonical documents (.horn.json)
 schema/        horn-document/0.1
 src/           TypeScript types + validator
 src/render/    pure SVG renderer + neutral CSS shell
+src/view/      immutable mural camera + browser controller
 docs/adr/      architectural decisions
 ```
 
