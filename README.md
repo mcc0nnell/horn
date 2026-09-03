@@ -21,6 +21,32 @@ Historical maps freeze geometry. Authored maps are marked *after Horn* and must 
 
 `horn-document/0.1` has a small core vocabulary plus an explicit `x-*` extension namespace. New relation or node kinds never arrive by accident: source-faithful additions join the core deliberately; experimental additions stay namespaced until promoted.
 
+## Projections
+
+Horn is the authored truth. Other systems consume it through derived projection manifests rather than by rewriting Horn documents.
+
+`horn-projection/0.1` names one source Horn document, one target, and the source node/relation identities selected for that target. `src/projection.ts` resolves those identities and rejects stale document references, unknown identities, and relations whose endpoints fall outside the selected node set.
+
+```ts
+import { resolveHornProjection } from "./src/projection";
+
+const projection = resolveHornProjection(document, {
+  id: "chinese-room-rustbelt",
+  version: "horn-projection/0.1",
+  source: {
+    documentId: document.id,
+    documentVersion: "horn-document/0.1",
+  },
+  target: "rustbelt",
+  nodes: ["c5-chinese-room"],
+  relations: [],
+});
+```
+
+A projection does not define target semantics. RUSTBELT decides how a selected Horn identity becomes executable state or operations; an analysis tool decides how it becomes analysis input; a renderer decides how it becomes presentation. None of those outputs become Horn authority merely because they were derived from Horn.
+
+See [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md).
+
 ## Renderer
 
 `src/render/svg.ts` is the first pure mural renderer. It takes a valid `HornDocument` and returns SVG plus explicit warnings. It paints authored canvas coordinates directly; it does not contain a layout engine.
@@ -84,16 +110,16 @@ See [`docs/adr/0002-horn-document-invariants.md`](docs/adr/0002-horn-document-in
 
 ## Not RUSTBELT
 
-RUSTBELT is a closed Java 21 kernel. Horn does not live there. The two may later share low-level libraries; neither conceptually depends on the other. The world-graph formerly nicknamed “Horn Fabric” stays in RUSTBELT under another name.
+RUSTBELT is a closed Java 21 kernel. Horn does not live there and RUSTBELT does not become Horn. Their explicit seam is a derived projection: Horn describes the authored graph; a projection selects source identities; RUSTBELT may interpret that selection into its own typed IR and deterministic kernel.
 
-See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md).
+See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md) and [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md).
 
 ## Layout
 
 ```
 maps/          canonical documents (.horn.json)
-schema/        horn-document/0.1
-src/           TypeScript types + validator
+schema/        horn-document/0.1 + horn-projection/0.1
+src/           TypeScript types + validators + projection resolver
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
 docs/adr/      architectural decisions
