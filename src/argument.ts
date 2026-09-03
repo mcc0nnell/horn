@@ -15,11 +15,7 @@ export type HornClaimRole =
   | "backing"
   | "rebuttal";
 
-export type HornArgumentRelationKind =
-  | "supports"
-  | "disputes"
-  | "warrants"
-  | "backs";
+export type HornArgumentRelationKind = "supports" | "disputes" | "backs";
 
 export type HornArgumentSource = {
   id: string;
@@ -47,6 +43,11 @@ export type HornArgumentRelation = {
   kind: HornArgumentRelationKind;
   from: string;
   to: string;
+  /**
+   * For a support move, identifies the warrant that licenses the inference
+   * from the grounds/supporting claim to the supported position.
+   */
+  warrantClaimId?: string;
   label?: string;
   extensions?: Record<string, unknown>;
 };
@@ -117,7 +118,8 @@ export function validateHornArgument(argument: HornArgument): HornArgumentProble
   }
 
   const sourceIds = new Set(argument.sources.map((source) => source.id));
-  const claimIds = new Set(argument.claims.map((claim) => claim.id));
+  const claimById = new Map(argument.claims.map((claim) => [claim.id, claim]));
+  const claimIds = new Set(claimById.keys());
   const streamIds = new Set(argument.streams.map((stream) => stream.id));
 
   if (!claimIds.has(argument.focusClaimId)) {
@@ -139,13 +141,15 @@ export function validateHornArgument(argument: HornArgument): HornArgumentProble
   }
 
   for (const relation of argument.relations) {
-    if (!claimIds.has(relation.from)) {
+    const from = claimById.get(relation.from);
+    const to = claimById.get(relation.to);
+    if (!from) {
       problems.push({
         code: "unknown-relation-from",
         message: `relation ${relation.id} references unknown from claim ${relation.from}`,
       });
     }
-    if (!claimIds.has(relation.to)) {
+    if (!to) {
       problems.push({
         code: "unknown-relation-to",
         message: `relation ${relation.id} references unknown to claim ${relation.to}`,
@@ -156,6 +160,42 @@ export function validateHornArgument(argument: HornArgument): HornArgumentProble
         code: "self-relation",
         message: `relation ${relation.id} cannot relate a claim to itself`,
       });
+    }
+
+    if (relation.warrantClaimId !== undefined) {
+      if (relation.kind !== "supports") {
+        problems.push({
+          code: "warrant-on-nonsupport-relation",
+          message: `relation ${relation.id} may name a warrant only when kind is supports`,
+        });
+      }
+      const warrant = claimById.get(relation.warrantClaimId);
+      if (!warrant) {
+        problems.push({
+          code: "unknown-warrant-claim",
+          message: `relation ${relation.id} references unknown warrant ${relation.warrantClaimId}`,
+        });
+      } else if (warrant.role !== "warrant") {
+        problems.push({
+          code: "warrant-role-mismatch",
+          message: `relation ${relation.id} names ${relation.warrantClaimId} as a warrant but its role is ${warrant.role}`,
+        });
+      }
+    }
+
+    if (relation.kind === "backs" && from && to) {
+      if (from.role !== "backing") {
+        problems.push({
+          code: "backing-role-mismatch",
+          message: `backs relation ${relation.id} must originate at a backing claim`,
+        });
+      }
+      if (to.role !== "warrant") {
+        problems.push({
+          code: "backing-target-mismatch",
+          message: `backs relation ${relation.id} must target a warrant claim`,
+        });
+      }
     }
   }
 
