@@ -21,6 +21,29 @@ Historical maps freeze geometry. Authored maps are marked *after Horn* and must 
 
 `horn-document/0.1` has a small core vocabulary plus an explicit `x-*` extension namespace. New relation or node kinds never arrive by accident: source-faithful additions join the core deliberately; experimental additions stay namespaced until promoted.
 
+## Renderer
+
+`src/render/svg.ts` is the first pure mural renderer. It takes a valid `HornDocument` and returns SVG plus explicit warnings. It paints authored canvas coordinates directly; it does not contain a layout engine.
+
+```ts
+import { renderHornSvg } from "./src/render";
+
+const { svg, warnings } = renderHornSvg(document);
+```
+
+If an authored relation has no route yet, the renderer omits it and emits an `unrouted-authored-relation` warning. It never invents a line. Historical missing-route cases are rejected by validation before rendering.
+
+`src/render/horn.css` is intentionally neutral. It is a working presentation shell, not a reconstruction of Horn / MacroVU typography, palette, icons, or arrow styling.
+
+See [`docs/adr/0004-renderer-is-pure.md`](docs/adr/0004-renderer-is-pure.md).
+
+Run the local contract checks with:
+
+```sh
+npm install
+npm run check
+```
+
 ## Chinese Room slice
 
 [`maps/chinese-room-slice.horn.json`](maps/chinese-room-slice.horn.json) — twelve nodes on a 2600×1960 poster. Turing supports from the left; Searle disputes from the right; the systems reply sits under the focus claim. Node 12 is an authored gloss, visually distinct.
@@ -56,6 +79,7 @@ See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt
 maps/          canonical documents (.horn.json)
 schema/        horn-document/0.1
 src/           TypeScript types + validator
+src/render/    pure SVG renderer + neutral CSS shell
 docs/adr/      architectural decisions
 ```
 
