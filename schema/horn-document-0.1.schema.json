@@ -9,7 +9,6 @@
     "vocabulary",
     "unitSize",
     "authority",
-    "after",
     "title",
     "subtitle",
     "issueQuestion",
@@ -22,42 +21,217 @@
     "rights"
   ],
   "properties": {
-    "id": { "type": "string" },
+    "id": { "type": "string", "minLength": 1 },
     "version": { "const": "horn-document/0.1" },
     "vocabulary": {
       "type": "array",
-      "items": { "type": "string" }
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
     },
     "unitSize": {
       "enum": ["vlicon", "concept-diagram", "infographic", "infomural"]
     },
     "authority": { "enum": ["historical", "authored"] },
+    "after": { "$ref": "#/$defs/after" },
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "issueQuestion": { "type": "string" },
+    "canvas": { "$ref": "#/$defs/canvas" },
+    "regions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/region" }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/node" }
+    },
+    "relations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/relation" }
+    },
+    "citations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/citation" },
+      "contains": {
+        "type": "object",
+        "properties": { "layer": { "const": "cartographic" } },
+        "required": ["layer"]
+      },
+      "minContains": 1
+    },
+    "readingPath": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "rights": { "type": "string" },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "authority": { "const": "authored" } },
+        "required": ["authority"]
+      },
+      "then": { "required": ["after"] },
+      "else": { "not": { "required": ["after"] } }
+    }
+  ],
+  "$defs": {
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    },
     "after": {
       "type": "object",
       "required": ["name", "works"],
       "properties": {
-        "name": { "type": "string" },
-        "works": { "type": "array", "items": { "type": "string" } }
-      }
+        "name": { "type": "string", "minLength": 1 },
+        "works": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
     },
-    "title": { "type": "string" },
-    "subtitle": { "type": "string" },
-    "issueQuestion": { "type": "string" },
+    "rect": {
+      "type": "object",
+      "required": ["x", "y", "w", "h"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0 },
+        "y": { "type": "number", "minimum": 0 },
+        "w": { "type": "number", "exclusiveMinimum": 0 },
+        "h": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
     "canvas": {
       "type": "object",
       "required": ["width", "height", "unit", "origin"],
       "properties": {
-        "width": { "type": "number" },
-        "height": { "type": "number" },
-        "unit": { "type": "string" },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 },
+        "unit": { "type": "string", "minLength": 1 },
         "origin": { "const": "top-left" }
-      }
+      },
+      "additionalProperties": false
     },
-    "regions": { "type": "array" },
-    "nodes": { "type": "array", "minItems": 1 },
-    "relations": { "type": "array" },
-    "citations": { "type": "array" },
-    "readingPath": { "type": "array", "items": { "type": "string" } },
-    "rights": { "type": "string" }
-  }
+    "nodeKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "question",
+            "claim",
+            "grounds",
+            "warrant",
+            "rebuttal",
+            "example",
+            "gloss",
+            "issue-area",
+            "focus-claim",
+            "implemented-model",
+            "proposed-model",
+            "postulate-set",
+            "definition",
+            "concept-sidebar",
+            "thought-experiment",
+            "dilemma",
+            "unmapped-territory",
+            "cross-reference",
+            "supplemental-artifact"
+          ]
+        },
+        { "type": "string", "pattern": "^x-.+" }
+      ]
+    },
+    "relationKind": {
+      "anyOf": [
+        {
+          "enum": [
+            "supports",
+            "disputes",
+            "warrants",
+            "addresses",
+            "interprets-as"
+          ]
+        },
+        { "type": "string", "pattern": "^x-.+" }
+      ]
+    },
+    "citation": {
+      "type": "object",
+      "required": ["id", "layer", "citation", "short", "year"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "layer": { "enum": ["mapped", "cartographic"] },
+        "citation": { "type": "string", "minLength": 1 },
+        "short": { "type": "string", "minLength": 1 },
+        "year": { "type": "integer" },
+        "url": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "number",
+        "kind",
+        "origin",
+        "label",
+        "text",
+        "geometry",
+        "citationIds"
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "number": { "type": "integer", "minimum": 1 },
+        "kind": { "$ref": "#/$defs/nodeKind" },
+        "origin": { "enum": ["debate", "authored"] },
+        "focus": { "type": "boolean" },
+        "label": { "type": "string" },
+        "text": { "type": "string" },
+        "author": { "type": "string" },
+        "authorShort": { "type": "string" },
+        "year": { "type": "integer" },
+        "geometry": { "$ref": "#/$defs/rect" },
+        "citationIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "notes": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "relation": {
+      "type": "object",
+      "required": ["id", "kind", "from", "to", "label"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/relationKind" },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "label": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "region": {
+      "type": "object",
+      "required": ["id", "label", "geometry"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string" },
+        "geometry": { "$ref": "#/$defs/rect" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
 }

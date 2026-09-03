@@ -6,18 +6,41 @@ export type HornUnitSize =
   | "infographic"
   | "infomural";
 
-export type NodeKind =
+export type CoreNodeKind =
   | "question"
   | "claim"
   | "grounds"
   | "warrant"
   | "rebuttal"
   | "example"
-  | "gloss";
+  | "gloss"
+  | "issue-area"
+  | "focus-claim"
+  | "implemented-model"
+  | "proposed-model"
+  | "postulate-set"
+  | "definition"
+  | "concept-sidebar"
+  | "thought-experiment"
+  | "dilemma"
+  | "unmapped-territory"
+  | "cross-reference"
+  | "supplemental-artifact";
 
-export type RelationKind = "supports" | "disputes" | "warrants" | "addresses";
+export type NodeKind = CoreNodeKind | `x-${string}`;
+
+export type CoreRelationKind =
+  | "supports"
+  | "disputes"
+  | "warrants"
+  | "addresses"
+  | "interprets-as";
+
+export type RelationKind = CoreRelationKind | `x-${string}`;
 
 export type ClaimOrigin = "debate" | "authored";
+export type CitationLayer = "mapped" | "cartographic";
+export type HornExtensions = Record<string, unknown>;
 
 export type Rect = {
   x: number;
@@ -28,11 +51,12 @@ export type Rect = {
 
 export type Citation = {
   id: string;
-  layer: "mapped" | "cartographic";
+  layer: CitationLayer;
   citation: string;
   short: string;
   year: number;
   url?: string;
+  extensions?: HornExtensions;
 };
 
 export type HornNode = {
@@ -49,6 +73,7 @@ export type HornNode = {
   geometry: Rect;
   citationIds: string[];
   notes?: string;
+  extensions?: HornExtensions;
 };
 
 export type HornRelation = {
@@ -57,12 +82,14 @@ export type HornRelation = {
   from: string;
   to: string;
   label: string;
+  extensions?: HornExtensions;
 };
 
 export type HornRegion = {
   id: string;
   label: string;
   geometry: Rect;
+  extensions?: HornExtensions;
 };
 
 export type HornDocument = {
@@ -71,7 +98,7 @@ export type HornDocument = {
   vocabulary: string[];
   unitSize: HornUnitSize;
   authority: HornAuthority;
-  after: {
+  after?: {
     name: string;
     works: string[];
   };
@@ -90,4 +117,5 @@ export type HornDocument = {
   citations: Citation[];
   readingPath: string[];
   rights: string;
+  extensions?: HornExtensions;
 };
