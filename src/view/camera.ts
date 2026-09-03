@@ -55,7 +55,11 @@ export class HornCamera {
       width: finitePositive(canvas.width, "canvas.width"),
       height: finitePositive(canvas.height, "canvas.height"),
     };
-    this.maxZoom = finitePositive(options.maxZoom ?? 24, "maxZoom");
+    const maxZoom = finitePositive(options.maxZoom ?? 24, "maxZoom");
+    if (maxZoom < 1) {
+      throw new Error("maxZoom must be at least 1");
+    }
+    this.maxZoom = maxZoom;
     this.focusPadding = options.focusPadding ?? 0.12;
     if (
       !Number.isFinite(this.focusPadding) ||
