@@ -1,0 +1,157 @@
+{
+  "id": "horn:argument:chinese-room",
+  "version": "horn-argument/0.1",
+  "title": "Can computers think? — Chinese Room argument",
+  "issueQuestion": "Can computers think?",
+  "issueType": "fact",
+  "sources": [
+    {
+      "id": "turing-1950",
+      "citation": "A. M. Turing. Computing Machinery and Intelligence. Mind 59 (1950).",
+      "short": "Turing 1950",
+      "year": 1950
+    },
+    {
+      "id": "searle-1980",
+      "citation": "John R. Searle. Minds, Brains, and Programs. Behavioral and Brain Sciences 3 (1980).",
+      "short": "Searle 1980",
+      "year": 1980
+    }
+  ],
+  "claims": [
+    {
+      "id": "c1-machines-can-think",
+      "role": "position",
+      "title": "Machines can think",
+      "statement": "Machines can think. A digital computer, suitably organized, is not merely a model of a mind. It is a candidate for thought.",
+      "sourceIds": ["turing-1950"],
+      "origin": "source-implied",
+      "normalizationNote": "Focus claim normalized as the large answer to the issue question."
+    },
+    {
+      "id": "c2-imitation-game",
+      "role": "grounds",
+      "title": "The imitation game",
+      "statement": "If a machine plays the imitation game so well that an interrogator cannot reliably tell it from a human, we ought to say that it thinks.",
+      "sourceIds": ["turing-1950"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "c3-substrate-independent",
+      "role": "grounds",
+      "title": "Thought is not bound to a biological substrate",
+      "statement": "Thought is not bound to a biological substrate. What matters is the organization of a discrete-state process, not the flesh that happens to realize it.",
+      "sourceIds": ["turing-1950"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "g1-universal-machine",
+      "role": "grounds",
+      "title": "A digital computer is a universal discrete-state machine",
+      "statement": "A digital computer is a universal discrete-state machine. In principle it can mimic any other discrete-state process, including whatever process we take thinking to be.",
+      "sourceIds": ["turing-1950"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "w1-behavior-sufficient",
+      "role": "warrant",
+      "title": "Behavioral indistinguishability warrants ascribing thought",
+      "statement": "Behavioral indistinguishability is sufficient warrant for ascribing thought. We have no better test for other human minds; we should not demand a stricter one of machines.",
+      "sourceIds": ["turing-1950"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "c5-chinese-room",
+      "role": "grounds",
+      "title": "The Chinese Room can produce intelligible answers without understanding Chinese",
+      "statement": "A man locked in a room, following a rule book to shuffle Chinese symbols, can produce answers Chinese speakers find intelligible without understanding a word of Chinese.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "g2-man-is-the-program",
+      "role": "grounds",
+      "title": "The man in the room implements the program",
+      "statement": "The man in the room is doing exactly what a computer does: manipulating formal symbols according to rules specified purely by their shape.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "c4-syntax-not-semantics",
+      "role": "position",
+      "title": "Syntax is not sufficient for semantics",
+      "statement": "A computer program is purely formal and syntactic. Syntax is not sufficient for semantics. Formal symbol manipulation is not, by itself, a sufficient condition for thinking.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "c6-simulate-not-think",
+      "role": "rebuttal",
+      "title": "A simulation of thought does not itself think",
+      "statement": "The computer, like the man in the room, does not understand. It at most simulates thinking. A simulation of digestion does not digest; a simulation of thought does not think.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-implied"
+    },
+    {
+      "id": "c7-systems-reply",
+      "role": "rebuttal",
+      "title": "The whole system can understand even if the man does not",
+      "statement": "The man does not understand Chinese. The system of which he is a part — man, rule book, paper, and symbols — does. Understanding is a property of the whole.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-explicit"
+    },
+    {
+      "id": "c8-internalization",
+      "role": "rebuttal",
+      "title": "Internalizing the system still does not produce understanding",
+      "statement": "Suppose the man memorizes the rules and symbols and performs the manipulations in his head. He is now the system. He still does not understand Chinese.",
+      "sourceIds": ["searle-1980"],
+      "origin": "source-explicit"
+    }
+  ],
+  "relations": [
+    { "id": "r-c2-c1", "kind": "supports", "from": "c2-imitation-game", "to": "c1-machines-can-think" },
+    { "id": "r-c3-c1", "kind": "supports", "from": "c3-substrate-independent", "to": "c1-machines-can-think" },
+    { "id": "r-g1-c2", "kind": "supports", "from": "g1-universal-machine", "to": "c2-imitation-game" },
+    { "id": "r-w1-c1", "kind": "warrants", "from": "w1-behavior-sufficient", "to": "c1-machines-can-think" },
+    { "id": "r-c5-g2", "kind": "supports", "from": "c5-chinese-room", "to": "g2-man-is-the-program" },
+    { "id": "r-g2-c4", "kind": "supports", "from": "g2-man-is-the-program", "to": "c4-syntax-not-semantics" },
+    { "id": "r-c4-c6", "kind": "supports", "from": "c4-syntax-not-semantics", "to": "c6-simulate-not-think" },
+    { "id": "r-c6-c1", "kind": "disputes", "from": "c6-simulate-not-think", "to": "c1-machines-can-think" },
+    { "id": "r-c7-c4", "kind": "disputes", "from": "c7-systems-reply", "to": "c4-syntax-not-semantics" },
+    { "id": "r-c8-c7", "kind": "disputes", "from": "c8-internalization", "to": "c7-systems-reply" }
+  ],
+  "focusClaimId": "c1-machines-can-think",
+  "streams": [
+    {
+      "id": "stream-turing",
+      "title": "Turing support stream",
+      "focusClaimId": "c1-machines-can-think",
+      "claimIds": ["c1-machines-can-think", "c2-imitation-game", "c3-substrate-independent", "g1-universal-machine", "w1-behavior-sufficient"]
+    },
+    {
+      "id": "stream-searle",
+      "title": "Searle dispute stream",
+      "focusClaimId": "c6-simulate-not-think",
+      "claimIds": ["c5-chinese-room", "g2-man-is-the-program", "c4-syntax-not-semantics", "c6-simulate-not-think"]
+    },
+    {
+      "id": "stream-systems-reply",
+      "title": "Systems reply and internalization",
+      "focusClaimId": "c7-systems-reply",
+      "claimIds": ["c7-systems-reply", "c8-internalization"]
+    }
+  ],
+  "subarguments": [
+    {
+      "id": "subargument-understanding",
+      "title": "Is formal symbol manipulation sufficient for understanding?",
+      "issueQuestion": "Is formal symbol manipulation sufficient for understanding?",
+      "streamIds": ["stream-searle", "stream-systems-reply"]
+    }
+  ],
+  "extensions": {
+    "x-cartographicDocumentId": "horn:authored:2026:chinese-room",
+    "x-method": "Normalized using the staged argumentation-mapping method documented in Robert E. Horn's Introduction to Argumentation Mapping (2003)."
+  }
+}
