@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-document-0.1.schema.json",
+  "title": "Horn document",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "vocabulary",
+    "unitSize",
+    "authority",
+    "after",
+    "title",
+    "subtitle",
+    "issueQuestion",
+    "canvas",
+    "regions",
+    "nodes",
+    "relations",
+    "citations",
+    "readingPath",
+    "rights"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "version": { "const": "horn-document/0.1" },
+    "vocabulary": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unitSize": {
+      "enum": ["vlicon", "concept-diagram", "infographic", "infomural"]
+    },
+    "authority": { "enum": ["historical", "authored"] },
+    "after": {
+      "type": "object",
+      "required": ["name", "works"],
+      "properties": {
+        "name": { "type": "string" },
+        "works": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "issueQuestion": { "type": "string" },
+    "canvas": {
+      "type": "object",
+      "required": ["width", "height", "unit", "origin"],
+      "properties": {
+        "width": { "type": "number" },
+        "height": { "type": "number" },
+        "unit": { "type": "string" },
+        "origin": { "const": "top-left" }
+      }
+    },
+    "regions": { "type": "array" },
+    "nodes": { "type": "array", "minItems": 1 },
+    "relations": { "type": "array" },
+    "citations": { "type": "array" },
+    "readingPath": { "type": "array", "items": { "type": "string" } },
+    "rights": { "type": "string" }
+  }
+}
