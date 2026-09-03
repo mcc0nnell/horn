@@ -160,6 +160,76 @@
         { "type": "string", "pattern": "^x-.+" }
       ]
     },
+    "pathCommand": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": ["op", "x", "y"],
+          "properties": {
+            "op": { "const": "M" },
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "x", "y"],
+          "properties": {
+            "op": { "const": "L" },
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "x1", "y1", "x", "y"],
+          "properties": {
+            "op": { "const": "Q" },
+            "x1": { "type": "number" },
+            "y1": { "type": "number" },
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op", "x1", "y1", "x2", "y2", "x", "y"],
+          "properties": {
+            "op": { "const": "C" },
+            "x1": { "type": "number" },
+            "y1": { "type": "number" },
+            "x2": { "type": "number" },
+            "y2": { "type": "number" },
+            "x": { "type": "number" },
+            "y": { "type": "number" }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": ["op"],
+          "properties": { "op": { "const": "Z" } },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "route": {
+      "type": "object",
+      "required": ["commands"],
+      "properties": {
+        "commands": {
+          "type": "array",
+          "minItems": 2,
+          "items": { "$ref": "#/$defs/pathCommand" }
+        },
+        "labelGeometry": { "$ref": "#/$defs/rect" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
     "citation": {
       "type": "object",
       "required": ["id", "layer", "citation", "short", "year"],
@@ -217,6 +287,7 @@
         "from": { "type": "string", "minLength": 1 },
         "to": { "type": "string", "minLength": 1 },
         "label": { "type": "string" },
+        "route": { "$ref": "#/$defs/route" },
         "extensions": { "$ref": "#/$defs/extensions" }
       },
       "additionalProperties": false
