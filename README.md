@@ -6,7 +6,11 @@ This repository is the **document kernel**: a portable `.horn.json` format, a va
 
 ## Product
 
-A Horn document is a mural. Claims have authored geometry. Relations have kinds (`supports`, `disputes`, `warrants`, `addresses`, `interprets-as`). Spatial arrangement is the argument’s grammar — not a layout of a graph.
+A Horn document is a mural. Claims have authored geometry. Relations have kinds (`supports`, `disputes`, `warrants`, `addresses`, `interprets-as`) and may carry authored vector routes. Spatial arrangement is the argument’s grammar — not a layout of a graph.
+
+A historical renderer must never replace Horn’s roads with endpoint-to-endpoint graph edges. Historical relations require preserved route geometry; authored documents may remain temporarily unrouted while being constructed, but finished routes are persisted as document data.
+
+See [`docs/adr/0003-relation-geometry-is-authored.md`](docs/adr/0003-relation-geometry-is-authored.md).
 
 Horn keeps two provenance layers distinct:
 
@@ -36,6 +40,7 @@ The runtime validator checks what JSON Schema alone cannot express cleanly:
 - Layer B provenance on every document
 - cartographic provenance on authored nodes
 - historical/authored authority separation
+- authored relation routes for historical documents
 
 See [`docs/adr/0002-horn-document-invariants.md`](docs/adr/0002-horn-document-invariants.md).
 
