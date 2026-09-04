@@ -1,0 +1,49 @@
+name: Celix Specimen
+
+on:
+  pull_request:
+    paths:
+      - "maps/celix-845-specimen-001.horn.json"
+      - "experiments/celix-845/**"
+      - "src/**"
+      - "package.json"
+      - ".github/workflows/celix-specimen.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-and-render:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts
+
+      - name: Validate Horn contracts
+        run: npm run check
+
+      - name: Render Celix Specimen 001
+        run: |
+          mkdir -p dist
+          npm run render:celix > dist/celix-845-specimen-001.svg
+          test -s dist/celix-845-specimen-001.svg
+          grep -q 'data-horn-document="horn:authored:2026:celix-845-specimen-001"' dist/celix-845-specimen-001.svg
+          grep -q 'data-horn-node="c6-safe-default"' dist/celix-845-specimen-001.svg
+
+      - name: Upload rendered specimen
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: celix-845-horn-specimen
+          path: dist/celix-845-specimen-001.svg
+          if-no-files-found: error
