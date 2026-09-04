@@ -12,7 +12,9 @@
     "check": "npm run typecheck && npm test",
     "horn-zeppelin": "tsx src/zeppelin/cli.ts",
     "render": "tsx src/cli/render.ts",
-    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json"
+    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json",
+    "trace": "tsx src/cli/trace.ts",
+    "trace:celix": "tsx src/cli/trace.ts maps/celix-845-specimen-001.horn.json c6-safe-default"
   },
   "dependencies": {
     "echarts": "^6.1.0"
