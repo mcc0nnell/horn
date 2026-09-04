@@ -1,0 +1,33 @@
+{
+  "name": "HORN-Z1 — Chinese Room — Native Interpreter",
+  "paragraphs": [
+    {
+      "title": "About",
+      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution."
+    },
+    {
+      "title": "Manifest",
+      "text": "%horn manifest maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Validate",
+      "text": "%horn validate maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Mural",
+      "text": "%horn render maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Network",
+      "text": "%horn network maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Audit",
+      "text": "%horn audit maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Authority boundary",
+      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. It invokes the same transport-neutral HORN adapter proven by Z1-A. The network is a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
+    }
+  ]
+}
