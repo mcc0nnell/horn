@@ -108,7 +108,7 @@ assert_note() {
   printf '%s\n' "$manifest" >"$manifest_out"
   jq -c '{
     nodes: (.nodes | map(.id) | sort),
-    edges: (.edges | map({id, source, target, label}) | sort_by(.id)),
+    edges: (.edges | map({id: .id, source: .source, target: .target, label: .label}) | sort_by(.id)),
     loss: .hornProjection
   }' <<<"$network" >"$signature_out"
 }
