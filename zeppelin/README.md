@@ -35,13 +35,17 @@ Build and test the interpreter with:
 mvn --file zeppelin/interpreter/pom.xml verify
 ```
 
+The Maven package phase also places the interpreter's runtime bootstrap dependencies in `zeppelin/interpreter/target/lib/`. Zeppelin's third-party interpreter launcher needs those dependencies beside the interpreter JAR before its remote process can start.
+
 ### Install into Zeppelin 0.12
 
-Build the interpreter, then install the JAR and its setting descriptor into a Zeppelin interpreter directory:
+Build the interpreter, then install the JAR, runtime dependencies, and setting descriptor into a Zeppelin interpreter directory:
 
 ```sh
 mkdir -p "$ZEPPELIN_HOME/interpreter/horn"
 cp zeppelin/interpreter/target/horn-zeppelin-interpreter-0.1.0-SNAPSHOT.jar \
+  "$ZEPPELIN_HOME/interpreter/horn/"
+cp zeppelin/interpreter/target/lib/*.jar \
   "$ZEPPELIN_HOME/interpreter/horn/"
 cp zeppelin/interpreter/src/main/resources/interpreter-setting.json \
   "$ZEPPELIN_HOME/interpreter/horn/"
