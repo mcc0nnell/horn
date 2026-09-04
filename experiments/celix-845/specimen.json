@@ -1,0 +1,35 @@
+{
+  "id": "horn:specimen:001:apache-celix-845",
+  "kind": "natural-engineering-argument",
+  "title": "What should the Celix SBOM describe?",
+  "capturedAt": "2026-09-03",
+  "source": {
+    "repository": "apache/celix",
+    "pullRequest": 845,
+    "url": "https://github.com/apache/celix/pull/845",
+    "stateAtCapture": "open",
+    "headShaAtCapture": "e0107b1ad30ef884ee4ebc651f046b065b2c631b",
+    "mergeableAtCapture": true
+  },
+  "method": {
+    "retrospective": true,
+    "argumentWasAuthoredInHorn": false,
+    "machineFactsMayBeCompiled": true,
+    "argumentEdgesRequireSourceGrounding": true,
+    "normativeRelations": ["supports", "disputes"]
+  },
+  "question": "What exactly should an Apache Celix SBOM describe, and what does that evidence warrant?",
+  "knownBoundary": [
+    "Celix does not currently make a canonical binary release.",
+    "A consumer can change the resolved dependency graph through Conan configuration/overrides.",
+    "An SBOM for one resolved graph does not warrant a claim about every downstream Celix configuration."
+  ],
+  "next": [
+    "Freeze the complete PR discussion timeline with stable source identifiers.",
+    "Capture the four PR commits and changed workflow/document artifacts.",
+    "Capture CI/check evidence for the specimen head.",
+    "Add the generated CycloneDX artifact when available.",
+    "Hand-author the first Horn map from the frozen evidence corpus.",
+    "Validate that every normative relation has explicit provenance."
+  ]
+}
