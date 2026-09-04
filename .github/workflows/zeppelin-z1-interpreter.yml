@@ -59,6 +59,8 @@ jobs:
             "$ZEPPELIN_HOME/interpreter/horn/"
           cp zeppelin/interpreter/src/main/resources/interpreter-setting.json \
             "$ZEPPELIN_HOME/interpreter/horn/"
+          echo "Installed HORN interpreter classpath:"
+          find "$ZEPPELIN_HOME/interpreter/horn" -maxdepth 1 -type f -printf '%f\n' | sort
 
       - name: Execute native %horn export/import proof
         env:
@@ -70,5 +72,12 @@ jobs:
         shell: bash
         run: |
           if [ -n "${ZEPPELIN_HOME:-}" ] && [ -d "$ZEPPELIN_HOME/logs" ]; then
+            echo "=== HORN interpreter logs ==="
+            find "$ZEPPELIN_HOME/logs" -maxdepth 1 -type f -name '*horn*' -print -exec cat {} \;
+            echo "=== All Zeppelin log tails ==="
             find "$ZEPPELIN_HOME/logs" -maxdepth 1 -type f -print -exec tail -n 250 {} \;
+          fi
+          if [ -n "${ZEPPELIN_HOME:-}" ] && [ -d "$ZEPPELIN_HOME/interpreter/horn" ]; then
+            echo "=== Installed HORN interpreter classpath ==="
+            find "$ZEPPELIN_HOME/interpreter/horn" -maxdepth 1 -type f -printf '%f\n' | sort
           fi
