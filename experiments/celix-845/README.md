@@ -40,6 +40,20 @@ The development-container role and the final release/reference authority boundar
 
 `evidence/sbom-physical-evidence.json` records the actual GitHub Actions artifact and the generated CycloneDX 1.6 dependency graph from the specimen head. Those `depends_on` observations remain evidence facts; they are deliberately not Horn argument relations.
 
+## Evidence invalidation
+
+`evidence/bindings.json` records which argument nodes rely on a particular factual substrate. The binding is deliberately narrow: the captured resolved-dependency graph currently binds to `c3-package-bound`, because that node describes the observed workflow resolution. It does **not** bind the future safe-default claim to the current SBOM, because the agreed `conan.lock` reference state has not been implemented upstream.
+
+Horn fingerprints only the semantic component/dependency graph, not incidental SBOM metadata such as UUIDs or array ordering. If a dependency version or edge changes, Horn reports the bound node as stale; it does not rewrite the claim or its history.
+
+Run the current baseline check with:
+
+```bash
+npm run invalidate:celix
+```
+
+A clean baseline exits 0 with no stale nodes. A changed substrate exits non-zero and names the argument nodes requiring re-verification.
+
 ## Authored roads and render
 
 Every argument relation in `maps/celix-845-specimen-001.horn.json` has persisted route geometry. The roads are authored reconstruction geometry, not geometry recovered from Apache Celix or an original Robert E. Horn mural.
@@ -54,9 +68,9 @@ The renderer is pure: it consumes persisted Horn geometry and does not invent mi
 
 ## Current result
 
-Specimen 001 now contains the full first loop: natural discussion → frozen provenance → Horn argument reconstruction → actual CycloneDX physical evidence → authored road geometry → deterministic render path.
+Specimen 001 now contains the full first loop: natural discussion → frozen provenance → Horn argument reconstruction → actual CycloneDX physical evidence → authored road geometry → deterministic render → evidence drift detection.
 
-The remaining missing substrate is the **agreed safe-default lockfile itself**. The current SBOM proves what the PR workflow resolved; it must not be mislabeled as the future canonical/reference lockfile state. Once upstream implements `conan.lock`, Horn can compare the two factual graphs and surface drift without rewriting the argument history.
+The remaining missing substrate is the **agreed safe-default lockfile itself**. The current SBOM proves what the PR workflow resolved; it must not be mislabeled as the future canonical/reference lockfile state. Once upstream implements `conan.lock`, Horn can bind that new substrate to the safe-default claim and compare later changes without rewriting the argument history.
 
 ## Success criterion
 
