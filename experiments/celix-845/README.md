@@ -40,9 +40,9 @@ The development-container role and the final release/reference authority boundar
 
 `evidence/sbom-physical-evidence.json` records the actual GitHub Actions artifact and the generated CycloneDX 1.6 dependency graph from the specimen head. Those `depends_on` observations remain evidence facts; they are deliberately not Horn argument relations.
 
-## Authored roads
+## Authored roads and render
 
-Every argument relation in `maps/celix-845-specimen-001.horn.json` now has persisted route geometry. The roads are authored reconstruction geometry, not geometry recovered from Apache Celix or an original Robert E. Horn mural.
+Every argument relation in `maps/celix-845-specimen-001.horn.json` has persisted route geometry. The roads are authored reconstruction geometry, not geometry recovered from Apache Celix or an original Robert E. Horn mural.
 
 Render the specimen deterministically with:
 
@@ -50,7 +50,13 @@ Render the specimen deterministically with:
 npm run render:celix > celix-845-specimen-001.svg
 ```
 
-The renderer is pure: it consumes the persisted Horn geometry and does not invent missing roads.
+The renderer is pure: it consumes persisted Horn geometry and does not invent missing roads. The specimen test asserts that all nine argument roads render and produce no synthetic-route warnings.
+
+## Current result
+
+Specimen 001 now contains the full first loop: natural discussion → frozen provenance → Horn argument reconstruction → actual CycloneDX physical evidence → authored road geometry → deterministic render path.
+
+The remaining missing substrate is the **agreed safe-default lockfile itself**. The current SBOM proves what the PR workflow resolved; it must not be mislabeled as the future canonical/reference lockfile state. Once upstream implements `conan.lock`, Horn can compare the two factual graphs and surface drift without rewriting the argument history.
 
 ## Success criterion
 
@@ -58,4 +64,4 @@ Horn should be able to answer, with provenance:
 
 > Why does this SBOM exist, what exactly does it describe, what claims does it support, what does it not warrant, and how did the project arrive at that design?
 
-If this reconstruction works, the next experiment should use another naturally occurring engineering discussion and test whether the same grammar holds without changing the ontology to fit the specimen.
+The next generalization test should use a second naturally occurring engineering discussion and ask whether the same grammar works without changing the ontology to fit the specimen.
