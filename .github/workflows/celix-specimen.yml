@@ -33,6 +33,9 @@ jobs:
       - name: Validate Horn contracts
         run: npm run check
 
+      - name: Verify bound evidence is fresh
+        run: npm run invalidate:celix
+
       - name: Render Celix Specimen 001
         run: |
           mkdir -p dist
