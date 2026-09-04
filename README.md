@@ -49,6 +49,22 @@ For Specimen 001:
 npm run render:celix > celix-845-specimen-001.svg
 ```
 
+## Trace a claim
+
+Horn can also answer a basic executable “why?” query without inventing new semantics. `traceHornNode` returns a node, its incoming and outgoing authored argument relations, and the source citations attached to that node.
+
+```sh
+npm run trace -- maps/celix-845-specimen-001.horn.json c6-safe-default
+```
+
+The shortcut below traces the focus claim in Specimen 001:
+
+```sh
+npm run trace:celix
+```
+
+For the safe-default claim, the trace exposes the lockfile proposal and audit grounds that support it, the unresolved-boundary node that addresses it, and the three upstream review comments that establish the current reviewer direction. It does not treat SBOM dependency edges as argumentative support.
+
 ## Camera
 
 `src/view/` turns the rendered mural into a place you can enter without touching document geometry. The camera changes only the SVG `viewBox`.
