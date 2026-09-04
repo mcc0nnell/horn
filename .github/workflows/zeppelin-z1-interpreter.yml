@@ -55,6 +55,8 @@ jobs:
           mkdir -p "$ZEPPELIN_HOME/interpreter/horn"
           cp zeppelin/interpreter/target/horn-zeppelin-interpreter-0.1.0-SNAPSHOT.jar \
             "$ZEPPELIN_HOME/interpreter/horn/"
+          cp zeppelin/interpreter/target/lib/*.jar \
+            "$ZEPPELIN_HOME/interpreter/horn/"
           cp zeppelin/interpreter/src/main/resources/interpreter-setting.json \
             "$ZEPPELIN_HOME/interpreter/horn/"
 
