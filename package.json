@@ -10,7 +10,9 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "tsx --test src/**/*.test.ts",
     "check": "npm run typecheck && npm test",
-    "horn-zeppelin": "tsx src/zeppelin/cli.ts"
+    "horn-zeppelin": "tsx src/zeppelin/cli.ts",
+    "render": "tsx src/cli/render.ts",
+    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json"
   },
   "dependencies": {
     "echarts": "^6.1.0"
