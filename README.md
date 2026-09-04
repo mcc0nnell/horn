@@ -83,7 +83,7 @@ This is an authored reconstruction in Horn’s visual language, **not a facsimil
 
 The experiment deliberately keeps the argument graph separate from the physical software graph. [`experiments/celix-845/evidence/sbom-physical-evidence.json`](experiments/celix-845/evidence/sbom-physical-evidence.json) records the actual CycloneDX dependency facts from the PR's workflow artifact; `depends_on` observations do not become Horn argument relations.
 
-All nine argument relations now carry persisted authored roads. Their route provenance is explicit: the geometry belongs to the 2026 reconstruction, not Apache Celix and not an original Robert E. Horn map.
+All nine argument relations carry persisted authored roads. Their route provenance is explicit: the geometry belongs to the 2026 reconstruction, not Apache Celix and not an original Robert E. Horn map. The deterministic render test asserts all nine roads render without synthetic-route warnings.
 
 See [`experiments/celix-845/README.md`](experiments/celix-845/README.md).
 
