@@ -1,0 +1,57 @@
+name: zeppelin-z1-roundtrip
+
+on:
+  pull_request:
+    paths:
+      - "src/zeppelin/**"
+      - "zeppelin/**"
+      - "maps/chinese-room-slice.horn.json"
+      - "package.json"
+      - ".github/workflows/zeppelin-z1-roundtrip.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  roundtrip:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 11
+
+      - run: npm install
+
+      - name: Download and verify Apache Zeppelin 0.12.0
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$RUNNER_TEMP"
+          curl -fL --retry 3 \
+            -o zeppelin-0.12.0-bin-netinst.tgz \
+            https://downloads.apache.org/zeppelin/zeppelin-0.12.0/zeppelin-0.12.0-bin-netinst.tgz
+          echo "7fe8d7e617e2b3469317b1abb97fd2f7112e83216a4528269ea70fd0c86d65a0fc2feb5f34d13dd6416b76d6c56d7a6215e3091c36162ab36b2e24011a825edc  zeppelin-0.12.0-bin-netinst.tgz" | sha512sum -c -
+          tar -xzf zeppelin-0.12.0-bin-netinst.tgz
+          echo "ZEPPELIN_HOME=$RUNNER_TEMP/zeppelin-0.12.0-bin-netinst" >> "$GITHUB_ENV"
+
+      - name: Execute HORN-Z1 Zeppelin export/import proof
+        env:
+          HORN_REPO: ${{ github.workspace }}
+        run: bash zeppelin/integration/run-z1-roundtrip.sh
+
+      - name: Dump Zeppelin logs on failure
+        if: failure()
+        shell: bash
+        run: |
+          if [ -n "${ZEPPELIN_HOME:-}" ] && [ -d "$ZEPPELIN_HOME/logs" ]; then
+            find "$ZEPPELIN_HOME/logs" -type f -maxdepth 1 -print -exec tail -n 200 {} \;
+          fi
