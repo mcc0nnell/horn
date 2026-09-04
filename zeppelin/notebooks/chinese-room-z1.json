@@ -1,0 +1,33 @@
+{
+  "name": "HORN-Z1 — Chinese Room",
+  "paragraphs": [
+    {
+      "title": "About",
+      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis notebook executes the canonical `maps/chinese-room-slice.horn.json` artifact. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution. The mural is primary. The network view is a lossy semantic/debug projection and cannot rewrite the HORN document."
+    },
+    {
+      "title": "Manifest",
+      "text": "%sh\nset -eu\ncd \"${HORN_REPO:-.}\"\nnpm run --silent horn-zeppelin -- manifest maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Validate",
+      "text": "%sh\nset -eu\ncd \"${HORN_REPO:-.}\"\nnpm run --silent horn-zeppelin -- validate maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Mural",
+      "text": "%sh\nset -eu\ncd \"${HORN_REPO:-.}\"\nnpm run --silent horn-zeppelin -- render maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Network",
+      "text": "%sh\nset -eu\ncd \"${HORN_REPO:-.}\"\nnpm run --silent horn-zeppelin -- network maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Audit",
+      "text": "%sh\nset -eu\ncd \"${HORN_REPO:-.}\"\nnpm run --silent horn-zeppelin -- audit maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Notes",
+      "text": "%md\n## Authority boundary\n\nThe network paragraph is not a map serialization. It omits authored node/region geometry, relation routes and label geometry, mural styling, and the full spatial semantics of the reading path. Use the manifest digest to bind every notebook result back to the exact HORN input bytes."
+    }
+  ]
+}
