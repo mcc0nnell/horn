@@ -16,7 +16,7 @@
     "argumentWasAuthoredInHorn": false,
     "machineFactsMayBeCompiled": true,
     "argumentEdgesRequireSourceGrounding": true,
-    "normativeRelations": ["supports", "disputes"]
+    "normativeRelations": ["supports", "disputes", "addresses"]
   },
   "question": "What exactly should an Apache Celix SBOM describe, and what does that evidence warrant?",
   "knownBoundary": [
@@ -24,12 +24,20 @@
     "A consumer can change the resolved dependency graph through Conan configuration/overrides.",
     "An SBOM for one resolved graph does not warrant a claim about every downstream Celix configuration."
   ],
+  "currentResult": {
+    "timelineFrozen": true,
+    "commitSetFrozen": true,
+    "ciStateFrozen": true,
+    "firstHornMapAuthored": true,
+    "focusClaim": "The lockfile and SBOM should describe a documented safe-default dependency state while users remain free to change dependency versions and options.",
+    "maintainerDirection": "pnoltes prefers the documented lockfile + SBOM safe-default option; PengZheng subsequently agreed.",
+    "openBoundary": "The precise relationship among the source release, reference dependency state, vulnerability reports, and a possible maintained development-container artifact remains unresolved upstream."
+  },
   "next": [
-    "Freeze the complete PR discussion timeline with stable source identifiers.",
-    "Capture the four PR commits and changed workflow/document artifacts.",
-    "Capture CI/check evidence for the specimen head.",
-    "Add the generated CycloneDX artifact when available.",
-    "Hand-author the first Horn map from the frozen evidence corpus.",
-    "Validate that every normative relation has explicit provenance."
+    "Capture/download the generated CycloneDX workflow artifact if still retained by GitHub Actions.",
+    "Attach concrete SBOM package nodes as supplemental artifacts without converting dependency edges into argument edges.",
+    "Author persisted relation routes for the mural so the specimen renders with no missing-route warnings.",
+    "Render and inspect the first full Celix infomural.",
+    "Use a second naturally occurring engineering discussion to test whether the grammar generalizes."
   ]
 }
