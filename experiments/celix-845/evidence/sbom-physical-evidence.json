@@ -1,0 +1,52 @@
+{
+  "artifact": {
+    "githubActionsArtifactId": 9679862458,
+    "name": "celix-conan-package-and-sbom",
+    "workflow": "Conan Create",
+    "workflowRunId": 33137166965,
+    "headSha": "e0107b1ad30ef884ee4ebc651f046b065b2c631b",
+    "archiveDigest": "sha256:7d5068822f582d87cc02715d81dbddbfb12ea819d62cb5780977140783ea3ebb",
+    "sizeInBytes": 64696649,
+    "createdAt": "2026-08-28T08:46:12Z",
+    "expiresAt": "2026-11-26T08:36:58Z"
+  },
+  "sbom": {
+    "pathInArtifact": "sbom-cyclonedx-1.6.json",
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.6",
+    "serialNumber": "urn:uuid:6e62e1fe-8831-4010-803e-819e9c7e6f7e",
+    "sha256": "92f1270161af6ecad7fff0a4fc873592a4a79e5ebdf6bd40c159673706a352b6",
+    "componentCount": 18,
+    "dependencyEntryCount": 19
+  },
+  "components": {
+    "celix": "3.0.0",
+    "libzip": "1.11.4",
+    "libuv": "1.51.0",
+    "util-linux-libuuid": "2.41.2",
+    "libcurl": "8.21.0",
+    "libxml2": "2.15.3",
+    "rapidjson": "1.1.0",
+    "civetweb": "1.16",
+    "libffi": "3.4.8",
+    "jansson": "2.14",
+    "mdnsresponder": "1310.140.1",
+    "mosquitto": "2.0.22",
+    "zlib": "1.3.1",
+    "bzip2": "1.0.8",
+    "xz_utils": "5.8.3",
+    "openssl": "3.6.3",
+    "zstd": "1.5.7",
+    "libiconv": "1.17"
+  },
+  "dependencyGraph": {
+    "celix": ["libzip", "libuv", "util-linux-libuuid", "libcurl", "libxml2", "rapidjson", "civetweb", "libffi", "jansson", "mdnsresponder", "mosquitto"],
+    "libzip": ["zlib", "bzip2", "xz_utils", "openssl", "zstd"],
+    "libcurl": ["openssl", "zlib"],
+    "libxml2": ["libiconv", "zlib"],
+    "civetweb": ["openssl"],
+    "mosquitto": ["openssl"],
+    "openssl": ["zlib"]
+  },
+  "interpretationBoundary": "This file records observations from the exact workflow artifact. The dependency edges are factual SBOM evidence. They are not Horn argument relations and do not by themselves establish that this graph is Celix's canonical, safe, or universally applicable dependency state."
+}

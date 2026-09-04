@@ -9,7 +9,13 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "tsx --test src/**/*.test.ts",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "render": "tsx src/cli/render.ts",
+    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json",
+    "trace": "tsx src/cli/trace.ts",
+    "trace:celix": "tsx src/cli/trace.ts maps/celix-845-specimen-001.horn.json c6-safe-default",
+    "invalidate": "tsx src/cli/invalidate.ts",
+    "invalidate:celix": "tsx src/cli/invalidate.ts experiments/celix-845/evidence/sbom-physical-evidence.json experiments/celix-845/evidence/bindings.json"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",

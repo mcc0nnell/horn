@@ -1,0 +1,144 @@
+{
+  "specimen": "horn:specimen:001:apache-celix-845",
+  "capturedAt": "2026-09-03T20:54:00-04:00",
+  "pullRequest": {
+    "repository": "apache/celix",
+    "number": 845,
+    "state": "open",
+    "mergeable": true,
+    "headSha": "e0107b1ad30ef884ee4ebc651f046b065b2c631b"
+  },
+  "events": [
+    {
+      "id": "commit-58d7feca",
+      "at": "2026-08-27T12:36:59Z",
+      "actor": "mcc0nnell",
+      "kind": "commit",
+      "summary": "Initial implementation generates a CycloneDX SBOM with Conan's cyclone_1.6 deployer in the Conan CI workflow.",
+      "source": "https://github.com/apache/celix/commit/58d7feca41a04338bfa40d96f6dde3f8aa81eae0"
+    },
+    {
+      "id": "review-3877380915",
+      "at": "2026-08-28T02:11:54Z",
+      "actor": "PengZheng",
+      "kind": "objection",
+      "summary": "Challenges the workflow/artifact boundary: a Conan recipe/test workflow is not the final binary, and dependency overrides can change both the binary and its SBOM without a Celix source change.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3877380915"
+    },
+    {
+      "id": "review-3877393466",
+      "at": "2026-08-28T02:15:30Z",
+      "actor": "PengZheng",
+      "kind": "objection",
+      "summary": "States that an SBOM should be paired with the final binary rather than uploaded alone.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3877393466"
+    },
+    {
+      "id": "commit-ce848f47",
+      "at": "2026-08-28T02:48:43Z",
+      "actor": "mcc0nnell",
+      "kind": "commit",
+      "summary": "Reformulates the implementation so the SBOM is generated from the same Conan resolution used to deploy the concrete package graph.",
+      "source": "https://github.com/apache/celix/commit/ce848f475fedfd1b5d1a976b34ab08fd6b0c9eba"
+    },
+    {
+      "id": "commit-a25708b5",
+      "at": "2026-08-28T02:49:08Z",
+      "actor": "mcc0nnell",
+      "kind": "commit",
+      "summary": "Preserves the existing macOS cache restore key while revising the workflow.",
+      "source": "https://github.com/apache/celix/commit/a25708b585820e94b02373b2570e656d63033519"
+    },
+    {
+      "id": "commit-e0107b1a",
+      "at": "2026-08-28T02:49:18Z",
+      "actor": "mcc0nnell",
+      "kind": "commit",
+      "summary": "Documents the package-bound SBOM artifact and the same-resolution publication model.",
+      "source": "https://github.com/apache/celix/commit/e0107b1ad30ef884ee4ebc651f046b065b2c631b"
+    },
+    {
+      "id": "comment-5447812243",
+      "at": "2026-08-28T02:54:32Z",
+      "actor": "mcc0nnell",
+      "kind": "reformulation",
+      "summary": "Explains that CI now deploys the concrete Conan packages and matching CycloneDX SBOM together, using -b never to avoid silently rebuilding another configuration.",
+      "source": "https://github.com/apache/celix/pull/845#issuecomment-5447812243"
+    },
+    {
+      "id": "comment-5447968454",
+      "at": "2026-08-28T03:17:56Z",
+      "actor": "PengZheng",
+      "kind": "objection",
+      "summary": "Points out that the modified workflow is only testing infrastructure, not a release process, then observes that Celix does not make a binary release.",
+      "source": "https://github.com/apache/celix/pull/845#issuecomment-5447968454"
+    },
+    {
+      "id": "review-3890016666",
+      "at": "2026-08-30T17:17:35Z",
+      "actor": "pnoltes",
+      "kind": "proposal",
+      "summary": "Proposes a Conan lockfile for a representative GCC/Linux build as a reproducible canonical dependency reference that can underpin SBOM and vulnerability scanning, while documenting that Celix can still be used without it.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3890016666"
+    },
+    {
+      "id": "comment-5470175760",
+      "at": "2026-08-30T17:25:32Z",
+      "actor": "pnoltes",
+      "kind": "constraint",
+      "summary": "Frames Celix as a framework whose Apache release is primarily source; questions the value and maintenance burden of an official binary distribution.",
+      "source": "https://github.com/apache/celix/pull/845#issuecomment-5470175760"
+    },
+    {
+      "id": "review-3891087598",
+      "at": "2026-08-31T01:06:31Z",
+      "actor": "PengZheng",
+      "kind": "proposal",
+      "summary": "Suggests Conan Audit for vulnerability reporting and says a safe-default dependency state is sufficient while users retain freedom to change dependencies/options.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3891087598"
+    },
+    {
+      "id": "review-3928184175",
+      "at": "2026-09-03T19:55:50Z",
+      "actor": "pnoltes",
+      "kind": "decision-direction",
+      "summary": "Prefers keeping a lockfile plus SBOM as a documented safe-default/reproducible development reference rather than omitting the lockfile.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3928184175"
+    },
+    {
+      "id": "comment-5531339760",
+      "at": "2026-09-03T19:57:08Z",
+      "actor": "pnoltes",
+      "kind": "alternative-boundary",
+      "summary": "Identifies the Apache Celix development container as a possible maintained concrete artifact that helps users build Celix applications without inventing an official binary distribution.",
+      "source": "https://github.com/apache/celix/pull/845#issuecomment-5531339760"
+    },
+    {
+      "id": "review-3929923565",
+      "at": "2026-09-04T00:45:12Z",
+      "actor": "PengZheng",
+      "kind": "agreement",
+      "summary": "Agrees with pnoltes' preferred option: a documented lockfile plus SBOM representing safe defaults while users remain free to change dependency versions.",
+      "source": "https://github.com/apache/celix/pull/845#discussion_r3929923565"
+    }
+  ],
+  "commits": [
+    "58d7feca41a04338bfa40d96f6dde3f8aa81eae0",
+    "ce848f475fedfd1b5d1a976b34ab08fd6b0c9eba",
+    "a25708b585820e94b02373b2570e656d63033519",
+    "e0107b1ad30ef884ee4ebc651f046b065b2c631b"
+  ],
+  "ciAtHead": {
+    "allObservedConclusions": "success",
+    "workflows": [
+      "Conan Create",
+      "Celix Ubuntu",
+      "Celix MacOS",
+      "Celix Coverage",
+      "Celix Containers",
+      "Celix Fuzzing",
+      "Standalone Celix Promise",
+      "Standalone Celix etcdlib"
+    ]
+  }
+}

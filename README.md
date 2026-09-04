@@ -37,6 +37,34 @@ If an authored relation has no route yet, the renderer omits it and emits an `un
 
 See [`docs/adr/0004-renderer-is-pure.md`](docs/adr/0004-renderer-is-pure.md).
 
+Render any Horn document from the command line:
+
+```sh
+npm run render -- maps/chinese-room-slice.horn.json > mural.svg
+```
+
+For Specimen 001:
+
+```sh
+npm run render:celix > celix-845-specimen-001.svg
+```
+
+## Trace a claim
+
+Horn can also answer a basic executable “why?” query without inventing new semantics. `traceHornNode` returns a node, its incoming and outgoing authored argument relations, and the source citations attached to that node.
+
+```sh
+npm run trace -- maps/celix-845-specimen-001.horn.json c6-safe-default
+```
+
+The shortcut below traces the focus claim in Specimen 001:
+
+```sh
+npm run trace:celix
+```
+
+For the safe-default claim, the trace exposes the lockfile proposal and audit grounds that support it, the unresolved-boundary node that addresses it, and the three upstream review comments that establish the current reviewer direction. It does not treat SBOM dependency edges as argumentative support.
+
 ## Camera
 
 `src/view/` turns the rendered mural into a place you can enter without touching document geometry. The camera changes only the SVG `viewBox`.
@@ -64,6 +92,16 @@ npm run check
 [`maps/chinese-room-slice.horn.json`](maps/chinese-room-slice.horn.json) — twelve nodes on a 2600×1960 poster. Turing supports from the left; Searle disputes from the right; the systems reply sits under the focus claim. Node 12 is an authored gloss, visually distinct.
 
 This is an authored reconstruction in Horn’s visual language, **not a facsimile** of a MacroVU sheet, and not a substitute for the original posters.
+
+## Specimen 001 · Apache Celix PR #845
+
+[`maps/celix-845-specimen-001.horn.json`](maps/celix-845-specimen-001.horn.json) reconstructs a naturally occurring software-engineering argument rather than an argument authored for Horn. The specimen follows the discussion from an initial CycloneDX-in-CI proposal through the artifact-boundary dispute and into the emerging lockfile + SBOM safe-default reference state.
+
+The experiment deliberately keeps the argument graph separate from the physical software graph. [`experiments/celix-845/evidence/sbom-physical-evidence.json`](experiments/celix-845/evidence/sbom-physical-evidence.json) records the actual CycloneDX dependency facts from the PR's workflow artifact; `depends_on` observations do not become Horn argument relations.
+
+All nine argument relations carry persisted authored roads. Their route provenance is explicit: the geometry belongs to the 2026 reconstruction, not Apache Celix and not an original Robert E. Horn map. The deterministic render test asserts all nine roads render without synthetic-route warnings.
+
+See [`experiments/celix-845/README.md`](experiments/celix-845/README.md).
 
 ## Document invariants
 
@@ -96,6 +134,7 @@ schema/        horn-document/0.1
 src/           TypeScript types + validator
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
+experiments/   source-grounded reconstruction specimens
 docs/adr/      architectural decisions
 ```
 

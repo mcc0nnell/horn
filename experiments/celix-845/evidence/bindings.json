@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "evidenceId": "celix-845-resolved-dependency-graph",
+      "nodeIds": ["c3-package-bound"],
+      "expectedFingerprint": "sha256:9fd2d18e8bd1c1a3ed03c9fefb4f562c2b0a73ebbfbfc5d1c23c0e39a3abc176",
+      "rationale": "Node c3 describes the observed package-bound workflow resolution. If that resolved component/dependency graph changes, its physical-evidence backing is stale until rechecked. The safe-default claim c6 is intentionally not bound here because the agreed conan.lock reference state has not yet been implemented upstream."
+    }
+  ],
+  "semantics": "Bindings do not make factual dependency edges into argument relations. They only record which authored argument nodes rely on a particular factual substrate so Horn can report staleness when that substrate changes."
+}
