@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-extraction-0.1.schema.json",
+  "title": "Horn extraction record",
+  "type": "object",
+  "required": ["id", "version", "argumentId", "sources", "spans", "candidates", "decisions"],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "version": { "const": "horn-extraction/0.1" },
+    "argumentId": { "type": "string", "minLength": 1 },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sourceRef" }
+    },
+    "spans": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/span" }
+    },
+    "candidates": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/decision" }
+    },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "sourceRef": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string" },
+        "digest": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "span": {
+      "type": "object",
+      "required": ["id", "sourceId", "locator", "text"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sourceId": { "type": "string", "minLength": 1 },
+        "locator": { "type": "string", "minLength": 1 },
+        "text": { "type": "string", "minLength": 1 },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "required": ["id", "spanIds", "statement"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "spanIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "statement": { "type": "string", "minLength": 1 },
+        "origin": { "enum": ["explicit", "implied"] },
+        "notes": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "decision": {
+      "type": "object",
+      "required": ["candidateId", "decision", "reason"],
+      "properties": {
+        "candidateId": { "type": "string", "minLength": 1 },
+        "decision": { "enum": ["select", "reject", "merge"] },
+        "reason": { "type": "string", "minLength": 1 },
+        "mergeWithCandidateIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "claimId": { "type": "string", "minLength": 1 },
+        "normalizedStatement": { "type": "string", "minLength": 1 },
+        "normalizationNote": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "decision": { "const": "select" } },
+            "required": ["decision"]
+          },
+          "then": { "required": ["claimId", "normalizedStatement"] }
+        },
+        {
+          "if": {
+            "properties": { "decision": { "const": "merge" } },
+            "required": ["decision"]
+          },
+          "then": { "required": ["mergeWithCandidateIds", "claimId", "normalizedStatement"] }
+        }
+      ],
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

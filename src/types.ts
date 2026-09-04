@@ -11,6 +11,7 @@ export type CoreNodeKind =
   | "claim"
   | "grounds"
   | "warrant"
+  | "backing"
   | "rebuttal"
   | "example"
   | "gloss"
