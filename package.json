@@ -11,7 +11,9 @@
     "test": "tsx --test src/**/*.test.ts",
     "check": "npm run typecheck && npm test",
     "render": "tsx src/cli/render.ts",
-    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json"
+    "render:celix": "tsx src/cli/render.ts maps/celix-845-specimen-001.horn.json",
+    "trace": "tsx src/cli/trace.ts",
+    "trace:celix": "tsx src/cli/trace.ts maps/celix-845-specimen-001.horn.json c6-safe-default"
   },
   "devDependencies": {
     "@types/node": "^24.3.0",
