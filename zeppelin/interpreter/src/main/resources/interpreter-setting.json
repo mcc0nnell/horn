@@ -1,0 +1,36 @@
+[
+  {
+    "group": "horn",
+    "name": "horn",
+    "className": "org.mcc0nnell.horn.zeppelin.HornInterpreter",
+    "defaultInterpreter": true,
+    "properties": {
+      "horn.repo": {
+        "envName": "HORN_REPO",
+        "propertyName": "horn.repo",
+        "defaultValue": "",
+        "description": "Absolute path to the HORN repository checkout containing canonical .horn.json documents and the TypeScript adapter.",
+        "type": "string"
+      },
+      "horn.npm": {
+        "envName": "HORN_NPM",
+        "propertyName": "horn.npm",
+        "defaultValue": "npm",
+        "description": "npm executable used to invoke the transport-neutral HORN adapter without a shell.",
+        "type": "string"
+      },
+      "horn.command.timeout.millis": {
+        "envName": "HORN_COMMAND_TIMEOUT_MILLIS",
+        "propertyName": "horn.command.timeout.millis",
+        "defaultValue": "60000",
+        "description": "Maximum execution time for one HORN projection command.",
+        "type": "number"
+      }
+    },
+    "editor": {
+      "language": "text",
+      "editOnDblClick": false,
+      "completionSupport": false
+    }
+  }
+]
