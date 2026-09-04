@@ -130,14 +130,18 @@ first_signature="$(mktemp)"
 run_note "$first_note_id" "$first_note"
 assert_note "$first_note" "$first_manifest" "$first_signature"
 
+exported_response="$(mktemp)"
 exported_note="$(mktemp)"
-curl -fsS "$ZEPPELIN_URL/api/notebook/export/$first_note_id" >"$exported_note"
+curl -fsS "$ZEPPELIN_URL/api/notebook/export/$first_note_id" >"$exported_response"
+jq -er '.body' "$exported_response" >"$exported_note"
+jq -e '.name and (.paragraphs | length > 0)' "$exported_note" >/dev/null \
+  || fail "Zeppelin export did not contain a serialized note"
 
 import_response="$(
   curl -fsS -X POST \
     -H 'Content-Type: application/json' \
     --data-binary "@$exported_note" \
-    "$ZEPPELIN_URL/api/notebook/import"
+    "$ZEPPELIN_URL/api/notebook/import?notePath=HORN-Z1%20Chinese%20Room%20Reimport"
 )"
 second_note_id="$(jq -er '.body' <<<"$import_response")"
 
