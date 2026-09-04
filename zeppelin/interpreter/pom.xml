@@ -14,6 +14,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <zeppelin.version>0.12.0</zeppelin.version>
+    <slf4j.version>1.7.35</slf4j.version>
     <junit.version>5.11.4</junit.version>
   </properties>
 
@@ -23,6 +24,17 @@
       <artifactId>zeppelin-interpreter</artifactId>
       <version>${zeppelin.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <!--
+      Zeppelin's third-party interpreter bootstrap loads SLF4J from the
+      interpreter's own dependency directory before RemoteInterpreterServer
+      starts. Keep the version aligned with Zeppelin 0.12.0.
+    -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
     </dependency>
 
     <dependency>
@@ -50,6 +62,25 @@
         <configuration>
           <useModulePath>false</useModulePath>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.8.1</version>
+        <executions>
+          <execution>
+            <id>copy-interpreter-runtime</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>runtime</includeScope>
+              <excludeTransitive>false</excludeTransitive>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
