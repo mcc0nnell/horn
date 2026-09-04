@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 
+import { renderHornSvg } from "../render";
 import type { HornDocument } from "../types";
 import { validateHornDocument } from "../validate";
 
@@ -82,4 +83,21 @@ test("SBOM facts remain explicitly outside the normative Horn relation graph", (
       ["depends_on", "contains", "generated_from"].includes(relation.kind),
     ),
   );
+});
+
+test("Celix 845 has persisted authored geometry for every argument relation", () => {
+  assert.equal(document.relations.length, 9);
+  assert.ok(document.relations.every((relation) => relation.route));
+  assert.match(
+    String(document.extensions?.routeProvenance),
+    /authored reconstruction geometry/,
+  );
+});
+
+test("Celix 845 renders all authored roads without synthetic-route warnings", () => {
+  const result = renderHornSvg(document);
+  assert.deepEqual(result.warnings, []);
+  assert.equal((result.svg.match(/data-horn-relation=/g) ?? []).length, 9);
+  assert.match(result.svg, /data-horn-document="horn:authored:2026:celix-845-specimen-001"/);
+  assert.match(result.svg, /data-horn-node="c6-safe-default"/);
 });
