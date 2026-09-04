@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import { renderHornSvg } from "../render";
+import { traceHornNode } from "../trace";
 import type { HornDocument } from "../types";
 import { validateHornDocument } from "../validate";
 
@@ -100,4 +101,21 @@ test("Celix 845 renders all authored roads without synthetic-route warnings", ()
   assert.equal((result.svg.match(/data-horn-relation=/g) ?? []).length, 9);
   assert.match(result.svg, /data-horn-document="horn:authored:2026:celix-845-specimen-001"/);
   assert.match(result.svg, /data-horn-node="c6-safe-default"/);
+});
+
+test("safe-default claim can be traced to arguments and source citations", () => {
+  const trace = traceHornNode(document, "c6-safe-default");
+
+  assert.equal(trace.node.focus, true);
+  assert.deepEqual(
+    trace.incoming.map(({ relation }) => relation.kind).sort(),
+    ["addresses", "supports", "supports"],
+  );
+  assert.ok(trace.incoming.some(({ from }) => from.id === "c5-reference-lock"));
+  assert.ok(trace.incoming.some(({ from }) => from.id === "c7-audit"));
+  assert.ok(trace.incoming.some(({ from }) => from.id === "c9-open-boundary"));
+  assert.deepEqual(
+    trace.citations.map((citation) => citation.id).sort(),
+    ["review-3891087598", "review-3928184175", "review-3929923565"],
+  );
 });
