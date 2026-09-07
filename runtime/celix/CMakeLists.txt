@@ -56,6 +56,16 @@ add_horn_rule_bundle(
     "${CMAKE_CURRENT_LIST_DIR}/bundles/handbook_2003_focus_claim/FocusClaimFormulationRule.cc"
 )
 
+add_celix_bundle(HornRuleInventoryBundle
+    SOURCES "${CMAKE_CURRENT_LIST_DIR}/bundles/rule_inventory/Activator.cc"
+    SYMBOLIC_NAME "Horn_RuleInventory"
+    NAME "Horn Rule Inventory"
+    FILENAME "HornRuleInventoryBundle"
+    VERSION "0.1.0"
+    GROUP "horn/rules"
+)
+target_link_libraries(HornRuleInventoryBundle PRIVATE horn::rules_api Celix::shell_api)
+
 add_celix_container(HornRulesContainer
     CXX
     BUNDLES
@@ -65,4 +75,5 @@ add_celix_container(HornRulesContainer
         Horn1998ReadingDirectionBundle
         Horn2003ClaimAtomicityBundle
         Horn2003FocusClaimBundle
+        HornRuleInventoryBundle
 )
