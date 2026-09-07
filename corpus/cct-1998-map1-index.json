@@ -11,11 +11,13 @@
     "methodSource": "Can Computers Think? Handbook (1998)"
   },
   "status": "source-index",
-  "geometryStatus": "unreconstructed",
+  "geometryStatus": "issue-areas-measured",
+  "sourceGeometry": "horn-source-geometry:cct-1998:map-1",
   "notes": [
     "Issue-area names and focus-box numbers are source-backed.",
     "The handbook defines the lowest-numbered box in an issue area as its focus box.",
-    "This index deliberately contains no reconstructed coordinates or relation routes."
+    "Issue-area background extents have been measured from a source raster and are stored separately in corpus/cct-1998-map1-geometry.json.",
+    "Claim-box geometry and relation routes remain unreconstructed."
   ],
   "issueAreas": [
     {
