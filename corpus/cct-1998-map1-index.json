@@ -1,0 +1,88 @@
+{
+  "id": "horn-source-index:cct-1998:map-1",
+  "version": "horn-source-index/0.1",
+  "title": "Can Computers Think?",
+  "subtitle": "The History and Status of the Debate — Map 1 of 7",
+  "source": {
+    "work": "Mapping Great Debates: Can Computers Think?",
+    "map": 1,
+    "year": 1998,
+    "creator": "Robert E. Horn",
+    "methodSource": "Can Computers Think? Handbook (1998)"
+  },
+  "status": "source-index",
+  "geometryStatus": "unreconstructed",
+  "notes": [
+    "Issue-area names and focus-box numbers are source-backed.",
+    "The handbook defines the lowest-numbered box in an issue area as its focus box.",
+    "This index deliberately contains no reconstructed coordinates or relation routes."
+  ],
+  "issueAreas": [
+    {
+      "id": "map1:free-will",
+      "question": "Can computers have free will?",
+      "focusBoxNumber": 2,
+      "focusLabel": "Computers can't have free will."
+    },
+    {
+      "id": "map1:emotions",
+      "question": "Can computers have emotions?",
+      "focusBoxNumber": 28,
+      "focusLabel": "Machines can't have emotions."
+    },
+    {
+      "id": "map1:heads-in-the-sand",
+      "question": "Should we pretend computers will never be able to think?",
+      "focusBoxNumber": 59,
+      "focusLabel": "The heads-in-the-sand objection."
+    },
+    {
+      "id": "map1:theology",
+      "question": "Does God prohibit computers from thinking?",
+      "focusBoxNumber": 61,
+      "focusLabel": "The theological objection."
+    },
+    {
+      "id": "map1:arithmetic",
+      "question": "Can computers understand arithmetic?",
+      "focusBoxNumber": 63,
+      "focusLabel": "Computers can't add, much less think."
+    },
+    {
+      "id": "map1:analogies",
+      "question": "Can computers draw analogies?",
+      "focusBoxNumber": 66,
+      "focusLabel": "Computers can't understand analogies."
+    },
+    {
+      "id": "map1:brain-computer",
+      "question": "Is the brain a computer?",
+      "focusBoxNumber": 78,
+      "focusLabel": "The biological assumption."
+    },
+    {
+      "id": "map1:disabilities",
+      "question": "Are computers inherently disabled?",
+      "focusBoxNumber": 87,
+      "focusLabel": "The argument from disabilities."
+    },
+    {
+      "id": "map1:creativity",
+      "question": "Can computers be creative?",
+      "focusBoxNumber": 97,
+      "focusLabel": "Computers can never be creative."
+    },
+    {
+      "id": "map1:scientific-reasoning",
+      "question": "Can computers reason scientifically?",
+      "focusBoxNumber": 115,
+      "focusLabel": "Computers can't reason scientifically."
+    },
+    {
+      "id": "map1:personhood",
+      "question": "Can computers be persons?",
+      "focusBoxNumber": 125,
+      "focusLabel": "Computers can't be persons."
+    }
+  ]
+}
