@@ -5,6 +5,7 @@ import type { HornDocument } from "../types";
 import {
   projectArgument,
   projectEvidence,
+  projectFrontier,
   projectHornDocument,
   projectTimeline,
 } from "./projections";
@@ -50,7 +51,7 @@ const fixture: HornDocument = {
       kind: "gloss",
       origin: "authored",
       label: "Claim B",
-      text: "An authored cartographic gloss.",
+      text: "A later response used to exercise the analytical views.",
       author: "After Horn",
       authorShort: "After Horn",
       year: 2026,
@@ -60,15 +61,15 @@ const fixture: HornDocument = {
   ],
   relations: [
     {
-      id: "relation-a-b",
+      id: "relation-b-a",
       kind: "supports",
-      from: "claim-a",
-      to: "claim-b",
+      from: "claim-b",
+      to: "claim-a",
       label: "supported by",
       route: {
         commands: [
-          { op: "M", x: 300, y: 150 },
-          { op: "L", x: 600, y: 360 },
+          { op: "M", x: 600, y: 360 },
+          { op: "L", x: 300, y: 150 },
         ],
       },
     },
@@ -146,11 +147,39 @@ test("evidence projection creates source and claim nodes without changing the do
   assert.deepEqual(fixture, before);
 });
 
-test("projection bundle exposes argument, timeline, and evidence views", () => {
+test("frontier projection reverses semantic response direction into reader order", () => {
+  const before = structuredClone(fixture);
+  const series = firstSeries(projectFrontier(fixture));
+
+  assert.deepEqual(
+    series.data.map(({ id, value }) => ({ id, value })),
+    [
+      { id: "claim-a", value: 0 },
+      { id: "claim-b", value: 1 },
+    ],
+  );
+  assert.deepEqual(series.links, [
+    {
+      id: "reading:relation-b-a",
+      source: "claim-a",
+      target: "claim-b",
+      value: "supports",
+    },
+  ]);
+  assert.deepEqual(fixture, before);
+});
+
+test("projection bundle exposes the source-backed analytical views", () => {
   const projections = projectHornDocument(fixture);
 
-  assert.deepEqual(Object.keys(projections), ["argument", "timeline", "evidence"]);
+  assert.deepEqual(Object.keys(projections), [
+    "argument",
+    "timeline",
+    "evidence",
+    "frontier",
+  ]);
   assert.equal(projections.argument.id, "argument");
   assert.equal(projections.timeline.id, "timeline");
   assert.equal(projections.evidence.id, "evidence");
+  assert.equal(projections.frontier.id, "frontier");
 });
