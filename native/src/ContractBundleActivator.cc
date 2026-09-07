@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 #include "celix/BundleActivator.h"
