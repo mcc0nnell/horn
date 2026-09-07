@@ -15,11 +15,11 @@ enum class Severity : std::int8_t {
 
 struct HornNodeView {
     std::string id{};
+    int number{0};
     std::string kind{};
     std::string label{};
     std::string text{};
     bool focus{false};
-    std::optional<int> number{};
     std::optional<int> year{};
 };
 
