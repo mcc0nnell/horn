@@ -13,18 +13,23 @@ Rules are namespaced by methodological source context:
 - `horn.rules.1998.*` — cartographic / *Can Computers Think?* conventions.
 - `horn.rules.2003.*` — authoring / *Introduction to Argumentation Mapping* conventions.
 
-The initial slice keeps profile selection explicit at the CLI boundary so a 1998 cartographic convention is not silently treated as a universal Horn rule.
+Profile selection is explicit so a 1998 cartographic convention is not silently treated as a universal 2003 authoring rule.
 
-## Planned CLI
+## Runtime commands
 
-```sh
-horn-celix analyze ../../maps/chinese-room-slice.horn.json --profile horn-1998
-horn-celix analyze ../../maps/chinese-room-slice.horn.json --profile horn-2003 --format json
+Start `HornRulesContainer`, then use the Celix shell:
+
+```text
+horn::rules
+horn::analyze <document.horn.json> --profile horn-1998
+horn::analyze <document.horn.json> --profile horn-2003
 ```
 
-## First rule set
+`horn::rules` proves dynamic discovery: it lists the `IHornRule` services currently registered in the framework.
 
-The first implementation targets a small set of deterministic, source-grounded rules:
+`horn::analyze` loads only the small read-only projection needed by the rule API, selects services by methodology profile, evaluates them, sorts diagnostics deterministically, and prints their provenance.
+
+## First rule set
 
 - `horn.rules.1998.focus-box`
 - `horn.rules.1998.argument-reading-direction`
@@ -33,10 +38,20 @@ The first implementation targets a small set of deterministic, source-grounded r
 
 Rules report diagnostics and optional suggestions only.
 
+## Canonical-document adapter
+
+The adapter follows the existing `horn-document/0.1` shape rather than inventing a parallel format. It currently projects:
+
+- document: `id`, `version`, `authority`, `issueQuestion`
+- nodes: `id`, `kind`, `label`, `text`, `focus`, `number`, `year`
+- relations: `id`, `kind`, `from`, `to`, `label`
+
+Geometry, citations, reading paths, and the rest of the canonical document remain owned by the existing Horn kernel. They are intentionally not copied into the rule view until a source-grounded rule requires them.
+
 ## Source handling
 
-Horn's books and original map sheets remain external source material. The public repository should contain distilled rule behavior, provenance references, and public-safe fixtures — not reproduced handbook pages or original map text/images.
+Horn's books and original map sheets remain external source material. The public repository contains distilled rule behavior and provenance references — not reproduced handbook pages or original map text/images.
 
-## Build shape
+## Build
 
-The runtime is intentionally isolated under `runtime/celix/` and is expected to use Apache Celix C++ services and CMake. The service API is kept small so rules can be loaded, compared, and replaced independently of the Horn document kernel.
+See [`BUILDING.md`](BUILDING.md). Apache Celix and RapidJSON must be discoverable by CMake.
