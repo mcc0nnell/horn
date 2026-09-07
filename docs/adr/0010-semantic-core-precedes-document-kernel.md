@@ -1,4 +1,4 @@
-# ADR-0006 — Semantic core precedes the document kernel
+# ADR-0010 — Semantic core precedes the document kernel
 
 Status: proposed  
 Date: 2026-09-02
