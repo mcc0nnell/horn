@@ -10,8 +10,11 @@ Prerequisites:
 ```sh
 cmake -S runtime/celix -B runtime/celix/build
 cmake --build runtime/celix/build
+ctest --test-dir runtime/celix/build --output-on-failure
 ./runtime/celix/build/deploy/HornRulesContainer/HornRulesContainer
 ```
+
+The CTest smoke test loads the synthetic public-safe fixture in `examples/rule-violations.horn.json` and verifies deterministic behavior from all four initial rules.
 
 Inside the Celix shell:
 
@@ -19,9 +22,11 @@ Inside the Celix shell:
 horn::rules
 horn::analyze ../../../../maps/chinese-room-slice.horn.json --profile horn-1998
 horn::analyze ../../../../maps/chinese-room-slice.horn.json --profile horn-2003
+horn::analyze ../../examples/rule-violations.horn.json --profile horn-1998
+horn::analyze ../../examples/rule-violations.horn.json --profile horn-2003
 ```
 
-Adjust the map path if the container is launched from a different working directory.
+Adjust map/fixture paths if the container is launched from a different working directory.
 
 The rule inventory should contain the four rule IDs declared in `STATUS.md`. Analysis must not change the input file.
 
