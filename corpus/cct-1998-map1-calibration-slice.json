@@ -1,0 +1,206 @@
+{
+  "id": "horn-source-calibration:cct-1998:map-1:small-regions",
+  "version": "horn-source-calibration/0.1",
+  "sourceIndex": "horn-source-index:cct-1998:map-1",
+  "sourceGeometry": "horn-source-geometry:cct-1998:map-1",
+  "source": {
+    "work": "Mapping Great Debates: Can Computers Think?",
+    "map": 1,
+    "year": 1998,
+    "creator": "Robert E. Horn",
+    "artifact": "Map 1 raster render"
+  },
+  "coordinateSystem": {
+    "origin": "top-left",
+    "pixelWidth": 8259,
+    "pixelHeight": 5191,
+    "normalizedRange": [0, 1]
+  },
+  "status": "measured-calibration-slice",
+  "scope": [
+    "map1:heads-in-the-sand",
+    "map1:theology",
+    "map1:arithmetic"
+  ],
+  "notes": [
+    "This slice calibrates claim-box and reading-route measurement before larger issue areas are reconstructed.",
+    "Claim summaries are not republished here; labels, attribution, topology, and source geometry are sufficient for the calibration purpose.",
+    "Node rectangles are measured visible box extents in the raster.",
+    "Reading routes are measured centerline approximations through the visible blue relation roads; they are source evidence, not yet HornDocument route geometry.",
+    "Semantic relation direction is later response -> earlier claim; reading direction is earlier claim -> later response."
+  ],
+  "nodes": [
+    {
+      "id": "map1:box-59",
+      "issueAreaId": "map1:heads-in-the-sand",
+      "boxNumber": 59,
+      "role": "focus",
+      "label": "The heads-in-the-sand objection.",
+      "attribution": { "qualifier": "anticipated-by", "name": "Alan Turing", "year": 1950 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 3634, "y": 2482, "w": 522, "h": 200 },
+        "normalized": { "x": 0.440005, "y": 0.478135, "w": 0.063204, "h": 0.038528 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-60",
+      "issueAreaId": "map1:heads-in-the-sand",
+      "boxNumber": 60,
+      "role": "response",
+      "label": "The transmigration consolation.",
+      "attribution": { "name": "Alan Turing", "year": 1950 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 4313, "y": 2503, "w": 437, "h": 170 },
+        "normalized": { "x": 0.522218, "y": 0.482181, "w": 0.052912, "h": 0.032749 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-61",
+      "issueAreaId": "map1:theology",
+      "boxNumber": 61,
+      "role": "focus",
+      "label": "The theological objection.",
+      "attribution": { "qualifier": "anticipated-by", "name": "Alan Turing", "year": 1950 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 3648, "y": 2904, "w": 527, "h": 221 },
+        "normalized": { "x": 0.4417, "y": 0.55943, "w": 0.063809, "h": 0.042574 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-62",
+      "issueAreaId": "map1:theology",
+      "boxNumber": 62,
+      "role": "response",
+      "label": "The theological objection is ungrounded.",
+      "attribution": { "name": "Alan Turing", "year": 1950 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 4298, "y": 2928, "w": 273, "h": 171 },
+        "normalized": { "x": 0.520402, "y": 0.564053, "w": 0.033055, "h": 0.032942 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-63",
+      "issueAreaId": "map1:arithmetic",
+      "boxNumber": 63,
+      "role": "focus",
+      "label": "Computers can't add, much less think.",
+      "attribution": { "name": "Stanley L. Jaki; Fred Dretske", "year": 1990, "years": [1969, 1990] },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 3630, "y": 3342, "w": 598, "h": 250 },
+        "normalized": { "x": 0.439521, "y": 0.643807, "w": 0.072406, "h": 0.04816 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-64",
+      "issueAreaId": "map1:arithmetic",
+      "boxNumber": 64,
+      "role": "response",
+      "label": "Computers can learn to add.",
+      "attribution": { "name": "William Rapaport", "year": 1988 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 4347, "y": 3370, "w": 185, "h": 190 },
+        "normalized": { "x": 0.526335, "y": 0.649201, "w": 0.0224, "h": 0.036602 },
+        "confidence": "high"
+      }
+    },
+    {
+      "id": "map1:box-65",
+      "issueAreaId": "map1:arithmetic",
+      "boxNumber": 65,
+      "role": "response",
+      "label": "The marijuana-sniffing dog.",
+      "attribution": { "name": "Fred Dretske", "year": 1990 },
+      "summaryStatus": "not-republished",
+      "geometry": {
+        "pixels": { "x": 3838, "y": 3597, "w": 623, "h": 205 },
+        "normalized": { "x": 0.464705, "y": 0.69293, "w": 0.075433, "h": 0.039491 },
+        "confidence": "high"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "map1:relation-60-59",
+      "kind": "disputes",
+      "semantic": { "fromBoxNumber": 60, "toBoxNumber": 59 },
+      "reading": {
+        "fromBoxNumber": 59,
+        "toBoxNumber": 60,
+        "label": "is disputed by",
+        "routeStatus": "centerline-approximation",
+        "route": [
+          { "pixels": { "x": 4156, "y": 2589 }, "normalized": { "x": 0.503209, "y": 0.498748 } },
+          { "pixels": { "x": 4313, "y": 2589 }, "normalized": { "x": 0.522218, "y": 0.498748 } }
+        ],
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "map1:relation-62-61",
+      "kind": "disputes",
+      "semantic": { "fromBoxNumber": 62, "toBoxNumber": 61 },
+      "reading": {
+        "fromBoxNumber": 61,
+        "toBoxNumber": 62,
+        "label": "is disputed by",
+        "routeStatus": "centerline-approximation",
+        "route": [
+          { "pixels": { "x": 4175, "y": 3014 }, "normalized": { "x": 0.505509, "y": 0.58062 } },
+          { "pixels": { "x": 4298, "y": 3014 }, "normalized": { "x": 0.520402, "y": 0.58062 } }
+        ],
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "map1:relation-64-63",
+      "kind": "disputes",
+      "semantic": { "fromBoxNumber": 64, "toBoxNumber": 63 },
+      "reading": {
+        "fromBoxNumber": 63,
+        "toBoxNumber": 64,
+        "label": "is disputed by",
+        "routeStatus": "centerline-approximation",
+        "route": [
+          { "pixels": { "x": 4228, "y": 3466 }, "normalized": { "x": 0.511926, "y": 0.667694 } },
+          { "pixels": { "x": 4347, "y": 3466 }, "normalized": { "x": 0.526335, "y": 0.667694 } }
+        ],
+        "confidence": "medium"
+      }
+    },
+    {
+      "id": "map1:relation-65-63",
+      "kind": "supports",
+      "semantic": { "fromBoxNumber": 65, "toBoxNumber": 63 },
+      "reading": {
+        "fromBoxNumber": 63,
+        "toBoxNumber": 65,
+        "label": "is supported by",
+        "routeStatus": "centerline-approximation",
+        "route": [
+          { "pixels": { "x": 3664, "y": 3591 }, "normalized": { "x": 0.443637, "y": 0.691774 } },
+          { "pixels": { "x": 3744, "y": 3651 }, "normalized": { "x": 0.453324, "y": 0.703333 } },
+          { "pixels": { "x": 3838, "y": 3651 }, "normalized": { "x": 0.464705, "y": 0.703333 } }
+        ],
+        "confidence": "medium"
+      }
+    }
+  ],
+  "boundary": {
+    "status": "open",
+    "notes": [
+      "Incoming roads from earlier map context are visible at the left edge of these issue areas but are not reconstructed in this calibration slice.",
+      "No claim outside boxes 59-65 is asserted by this file."
+    ]
+  }
+}
