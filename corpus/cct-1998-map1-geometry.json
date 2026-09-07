@@ -1,0 +1,97 @@
+{
+  "id": "horn-source-geometry:cct-1998:map-1",
+  "version": "horn-source-geometry/0.1",
+  "sourceIndex": "horn-source-index:cct-1998:map-1",
+  "source": {
+    "work": "Mapping Great Debates: Can Computers Think?",
+    "map": 1,
+    "year": 1998,
+    "creator": "Robert E. Horn",
+    "artifact": "Map 1 raster render"
+  },
+  "coordinateSystem": {
+    "origin": "top-left",
+    "pixelWidth": 8259,
+    "pixelHeight": 5191,
+    "normalizedRange": [0, 1]
+  },
+  "measurement": {
+    "status": "measured-source-raster",
+    "method": "connected components over the issue-area background fill in the source raster",
+    "targetRgb": [166, 195, 233],
+    "euclideanRgbTolerance": 10,
+    "notes": [
+      "These rectangles measure visible issue-area background extents in one raster rendering.",
+      "They are reproducible source measurements, not yet canonical HornDocument geometry.",
+      "No claim-box geometry or relation-route geometry is asserted by this file."
+    ]
+  },
+  "issueAreas": [
+    {
+      "id": "map1:free-will",
+      "pixels": { "x": 1737, "y": 1404, "w": 1560, "h": 2943 },
+      "normalized": { "x": 0.210316, "y": 0.270468, "w": 0.188885, "h": 0.566943 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:emotions",
+      "pixels": { "x": 3405, "y": 113, "w": 2928, "h": 2153 },
+      "normalized": { "x": 0.412278, "y": 0.021768, "w": 0.354522, "h": 0.414756 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:heads-in-the-sand",
+      "pixels": { "x": 3495, "y": 2290, "w": 1383, "h": 410 },
+      "normalized": { "x": 0.423175, "y": 0.441148, "w": 0.167454, "h": 0.078983 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:theology",
+      "pixels": { "x": 3498, "y": 2712, "w": 1185, "h": 421 },
+      "normalized": { "x": 0.423538, "y": 0.522443, "w": 0.14348, "h": 0.081102 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:arithmetic",
+      "pixels": { "x": 3494, "y": 3147, "w": 1051, "h": 670 },
+      "normalized": { "x": 0.423054, "y": 0.606242, "w": 0.127255, "h": 0.12907 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:analogies",
+      "pixels": { "x": 3376, "y": 3866, "w": 1845, "h": 1264 },
+      "normalized": { "x": 0.408766, "y": 0.744751, "w": 0.223393, "h": 0.243498 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:brain-computer",
+      "pixels": { "x": 4696, "y": 2364, "w": 1611, "h": 1216 },
+      "normalized": { "x": 0.568592, "y": 0.455404, "w": 0.19506, "h": 0.234252 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:disabilities",
+      "pixels": { "x": 4856, "y": 3673, "w": 1562, "h": 1448 },
+      "normalized": { "x": 0.587965, "y": 0.707571, "w": 0.189127, "h": 0.278944 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:creativity",
+      "pixels": { "x": 6465, "y": 111, "w": 1719, "h": 2456 },
+      "normalized": { "x": 0.782782, "y": 0.021383, "w": 0.208137, "h": 0.473127 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:scientific-reasoning",
+      "pixels": { "x": 6467, "y": 2613, "w": 1721, "h": 1201 },
+      "normalized": { "x": 0.783025, "y": 0.503371, "w": 0.208379, "h": 0.231362 },
+      "confidence": "high"
+    },
+    {
+      "id": "map1:personhood",
+      "pixels": { "x": 6477, "y": 3847, "w": 1718, "h": 1285 },
+      "normalized": { "x": 0.784235, "y": 0.74109, "w": 0.208015, "h": 0.247544 },
+      "confidence": "high"
+    }
+  ]
+}
