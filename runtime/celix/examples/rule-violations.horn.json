@@ -1,25 +1,50 @@
 {
   "id": "horn:authored:test:rule-violations",
   "version": "horn-document/0.1",
+  "vocabulary": ["argumentation"],
+  "unitSize": "concept-diagram",
   "authority": "authored",
+  "after": {
+    "name": "Horn rule test fixture",
+    "works": ["Synthetic public-safe methodology fixture"]
+  },
+  "title": "Prototype release argument",
+  "subtitle": "Synthetic rule-violation fixture",
   "issueQuestion": "Should the prototype ship?",
+  "canvas": {
+    "width": 1200,
+    "height": 800,
+    "unit": "test-pt",
+    "origin": "top-left"
+  },
+  "regions": [],
   "nodes": [
     {
       "id": "focus",
       "number": 1,
       "kind": "claim",
+      "origin": "authored",
       "focus": true,
       "label": "The prototype should not ship?",
       "text": "The prototype should not ship because the evidence is incomplete.",
-      "year": 2026
+      "author": "Synthetic fixture",
+      "authorShort": "Fixture",
+      "year": 2026,
+      "geometry": { "x": 400, "y": 100, "w": 400, "h": 180 },
+      "citationIds": ["fixture-cartographic"]
     },
     {
       "id": "evidence",
       "number": 2,
       "kind": "grounds",
+      "origin": "authored",
       "label": "Evidence is incomplete",
       "text": "Only one independent test has been completed.",
-      "year": 2026
+      "author": "Synthetic fixture",
+      "authorShort": "Fixture",
+      "year": 2026,
+      "geometry": { "x": 400, "y": 380, "w": 400, "h": 160 },
+      "citationIds": ["fixture-cartographic"]
     }
   ],
   "relations": [
@@ -30,5 +55,16 @@
       "to": "focus",
       "label": "supports"
     }
-  ]
+  ],
+  "citations": [
+    {
+      "id": "fixture-cartographic",
+      "layer": "cartographic",
+      "citation": "Synthetic public-safe Horn methodology fixture.",
+      "short": "Synthetic fixture",
+      "year": 2026
+    }
+  ],
+  "readingPath": ["focus", "evidence"],
+  "rights": "Synthetic test fixture; no Robert E. Horn source text or images reproduced."
 }
