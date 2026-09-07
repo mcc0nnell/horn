@@ -56,7 +56,7 @@ A warrant licenses a particular **support move**; it is not merely another edge 
 
 `src/argument.ts` provides the corresponding TypeScript model and cross-reference validator.
 
-See [`docs/adr/0007-horn-has-a-semantic-argument-layer.md`](docs/adr/0007-horn-has-a-semantic-argument-layer.md) and [`docs/adr/0008-warrants-license-support-moves.md`](docs/adr/0008-warrants-license-support-moves.md).
+See [`docs/adr/0012-horn-has-a-semantic-argument-layer.md`](docs/adr/0012-horn-has-a-semantic-argument-layer.md) and [`docs/adr/0013-warrants-license-support-moves.md`](docs/adr/0013-warrants-license-support-moves.md).
 
 ### `horn-document/0.1`
 
@@ -105,7 +105,7 @@ A projection does not define target semantics. RUSTBELT decides how selected Hor
 
 A later projection revision may select directly from `horn-argument/0.1`; the semantic layer is being stabilized before that manifest is generalized.
 
-See [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md).
+See [`docs/adr/0011-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0011-horn-is-authored-truth-projections-are-derived.md).
 
 ## Renderer
 
@@ -221,7 +221,7 @@ RUSTBELT is a closed Java 21 kernel. Horn does not live there and RUSTBELT does 
 
 Horn owns argument meaning and authored cartography. A projection may select Horn identities. A target adapter may then interpret that selection into RUSTBELT's own typed IR and deterministic kernel.
 
-See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md), [`docs/adr/0006-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0006-horn-is-authored-truth-projections-are-derived.md), and [`docs/adr/0007-horn-has-a-semantic-argument-layer.md`](docs/adr/0007-horn-has-a-semantic-argument-layer.md).
+See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt.md), [`docs/adr/0011-horn-is-authored-truth-projections-are-derived.md`](docs/adr/0011-horn-is-authored-truth-projections-are-derived.md), and [`docs/adr/0012-horn-has-a-semantic-argument-layer.md`](docs/adr/0012-horn-has-a-semantic-argument-layer.md).
 
 ## Layout
 

@@ -1,4 +1,4 @@
-# ADR-0006: Horn is authored truth; projections are derived
+# ADR-0011: Horn is authored truth; projections are derived
 
 Status: Accepted
 

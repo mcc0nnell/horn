@@ -1,4 +1,4 @@
-# ADR-0009: Extraction decisions are first-class artifacts
+# ADR-0014: Extraction decisions are first-class artifacts
 
 Status: Proposed
 
