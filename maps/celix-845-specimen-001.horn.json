@@ -1,0 +1,159 @@
+{
+  "id": "horn:authored:2026:celix-845-specimen-001",
+  "version": "horn-document/0.1",
+  "vocabulary": ["argumentation", "software-supply-chain"],
+  "unitSize": "infomural",
+  "authority": "authored",
+  "after": {
+    "name": "Robert E. Horn",
+    "works": ["Mapping Great Debates (1998)", "Introduction to Argumentation Mapping (2003)"]
+  },
+  "title": "What should the Celix SBOM describe?",
+  "subtitle": "Specimen 001 · Apache Celix PR #845",
+  "issueQuestion": "What exactly should an Apache Celix SBOM describe, and what does that evidence warrant?",
+  "canvas": { "width": 3000, "height": 1800, "unit": "poster-pt", "origin": "top-left" },
+  "regions": [
+    { "id": "region-proposal", "label": "Initial proposal", "geometry": { "x": 40, "y": 180, "w": 650, "h": 1260 } },
+    { "id": "region-boundary", "label": "Artifact-boundary dispute", "geometry": { "x": 720, "y": 180, "w": 690, "h": 1260 } },
+    { "id": "region-reference", "label": "Reference-state reformulation", "geometry": { "x": 1440, "y": 180, "w": 730, "h": 1260 } },
+    { "id": "region-emerging", "label": "Emerging agreement and open boundary", "geometry": { "x": 2200, "y": 180, "w": 760, "h": 1260 } }
+  ],
+  "nodes": [
+    {
+      "id": "c1-sbom-ci", "number": 1, "kind": "proposed-model", "origin": "debate",
+      "label": "Generate a CycloneDX SBOM in Conan CI",
+      "text": "The initial proposal adds CycloneDX generation to the existing Conan CI and publishes the result as build evidence.",
+      "author": "Robert McConnell", "authorShort": "McConnell", "year": 2026,
+      "geometry": { "x": 80, "y": 250, "w": 570, "h": 250 },
+      "citationIds": ["celix-pr-845", "commit-58d7feca"]
+    },
+    {
+      "id": "c2-binary-boundary", "number": 2, "kind": "rebuttal", "origin": "debate",
+      "label": "An SBOM needs a concrete artifact boundary",
+      "text": "A recipe or test workflow is not the final binary. Dependency overrides can change the resolved binary graph and therefore change the corresponding SBOM without changing Celix source.",
+      "author": "PengZheng", "authorShort": "PengZheng", "year": 2026,
+      "geometry": { "x": 760, "y": 250, "w": 610, "h": 300 },
+      "citationIds": ["review-3877380915", "review-3877393466"]
+    },
+    {
+      "id": "c3-package-bound", "number": 3, "kind": "implemented-model", "origin": "debate",
+      "label": "Bind the SBOM to the deployed Conan graph",
+      "text": "The revised workflow consumes the created Celix Conan package, deploys the resolved binary packages, and generates the CycloneDX SBOM from that same dependency-graph resolution. The publication step uses -b never so it cannot silently rebuild another configuration.",
+      "author": "Robert McConnell", "authorShort": "McConnell", "year": 2026,
+      "geometry": { "x": 760, "y": 650, "w": 610, "h": 350 },
+      "citationIds": ["commit-ce848f47", "comment-5447812243"]
+    },
+    {
+      "id": "c4-no-binary-release", "number": 4, "kind": "rebuttal", "origin": "debate",
+      "label": "But Celix does not make a binary release",
+      "text": "The revised workflow is still testing infrastructure, not a release process. Celix primarily releases source and does not currently maintain a canonical binary distribution.",
+      "author": "PengZheng / pnoltes", "authorShort": "Celix reviewers", "year": 2026,
+      "geometry": { "x": 760, "y": 1080, "w": 610, "h": 300 },
+      "citationIds": ["comment-5447968454", "comment-5470175760"]
+    },
+    {
+      "id": "c5-reference-lock", "number": 5, "kind": "proposed-model", "origin": "debate",
+      "label": "Use a reproducible reference dependency state",
+      "text": "A representative Conan lockfile can preserve a resolved dependency list for a documented Celix configuration and provide the reference state for an SBOM, reproducible development builds, and vulnerability scanning.",
+      "author": "pnoltes", "authorShort": "pnoltes", "year": 2026,
+      "geometry": { "x": 1480, "y": 330, "w": 650, "h": 340 },
+      "citationIds": ["review-3890016666"]
+    },
+    {
+      "id": "c6-safe-default", "number": 6, "kind": "claim", "origin": "debate", "focus": true,
+      "label": "The reference state is a safe default, not a universal Celix graph",
+      "text": "The lockfile and SBOM should describe a documented safe-default dependency state while users remain free to change dependency versions and options for their own builds.",
+      "author": "PengZheng / pnoltes", "authorShort": "Celix reviewers", "year": 2026,
+      "geometry": { "x": 1480, "y": 820, "w": 650, "h": 360 },
+      "citationIds": ["review-3891087598", "review-3928184175", "review-3929923565"]
+    },
+    {
+      "id": "c7-audit", "number": 7, "kind": "grounds", "origin": "debate",
+      "label": "The reference graph can be audited",
+      "text": "Conan Audit can assess vulnerabilities in the dependency state selected by the documented default resolution, giving the project a concrete security-maintenance target without claiming to describe every downstream build.",
+      "author": "PengZheng", "authorShort": "PengZheng", "year": 2026,
+      "geometry": { "x": 1480, "y": 1240, "w": 650, "h": 180 },
+      "citationIds": ["review-3891087598"]
+    },
+    {
+      "id": "c8-dev-container", "number": 8, "kind": "proposed-model", "origin": "debate",
+      "label": "A development container may be a concrete maintained artifact",
+      "text": "Instead of inventing an official Celix binary distribution, the project may provide and maintain a development container as a concrete artifact that helps users build applications with Celix.",
+      "author": "pnoltes", "authorShort": "pnoltes", "year": 2026,
+      "geometry": { "x": 2240, "y": 390, "w": 680, "h": 330 },
+      "citationIds": ["comment-5531339760"]
+    },
+    {
+      "id": "c9-open-boundary", "number": 9, "kind": "unmapped-territory", "origin": "authored",
+      "label": "Open: what does Celix ultimately warrant?",
+      "text": "The discussion has converged on a safe-default lockfile plus SBOM, but the precise relationship among the source release, reference dependency state, vulnerability reports, and any maintained development-container artifact remains to be implemented and made authoritative upstream.",
+      "author": "Horn reconstruction", "authorShort": "Horn", "year": 2026,
+      "geometry": { "x": 2240, "y": 940, "w": 680, "h": 390 },
+      "citationIds": ["review-3928184175", "review-3929923565", "comment-5531339760", "horn-cartography"]
+    }
+  ],
+  "relations": [
+    {
+      "id": "r1", "kind": "disputes", "from": "c2-binary-boundary", "to": "c1-sbom-ci", "label": "artifact boundary is not established",
+      "route": { "commands": [{ "op": "M", "x": 760, "y": 400 }, { "op": "L", "x": 705, "y": 400 }, { "op": "L", "x": 705, "y": 375 }, { "op": "L", "x": 650, "y": 375 }] }
+    },
+    {
+      "id": "r2", "kind": "addresses", "from": "c3-package-bound", "to": "c2-binary-boundary", "label": "binds SBOM and package to one resolution",
+      "route": { "commands": [{ "op": "M", "x": 1065, "y": 650 }, { "op": "L", "x": 1065, "y": 550 }] }
+    },
+    {
+      "id": "r3", "kind": "disputes", "from": "c4-no-binary-release", "to": "c3-package-bound", "label": "test artifact is not an official release boundary",
+      "route": { "commands": [{ "op": "M", "x": 1065, "y": 1080 }, { "op": "L", "x": 1065, "y": 1000 }] }
+    },
+    {
+      "id": "r4", "kind": "addresses", "from": "c5-reference-lock", "to": "c4-no-binary-release", "label": "moves authority from binary release to reproducible reference state",
+      "route": { "commands": [{ "op": "M", "x": 1480, "y": 500 }, { "op": "L", "x": 1410, "y": 500 }, { "op": "L", "x": 1410, "y": 1230 }, { "op": "L", "x": 1370, "y": 1230 }] }
+    },
+    {
+      "id": "r5", "kind": "supports", "from": "c5-reference-lock", "to": "c6-safe-default", "label": "lockfile makes one documented state reproducible",
+      "route": { "commands": [{ "op": "M", "x": 1805, "y": 670 }, { "op": "L", "x": 1805, "y": 820 }] }
+    },
+    {
+      "id": "r6", "kind": "supports", "from": "c7-audit", "to": "c6-safe-default", "label": "safe default becomes an actionable security-maintenance target",
+      "route": { "commands": [{ "op": "M", "x": 1805, "y": 1240 }, { "op": "L", "x": 1805, "y": 1180 }] }
+    },
+    {
+      "id": "r7", "kind": "addresses", "from": "c8-dev-container", "to": "c4-no-binary-release", "label": "offers a concrete artifact without requiring a binary distribution",
+      "route": { "commands": [{ "op": "M", "x": 2240, "y": 555 }, { "op": "L", "x": 2180, "y": 555 }, { "op": "L", "x": 2180, "y": 1500 }, { "op": "L", "x": 1400, "y": 1500 }, { "op": "L", "x": 1400, "y": 1230 }, { "op": "L", "x": 1370, "y": 1230 }] }
+    },
+    {
+      "id": "r8", "kind": "addresses", "from": "c9-open-boundary", "to": "c6-safe-default", "label": "marks the remaining authority boundary as unresolved",
+      "route": { "commands": [{ "op": "M", "x": 2240, "y": 1135 }, { "op": "L", "x": 2180, "y": 1135 }, { "op": "L", "x": 2180, "y": 1000 }, { "op": "L", "x": 2130, "y": 1000 }] }
+    },
+    {
+      "id": "r9", "kind": "addresses", "from": "c9-open-boundary", "to": "c8-dev-container", "label": "container role remains an emerging alternative",
+      "route": { "commands": [{ "op": "M", "x": 2580, "y": 940 }, { "op": "L", "x": 2580, "y": 720 }] }
+    }
+  ],
+  "citations": [
+    { "id": "horn-cartography", "layer": "cartographic", "citation": "Robert E. Horn, Introduction to Argumentation Mapping (2003). Used as the cartographic method for this retrospective reconstruction.", "short": "Horn 2003", "year": 2003 },
+    { "id": "celix-pr-845", "layer": "mapped", "citation": "Apache Celix pull request #845, Generate CycloneDX SBOM with Conan deployer.", "short": "Celix PR #845", "year": 2026, "url": "https://github.com/apache/celix/pull/845" },
+    { "id": "commit-58d7feca", "layer": "mapped", "citation": "Initial PR commit: Generate CycloneDX SBOM with Conan deployer.", "short": "58d7feca", "year": 2026, "url": "https://github.com/apache/celix/commit/58d7feca41a04338bfa40d96f6dde3f8aa81eae0" },
+    { "id": "review-3877380915", "layer": "mapped", "citation": "PengZheng review comment challenging the recipe/test-workflow artifact boundary and explaining dependency overrides.", "short": "PengZheng artifact-boundary objection", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3877380915" },
+    { "id": "review-3877393466", "layer": "mapped", "citation": "PengZheng review comment arguing that the SBOM should accompany the final binary rather than be uploaded alone.", "short": "PengZheng binary/SBOM objection", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3877393466" },
+    { "id": "commit-ce848f47", "layer": "mapped", "citation": "Revision commit: Bind SBOM to deployed Conan package.", "short": "ce848f47", "year": 2026, "url": "https://github.com/apache/celix/commit/ce848f475fedfd1b5d1a976b34ab08fd6b0c9eba" },
+    { "id": "comment-5447812243", "layer": "mapped", "citation": "McConnell PR comment explaining the same-resolution package + SBOM reformulation and -b never publication step.", "short": "package-bound reformulation", "year": 2026, "url": "https://github.com/apache/celix/pull/845#issuecomment-5447812243" },
+    { "id": "comment-5447968454", "layer": "mapped", "citation": "PengZheng PR comment observing that the modified action is testing-only and that Celix does not make binary releases.", "short": "no binary release", "year": 2026, "url": "https://github.com/apache/celix/pull/845#issuecomment-5447968454" },
+    { "id": "comment-5470175760", "layer": "mapped", "citation": "pnoltes PR comment framing Celix as a source-released framework and questioning an official binary distribution.", "short": "source-release framing", "year": 2026, "url": "https://github.com/apache/celix/pull/845#issuecomment-5470175760" },
+    { "id": "review-3890016666", "layer": "mapped", "citation": "pnoltes review comment proposing a representative Conan lockfile as a reproducible canonical dependency reference for SBOM and vulnerability scanning.", "short": "lockfile proposal", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3890016666" },
+    { "id": "review-3891087598", "layer": "mapped", "citation": "PengZheng review comment proposing Conan Audit and describing the dependency state as safe defaults that users may change.", "short": "safe-default proposal", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3891087598" },
+    { "id": "review-3928184175", "layer": "mapped", "citation": "pnoltes review comment preferring a documented lockfile + SBOM safe-default reference.", "short": "pnoltes prefers option b", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3928184175" },
+    { "id": "review-3929923565", "layer": "mapped", "citation": "PengZheng review reply agreeing with the documented safe-default lockfile + SBOM direction.", "short": "PengZheng agrees", "year": 2026, "url": "https://github.com/apache/celix/pull/845#discussion_r3929923565" },
+    { "id": "comment-5531339760", "layer": "mapped", "citation": "pnoltes PR comment suggesting an Apache Celix development container as a possible maintained concrete artifact.", "short": "dev-container alternative", "year": 2026, "url": "https://github.com/apache/celix/pull/845#issuecomment-5531339760" }
+  ],
+  "readingPath": ["c1-sbom-ci", "c2-binary-boundary", "c3-package-bound", "c4-no-binary-release", "c5-reference-lock", "c6-safe-default", "c7-audit", "c8-dev-container", "c9-open-boundary"],
+  "rights": "Apache Celix source discussion remains subject to its upstream project terms; this authored Horn reconstruction is an experimental cartographic layer.",
+  "extensions": {
+    "specimen": "horn:specimen:001:apache-celix-845",
+    "sourceHeadSha": "e0107b1ad30ef884ee4ebc651f046b065b2c631b",
+    "captureState": "open",
+    "evidenceTimeline": "experiments/celix-845/evidence/timeline.json",
+    "method": "Compile source-grounded assertions; author normative argument relations explicitly.",
+    "routeProvenance": "Relation routes are authored reconstruction geometry created in 2026 for Specimen 001. They are not geometry recovered from Apache Celix or an original Robert E. Horn map."
+  }
+}
