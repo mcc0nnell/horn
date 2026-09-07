@@ -2,7 +2,7 @@
 
 Horn is an executable visual language for mapped argument. You do not look at a poster. You enter one.
 
-This repository is the **document kernel**: a portable `.horn.json` format, a validator, and the first slice — twelve claims from the Chinese Room cluster, authored in Horn’s language. It is not a game engine, not a generic graph viewer, and not RUSTBELT.
+This repository is the **document kernel**: a portable `.horn.json` format, a validator, source-calibrated historical reconstruction work, and authored experiments in Horn’s language. It is not a game engine, not a generic graph viewer, and not RUSTBELT.
 
 ## Product
 
@@ -94,13 +94,32 @@ npm install
 npm run check
 ```
 
-## Source corpus
+## Source corpus and calibration
 
-`corpus/` contains compact source-backed reconstruction indexes. These are not facsimiles and deliberately omit geometry until geometry has been measured from a source artifact.
+`corpus/` contains compact source-backed reconstruction evidence. Source measurements remain distinct from adopted historical Horn geometry.
 
-[`corpus/cct-1998-map1-index.json`](corpus/cct-1998-map1-index.json) currently records the eleven Map 1 issue areas and their source-backed focus-box numbers. The methodology constraints used while reconstructing the series are summarized in [`docs/sources/cct-1998-reconstruction-constraints.md`](docs/sources/cct-1998-reconstruction-constraints.md).
+- [`corpus/cct-1998-map1-index.json`](corpus/cct-1998-map1-index.json) records the eleven Map 1 issue areas and focus-box numbers.
+- [`corpus/cct-1998-map1-geometry.json`](corpus/cct-1998-map1-geometry.json) records measured issue-area raster extents.
+- [`corpus/cct-1998-map1-calibration-slice.json`](corpus/cct-1998-map1-calibration-slice.json) calibrates seven boxes and four local roads across the small 59–65 regions.
+- [`corpus/cct-1998-worldviews-index.json`](corpus/cct-1998-worldviews-index.json) indexes the handbook’s named postulate/worldview sets without reproducing their text.
 
-## Chinese Room slice
+`src/source/` validates pixel-to-normalized geometry and source-calibration invariants. See ADR 0008 and ADR 0009.
+
+## Historical CCT slice
+
+[`maps/cct-map1-small-regions.horn.json`](maps/cct-map1-small-regions.horn.json) is the first source-calibrated historical `HornDocument` from the 1998 *Can Computers Think?* map set.
+
+It reconstructs boxes 59–65 across three issue areas:
+
+- heads-in-the-sand: 59 -> 60 in reading order;
+- theology: 61 -> 62;
+- arithmetic: 63 -> 64 and 63 -> 65.
+
+The document adopts the calibrated 8259 × 5191 source-raster coordinate system as its Horn canvas. Box rectangles are high-confidence source measurements. Relation routes are explicitly marked medium-confidence **centerline approximations**; full arrow polygons, starburst relation labels, and historical arrowheads are not claimed as reconstructed.
+
+The claim texts in the file are paraphrases. Layer A citations point to the published works Horn maps; Layer B identifies Horn’s 1998 cartography.
+
+## Chinese Room authored slice
 
 [`maps/chinese-room-slice.horn.json`](maps/chinese-room-slice.horn.json) — twelve nodes on a 2600×1960 poster. Turing supports from the left; Searle disputes from the right; the systems reply sits under the focus claim. Node 12 is an authored gloss, visually distinct.
 
@@ -132,15 +151,16 @@ See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt
 ## Layout
 
 ```
-corpus/        source-backed reconstruction indexes
+corpus/        source indexes, source geometry, calibration evidence
 maps/          canonical documents (.horn.json)
 schema/        horn-document/0.1
 src/           TypeScript types + validator + derived thread structure
+src/source/    source geometry + calibration validation
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
 src/echarts/   derived Argument / Timeline / Evidence / Frontier projections
 docs/adr/      architectural decisions
-docs/sources/  source-derived reconstruction constraints
+docs/sources/  source-derived reconstruction constraints and measurement notes
 ```
 
 Code: Apache-2.0. Horn’s original posters remain his / MacroVU’s. This repo does not republish them.
