@@ -49,6 +49,8 @@ export function mountHornECharts(
   };
 }
 
+export type HornEChartsTriptychView = Exclude<HornEChartsView, "frontier">;
+
 export type HornEChartsTriptych = {
   argument: HornEChartsController;
   timeline: HornEChartsController;
@@ -63,6 +65,7 @@ const seriesIdByView: Record<HornEChartsView, string> = {
   argument: "horn-argument",
   timeline: "horn-timeline",
   evidence: "horn-evidence",
+  frontier: "horn-frontier",
 };
 
 function projectedNodeName(view: HornEChartsView, nodeId: string): string {
@@ -70,7 +73,7 @@ function projectedNodeName(view: HornEChartsView, nodeId: string): string {
 }
 
 export function mountHornEChartsTriptych(
-  elements: Record<HornEChartsView, HTMLElement>,
+  elements: Record<HornEChartsTriptychView, HTMLElement>,
   document: HornDocument,
 ): HornEChartsTriptych {
   const argument = mountHornECharts(elements.argument, document, "argument");
@@ -80,7 +83,7 @@ export function mountHornEChartsTriptych(
   const nodeIds = new Set(document.nodes.map((node) => node.id));
 
   const clearFocus = (): void => {
-    for (const view of Object.keys(controllers) as HornEChartsView[]) {
+    for (const view of Object.keys(controllers) as HornEChartsTriptychView[]) {
       controllers[view].chart.dispatchAction({
         type: "downplay",
         seriesId: seriesIdByView[view],
@@ -95,7 +98,7 @@ export function mountHornEChartsTriptych(
 
     clearFocus();
 
-    for (const view of Object.keys(controllers) as HornEChartsView[]) {
+    for (const view of Object.keys(controllers) as HornEChartsTriptychView[]) {
       controllers[view].chart.dispatchAction({
         type: "highlight",
         seriesId: seriesIdByView[view],
@@ -104,7 +107,7 @@ export function mountHornEChartsTriptych(
     }
   };
 
-  for (const view of Object.keys(controllers) as HornEChartsView[]) {
+  for (const view of Object.keys(controllers) as HornEChartsTriptychView[]) {
     controllers[view].chart.on("click", (params) => {
       const projectedName = params.name;
       if (typeof projectedName !== "string") {
