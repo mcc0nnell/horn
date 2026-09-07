@@ -56,11 +56,14 @@ See [`docs/adr/0005-camera-moves-the-window.md`](docs/adr/0005-camera-moves-the-
 
 `src/echarts/` derives disposable Apache ECharts views from the same canonical `HornDocument`. ECharts does **not** replace the mural renderer and does not own or rewrite Horn geometry.
 
-The first vertical slice exposes three projections:
+The current vertical slice exposes four projections:
 
-- **Argument** — analytical topology using the centers of authored Horn node rectangles. Authored route geometry is intentionally not reconstructed as graph edges.
+- **Argument** — semantic support/dispute topology. Relation routes are intentionally abstracted.
 - **Timeline** — dated claims laid out chronologically.
 - **Evidence** — mapped and cartographic sources connected to the claims that cite them.
+- **Frontier** — reader-facing dialogue threads derived from focus boxes out to their current terminal arguments.
+
+The Argument and Frontier views deliberately use opposite directions for the same dialectical relation. `HornRelation.from -> HornRelation.to` is semantic response direction; Horn’s historical arrows guide the reader from the earlier claim toward the later response. `src/structure.ts` derives that reader-facing thread without changing the canonical relation or its route geometry.
 
 ```ts
 import {
@@ -72,7 +75,7 @@ import {
 const projections = projectHornDocument(document);
 
 const controller = mountHornECharts(element, document, "argument");
-controller.setView("timeline");
+controller.setView("frontier");
 
 const triptych = mountHornEChartsTriptych(
   { argument: argumentEl, timeline: timelineEl, evidence: evidenceEl },
@@ -82,7 +85,7 @@ const triptych = mountHornEChartsTriptych(
 
 The projection boundary is deliberate: ECharts options are derived state and are never serialized back into `.horn.json`. The canonical SVG mural remains the reference for Horn’s authored spatial grammar.
 
-See [`docs/adr/0006-echarts-is-an-analytical-projection.md`](docs/adr/0006-echarts-is-an-analytical-projection.md).
+See [`docs/adr/0006-echarts-is-an-analytical-projection.md`](docs/adr/0006-echarts-is-an-analytical-projection.md) and [`docs/adr/0007-semantic-and-reading-direction-are-distinct.md`](docs/adr/0007-semantic-and-reading-direction-are-distinct.md).
 
 Run the local contract checks with:
 
@@ -90,6 +93,12 @@ Run the local contract checks with:
 npm install
 npm run check
 ```
+
+## Source corpus
+
+`corpus/` contains compact source-backed reconstruction indexes. These are not facsimiles and deliberately omit geometry until geometry has been measured from a source artifact.
+
+[`corpus/cct-1998-map1-index.json`](corpus/cct-1998-map1-index.json) currently records the eleven Map 1 issue areas and their source-backed focus-box numbers. The methodology constraints used while reconstructing the series are summarized in [`docs/sources/cct-1998-reconstruction-constraints.md`](docs/sources/cct-1998-reconstruction-constraints.md).
 
 ## Chinese Room slice
 
@@ -123,13 +132,15 @@ See [`docs/adr/0001-horn-is-not-rustbelt.md`](docs/adr/0001-horn-is-not-rustbelt
 ## Layout
 
 ```
+corpus/        source-backed reconstruction indexes
 maps/          canonical documents (.horn.json)
 schema/        horn-document/0.1
-src/           TypeScript types + validator
+src/           TypeScript types + validator + derived thread structure
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
-src/echarts/   derived Argument / Timeline / Evidence projections
+src/echarts/   derived Argument / Timeline / Evidence / Frontier projections
 docs/adr/      architectural decisions
+docs/sources/  source-derived reconstruction constraints
 ```
 
 Code: Apache-2.0. Horn’s original posters remain his / MacroVU’s. This repo does not republish them.
