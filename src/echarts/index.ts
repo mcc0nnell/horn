@@ -1,6 +1,7 @@
 export {
   projectArgument,
   projectEvidence,
+  projectFrontier,
   projectHornDocument,
   projectTimeline,
   type HornEChartsProjection,
@@ -12,4 +13,5 @@ export {
   mountHornEChartsTriptych,
   type HornEChartsController,
   type HornEChartsTriptych,
+  type HornEChartsTriptychView,
 } from "./mount";
