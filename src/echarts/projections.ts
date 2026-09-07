@@ -1,8 +1,13 @@
 import type { EChartsOption } from "echarts";
 
+import { deriveHornThread } from "../structure";
 import type { Citation, HornDocument, HornNode } from "../types";
 
-export type HornEChartsView = "argument" | "timeline" | "evidence";
+export type HornEChartsView =
+  | "argument"
+  | "timeline"
+  | "evidence"
+  | "frontier";
 
 export type HornEChartsProjection = {
   id: HornEChartsView;
@@ -236,6 +241,104 @@ export function projectEvidence(document: HornDocument): EChartsOption {
   };
 }
 
+export function projectFrontier(document: HornDocument): EChartsOption {
+  const focusNodes = document.nodes.filter((node) => node.focus === true);
+  const nodeById = new Map(document.nodes.map((node) => [node.id, node]));
+  const placed = new Map<
+    string,
+    { node: HornNode; depth: number; frontier: boolean; lane: number }
+  >();
+  const readingLinks: Array<{
+    id: string;
+    source: string;
+    target: string;
+    value: string;
+  }> = [];
+  let lane = 0;
+
+  for (const focus of focusNodes) {
+    const thread = deriveHornThread(document, focus.id);
+    const frontierIds = new Set(thread.frontierNodeIds);
+
+    for (const step of thread.steps) {
+      const node = nodeById.get(step.nodeId);
+      if (!node || placed.has(node.id)) {
+        continue;
+      }
+
+      placed.set(node.id, {
+        node,
+        depth: step.depth,
+        frontier: frontierIds.has(node.id),
+        lane,
+      });
+      lane += 1;
+
+      if (step.parentNodeId && step.relationId) {
+        const relation = document.relations.find(
+          (candidate) => candidate.id === step.relationId,
+        );
+        readingLinks.push({
+          id: `reading:${step.relationId}`,
+          source: step.parentNodeId,
+          target: step.nodeId,
+          value: relation?.kind ?? "response",
+        });
+      }
+    }
+  }
+
+  const maxDepth = Math.max(0, ...[...placed.values()].map((item) => item.depth));
+
+  return {
+    animationDurationUpdate: 240,
+    tooltip: { trigger: "item" },
+    legend: [
+      {
+        data: ["focus", "thread", "frontier"],
+      },
+    ],
+    series: [
+      {
+        id: "horn-frontier",
+        type: "graph",
+        layout: "none",
+        roam: true,
+        categories: [
+          { name: "focus" },
+          { name: "thread" },
+          { name: "frontier" },
+        ],
+        data: [...placed.values()].map(({ node, depth, frontier, lane: row }) => ({
+          id: node.id,
+          name: node.id,
+          x: maxDepth === 0 ? 0 : (depth / maxDepth) * 1000,
+          y: row * 90,
+          value: depth,
+          category: node.focus === true ? 0 : frontier ? 2 : 1,
+          symbol: frontier ? "diamond" : "circle",
+          symbolSize: node.focus === true ? 46 : frontier ? 38 : 28,
+          label: {
+            show: node.focus === true || frontier,
+            formatter: node.label,
+            position: "right",
+          },
+          tooltip: { formatter: nodeTooltip(node) },
+        })),
+        links: readingLinks,
+        lineStyle: {
+          opacity: 0.5,
+          width: 1.5,
+        },
+        emphasis: {
+          focus: "adjacency",
+          lineStyle: { width: 3 },
+        },
+      },
+    ],
+  };
+}
+
 export function projectHornDocument(
   document: HornDocument,
 ): Record<HornEChartsView, HornEChartsProjection> {
@@ -244,7 +347,7 @@ export function projectHornDocument(
       id: "argument",
       title: "Argument",
       description:
-        "Analytical topology using authored node centers; relation routes are intentionally abstracted.",
+        "Semantic response topology; relation routes are intentionally abstracted.",
       option: projectArgument(document),
     },
     timeline: {
@@ -260,6 +363,13 @@ export function projectHornDocument(
       description:
         "Derived source-to-claim network across mapped and cartographic provenance layers.",
       option: projectEvidence(document),
+    },
+    frontier: {
+      id: "frontier",
+      title: "Frontier",
+      description:
+        "Reader-facing dialogue threads from focus boxes to their current terminal arguments.",
+      option: projectFrontier(document),
     },
   };
 }
