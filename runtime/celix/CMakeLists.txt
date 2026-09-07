@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.20)
 project(HornCelixRules VERSION 0.1.0 LANGUAGES CXX)
 
 find_package(Celix REQUIRED)
+find_package(RapidJSON REQUIRED)
 
 add_library(HornRulesApi INTERFACE)
 add_library(horn::rules_api ALIAS HornRulesApi)
@@ -66,6 +67,22 @@ add_celix_bundle(HornRuleInventoryBundle
 )
 target_link_libraries(HornRuleInventoryBundle PRIVATE horn::rules_api Celix::shell_api)
 
+add_celix_bundle(HornAnalyzerBundle
+    SOURCES
+        "${CMAKE_CURRENT_LIST_DIR}/bundles/analyzer/Activator.cc"
+        "${CMAKE_CURRENT_LIST_DIR}/src/HornDocumentAdapter.cc"
+    SYMBOLIC_NAME "Horn_Analyzer"
+    NAME "Horn Methodology Analyzer"
+    FILENAME "HornAnalyzerBundle"
+    VERSION "0.1.0"
+    GROUP "horn/rules"
+)
+target_include_directories(HornAnalyzerBundle PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/src"
+    ${RapidJSON_INCLUDE_DIRS}
+)
+target_link_libraries(HornAnalyzerBundle PRIVATE horn::rules_api Celix::shell_api)
+
 add_celix_container(HornRulesContainer
     CXX
     BUNDLES
@@ -76,4 +93,5 @@ add_celix_container(HornRulesContainer
         Horn2003ClaimAtomicityBundle
         Horn2003FocusClaimBundle
         HornRuleInventoryBundle
+        HornAnalyzerBundle
 )
