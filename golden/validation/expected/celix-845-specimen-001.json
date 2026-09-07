@@ -1,0 +1,7 @@
+{
+  "version": "horn-validation-report/0.1",
+  "documentContract": "horn-document/0.1",
+  "documentId": "horn:authored:2026:celix-845-specimen-001",
+  "ok": true,
+  "issues": []
+}

@@ -59,7 +59,7 @@ Available now. It advertises:
 
 ### `horn::IValidationService`
 
-Reserved seam for native validation. A provider is intentionally not landed until native output can be compared against the existing Horn validator on a golden corpus.
+Phase1 provider returns normalized report JSON from canonical document JSON. Equivalence with validate.ts is proven by golden:validation.
 
 ### `horn::IProjectionService`
 
@@ -90,7 +90,7 @@ Landed here. Proves Apache Celix packaging, container startup, service publicati
 
 ### Phase 1 — golden validation
 
-Run canonical fixtures through the TypeScript validator and a native provider. Compare normalized validation reports exactly.
+Phase 1 is landed. Use validate:report and golden:validation; see ADR-0015.
 
 Acceptance rule: no native-specific interpretation of Horn semantics.
 

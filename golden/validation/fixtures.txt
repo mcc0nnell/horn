@@ -1,0 +1,3 @@
+maps/chinese-room-slice.horn.json
+maps/cct-map1-small-regions.horn.json
+maps/celix-845-specimen-001.horn.json
