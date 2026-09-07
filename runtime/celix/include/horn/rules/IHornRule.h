@@ -16,8 +16,11 @@ enum class Severity : std::int8_t {
 struct HornNodeView {
     std::string id{};
     std::string kind{};
-    std::string title{};
+    std::string label{};
     std::string text{};
+    bool focus{false};
+    std::optional<int> number{};
+    std::optional<int> year{};
 };
 
 struct HornRelationView {
@@ -25,10 +28,14 @@ struct HornRelationView {
     std::string kind{};
     std::string from{};
     std::string to{};
+    std::string label{};
 };
 
 struct HornDocumentView {
     std::string id{};
+    std::string version{};
+    std::string authority{};
+    std::string issueQuestion{};
     std::vector<HornNodeView> nodes{};
     std::vector<HornRelationView> relations{};
 };
