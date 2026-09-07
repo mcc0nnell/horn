@@ -15,11 +15,6 @@ std::string lower(std::string value) {
     return value;
 }
 
-bool looksLikeFocusKind(const std::string& kind) {
-    const auto value = lower(kind);
-    return value == "focus-claim" || value == "focus_claim" || value == "focus";
-}
-
 bool containsNegativeForm(const std::string& text) {
     const auto value = " " + lower(text) + " ";
     return value.find(" not ") != std::string::npos ||
@@ -48,16 +43,16 @@ public:
         std::vector<Diagnostic> result{};
         const auto meta = metadata();
         for (const auto& node : document.nodes) {
-            if (!looksLikeFocusKind(node.kind)) {
+            if (!node.focus) {
                 continue;
             }
 
-            const auto candidate = !node.title.empty() ? node.title : node.text;
+            const auto candidate = !node.label.empty() ? node.label : node.text;
             if (candidate.empty()) {
                 continue;
             }
 
-            if (!candidate.empty() && candidate.back() == '?') {
+            if (candidate.back() == '?') {
                 result.push_back(Diagnostic{
                     meta.ruleId,
                     Severity::WARNING,
