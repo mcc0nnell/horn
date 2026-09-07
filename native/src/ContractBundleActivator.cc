@@ -1,3 +1,4 @@
+#include "DocumentValidator.h"
 #include "horn/RuntimeServices.h"
 
 #include <memory>
@@ -37,15 +38,25 @@ class ContractBundleActivator final {
 public:
     explicit ContractBundleActivator(const std::shared_ptr<celix::BundleContext>& context) {
         auto descriptor = std::make_shared<RuntimeDescriptor>();
-        registration_ = context->registerService<horn::IRuntimeDescriptor>(std::move(descriptor))
-            .addProperty("horn.runtime.api", std::string{horn::RUNTIME_API_VERSION})
-            .addProperty("horn.document.contract", std::string{horn::DOCUMENT_CONTRACT})
-            .addProperty("horn.projection.contract", std::string{horn::PROJECTION_CONTRACT})
-            .build();
+        descriptorRegistration_ =
+            context->registerService<horn::IRuntimeDescriptor>(std::move(descriptor))
+                .addProperty("horn.runtime.api", std::string{horn::RUNTIME_API_VERSION})
+                .addProperty("horn.document.contract", std::string{horn::DOCUMENT_CONTRACT})
+                .addProperty("horn.projection.contract", std::string{horn::PROJECTION_CONTRACT})
+                .build();
+
+        auto validation = std::make_shared<horn::ValidationService>();
+        validationRegistration_ =
+            context->registerService<horn::IValidationService>(std::move(validation))
+                .addProperty("horn.runtime.api", std::string{horn::RUNTIME_API_VERSION})
+                .addProperty("horn.document.contract", std::string{horn::DOCUMENT_CONTRACT})
+                .addProperty("horn.validation.report", std::string{"horn-validation-report/0.1"})
+                .build();
     }
 
 private:
-    std::shared_ptr<celix::ServiceRegistration> registration_{};
+    std::shared_ptr<celix::ServiceRegistration> descriptorRegistration_{};
+    std::shared_ptr<celix::ServiceRegistration> validationRegistration_{};
 };
 
 } // namespace
