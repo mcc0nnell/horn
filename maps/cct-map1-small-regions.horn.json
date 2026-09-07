@@ -1,0 +1,285 @@
+{
+  "id": "horn:cct-1998:map-1:small-regions",
+  "version": "horn-document/0.1",
+  "vocabulary": ["argumentation", "cct-1998", "source-calibrated"],
+  "unitSize": "infomural",
+  "authority": "historical",
+  "title": "Can Computers Think? — Map 1 small-region reconstruction",
+  "subtitle": "Boxes 59–65: heads-in-the-sand, theology, and arithmetic",
+  "issueQuestion": "Can computers think?",
+  "canvas": {
+    "width": 8259,
+    "height": 5191,
+    "unit": "source-raster-pixel",
+    "origin": "top-left"
+  },
+  "regions": [
+    {
+      "id": "map1:heads-in-the-sand",
+      "label": "Should we pretend computers will never be able to think?",
+      "geometry": { "x": 3495, "y": 2290, "w": 1383, "h": 410 },
+      "extensions": { "sourceGeometryConfidence": "high" }
+    },
+    {
+      "id": "map1:theology",
+      "label": "Does God prohibit computers from thinking?",
+      "geometry": { "x": 3498, "y": 2712, "w": 1185, "h": 421 },
+      "extensions": { "sourceGeometryConfidence": "high" }
+    },
+    {
+      "id": "map1:arithmetic",
+      "label": "Can computers understand arithmetic?",
+      "geometry": { "x": 3494, "y": 3147, "w": 1051, "h": 670 },
+      "extensions": { "sourceGeometryConfidence": "high" }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "map1:box-59",
+      "number": 59,
+      "kind": "focus-claim",
+      "origin": "debate",
+      "focus": true,
+      "label": "The heads-in-the-sand objection.",
+      "text": "Machine thought is rejected because its possible consequences are feared rather than because of an argument about what machines can do.",
+      "author": "Alan Turing",
+      "authorShort": "Turing",
+      "year": 1950,
+      "geometry": { "x": 3634, "y": 2482, "w": 522, "h": 200 },
+      "citationIds": ["turing-1950"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "attributionQualifier": "anticipated-by",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-60",
+      "number": 60,
+      "kind": "rebuttal",
+      "origin": "debate",
+      "label": "The transmigration consolation.",
+      "text": "Turing treats the fear behind the objection as calling for consolation rather than refutation and invokes the possibility of souls passing to machines.",
+      "author": "Alan Turing",
+      "authorShort": "Turing",
+      "year": 1950,
+      "geometry": { "x": 4313, "y": 2503, "w": 437, "h": 170 },
+      "citationIds": ["turing-1950"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-61",
+      "number": 61,
+      "kind": "focus-claim",
+      "origin": "debate",
+      "focus": true,
+      "label": "The theological objection.",
+      "text": "The objection holds that thinking requires an immortal soul and that machines have not been given souls.",
+      "author": "Alan Turing",
+      "authorShort": "Turing",
+      "year": 1950,
+      "geometry": { "x": 3648, "y": 2904, "w": 527, "h": 221 },
+      "citationIds": ["turing-1950"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "attributionQualifier": "anticipated-by",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-62",
+      "number": 62,
+      "kind": "rebuttal",
+      "origin": "debate",
+      "label": "The theological objection is ungrounded.",
+      "text": "Turing rejects as arbitrary the assumption that machines could not receive souls and suggests that building thinking machines need not conflict with divine purposes.",
+      "author": "Alan Turing",
+      "authorShort": "Turing",
+      "year": 1950,
+      "geometry": { "x": 4298, "y": 2928, "w": 273, "h": 171 },
+      "citationIds": ["turing-1950"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-63",
+      "number": 63,
+      "kind": "focus-claim",
+      "origin": "debate",
+      "focus": true,
+      "label": "Computers can't add, much less think.",
+      "text": "The claim distinguishes formal symbol manipulation from understood arithmetic: computational operations become mathematics only through interpretation.",
+      "author": "Stanley L. Jaki; Fred Dretske",
+      "authorShort": "Jaki; Dretske",
+      "geometry": { "x": 3630, "y": 3342, "w": 598, "h": 250 },
+      "citationIds": ["jaki-1969", "dretske-1990"],
+      "notes": "Horn attributes the box to Jaki (1969) and Dretske (1990), and notes an earlier Wittgenstein version.",
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-64",
+      "number": 64,
+      "kind": "rebuttal",
+      "origin": "debate",
+      "label": "Computers can learn to add.",
+      "text": "A computer with internal semantic structure may acquire arithmetic understanding through learning rather than possessing that understanding intrinsically.",
+      "author": "William Rapaport",
+      "authorShort": "Rapaport",
+      "year": 1988,
+      "geometry": { "x": 4347, "y": 3370, "w": 185, "h": 190 },
+      "citationIds": ["rapaport-1988"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    },
+    {
+      "id": "map1:box-65",
+      "number": 65,
+      "kind": "grounds",
+      "origin": "debate",
+      "label": "The marijuana-sniffing dog.",
+      "text": "Meaningful thought requires symbols or signals to have the right causal role; a trained response by itself does not establish understanding.",
+      "author": "Fred Dretske",
+      "authorShort": "Dretske",
+      "year": 1990,
+      "geometry": { "x": 3838, "y": 3597, "w": 623, "h": 205 },
+      "citationIds": ["dretske-1990"],
+      "extensions": {
+        "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+        "sourceGeometryConfidence": "high",
+        "textStatus": "paraphrase"
+      }
+    }
+  ],
+  "relations": [
+    {
+      "id": "map1:relation-60-59",
+      "kind": "disputes",
+      "from": "map1:box-60",
+      "to": "map1:box-59",
+      "label": "is disputed by",
+      "route": {
+        "commands": [
+          { "op": "M", "x": 4156, "y": 2589 },
+          { "op": "L", "x": 4313, "y": 2589 }
+        ],
+        "extensions": { "status": "centerline-approximation", "confidence": "medium" }
+      },
+      "extensions": { "readingDirection": { "fromBoxNumber": 59, "toBoxNumber": 60 } }
+    },
+    {
+      "id": "map1:relation-62-61",
+      "kind": "disputes",
+      "from": "map1:box-62",
+      "to": "map1:box-61",
+      "label": "is disputed by",
+      "route": {
+        "commands": [
+          { "op": "M", "x": 4175, "y": 3014 },
+          { "op": "L", "x": 4298, "y": 3014 }
+        ],
+        "extensions": { "status": "centerline-approximation", "confidence": "medium" }
+      },
+      "extensions": { "readingDirection": { "fromBoxNumber": 61, "toBoxNumber": 62 } }
+    },
+    {
+      "id": "map1:relation-64-63",
+      "kind": "disputes",
+      "from": "map1:box-64",
+      "to": "map1:box-63",
+      "label": "is disputed by",
+      "route": {
+        "commands": [
+          { "op": "M", "x": 4228, "y": 3466 },
+          { "op": "L", "x": 4347, "y": 3466 }
+        ],
+        "extensions": { "status": "centerline-approximation", "confidence": "medium" }
+      },
+      "extensions": { "readingDirection": { "fromBoxNumber": 63, "toBoxNumber": 64 } }
+    },
+    {
+      "id": "map1:relation-65-63",
+      "kind": "supports",
+      "from": "map1:box-65",
+      "to": "map1:box-63",
+      "label": "is supported by",
+      "route": {
+        "commands": [
+          { "op": "M", "x": 3664, "y": 3591 },
+          { "op": "L", "x": 3744, "y": 3651 },
+          { "op": "L", "x": 3838, "y": 3651 }
+        ],
+        "extensions": { "status": "centerline-approximation", "confidence": "medium" }
+      },
+      "extensions": { "readingDirection": { "fromBoxNumber": 63, "toBoxNumber": 65 } }
+    }
+  ],
+  "citations": [
+    {
+      "id": "turing-1950",
+      "layer": "mapped",
+      "citation": "Turing, A. M. 1950. Computing machinery and intelligence. Mind 59:433–60.",
+      "short": "Turing 1950",
+      "year": 1950
+    },
+    {
+      "id": "jaki-1969",
+      "layer": "mapped",
+      "citation": "Jaki, S. L. 1969. Brain, Mind, and Computers. New York: Herder and Herder.",
+      "short": "Jaki 1969",
+      "year": 1969
+    },
+    {
+      "id": "dretske-1990",
+      "layer": "mapped",
+      "citation": "Dretske, F. 1990. Machines and the mental. In Philosophy, Mind, and Cognitive Inquiry, ed. D. Cole, J. Fetzer, and T. Rankin, 75–88. Dordrecht: Kluwer.",
+      "short": "Dretske 1990",
+      "year": 1990
+    },
+    {
+      "id": "rapaport-1988",
+      "layer": "mapped",
+      "citation": "Rapaport, W. J. 1988. Syntactic semantics: Foundations of computational natural-language understanding. In Aspects of Artificial Intelligence, ed. J. H. Fetzer, 81–131. Boston: Kluwer.",
+      "short": "Rapaport 1988",
+      "year": 1988
+    },
+    {
+      "id": "horn-cct-map1-1998",
+      "layer": "cartographic",
+      "citation": "Robert E. Horn. Mapping Great Debates: Can Computers Think? Map 1, Can Computers Think? MacroVU Press, 1998.",
+      "short": "Horn CCT Map 1 (1998)",
+      "year": 1998
+    }
+  ],
+  "readingPath": [
+    "map1:box-59",
+    "map1:box-60",
+    "map1:box-61",
+    "map1:box-62",
+    "map1:box-63",
+    "map1:box-64",
+    "map1:box-65"
+  ],
+  "rights": "Reconstruction metadata and paraphrases for analysis. Original 1998 map © Robert E. Horn / MacroVU. This file does not reproduce the original claim summaries wholesale.",
+  "extensions": {
+    "sourceCalibration": "horn-source-calibration:cct-1998:map-1:small-regions",
+    "geometryAdoption": "Source raster pixels from the calibrated 8259x5191 Map 1 rendering are adopted as this slice's Horn canvas coordinates.",
+    "routeProvenance": "Relation routes are calibrated centerline approximations measured from the historical map roads; full arrow polygons, starburst labels, and arrowheads are not reconstructed.",
+    "scopeBoundary": "Incoming roads from earlier Map 1 context are visible but intentionally omitted until their external endpoints are reconstructed."
+  }
+}
