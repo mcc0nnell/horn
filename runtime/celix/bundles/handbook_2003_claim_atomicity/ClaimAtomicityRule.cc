@@ -1,10 +1,33 @@
 #include "horn/rules/IHornRule.h"
 
 #include <algorithm>
+#include <cctype>
 #include <memory>
 #include <string>
 
 namespace horn::rules {
+namespace {
+
+std::string lower(std::string value) {
+    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
+        return static_cast<char>(std::tolower(c));
+    });
+    return value;
+}
+
+bool hasArgumentMoveMarker(const std::string& text) {
+    const auto value = " " + lower(text) + " ";
+    return value.find(" because ") != std::string::npos ||
+           value.find(" therefore ") != std::string::npos ||
+           value.find(" for example ") != std::string::npos;
+}
+
+bool hasEnumeratedMoves(const std::string& text) {
+    return (text.find("(1)") != std::string::npos && text.find("(2)") != std::string::npos) ||
+           (text.find("1.") != std::string::npos && text.find("2.") != std::string::npos);
+}
+
+} // namespace
 
 class ClaimAtomicityRule final : public IHornRule {
 public:
@@ -26,20 +49,17 @@ public:
                 continue;
             }
 
-            const auto semicolons = static_cast<int>(std::count(node.text.begin(), node.text.end(), ';'));
-            const auto periods = static_cast<int>(std::count(node.text.begin(), node.text.end(), '.'));
-            const bool enumerated = node.text.find("(1)") != std::string::npos && node.text.find("(2)") != std::string::npos;
-            const bool connective = node.text.find(" therefore ") != std::string::npos ||
-                                    node.text.find(" because ") != std::string::npos ||
-                                    node.text.find(" however ") != std::string::npos;
-
-            if (semicolons >= 2 || periods >= 3 || enumerated || (periods >= 1 && connective)) {
+            // Horn explicitly allows a claim box to contain several explanatory sentences.
+            // Sentence count alone is therefore not evidence of a multi-claim box. The
+            // conservative first slice only warns on source-grounded indicators of another
+            // argumentative move inside the same box.
+            if (hasArgumentMoveMarker(node.text) || hasEnumeratedMoves(node.text)) {
                 result.push_back(Diagnostic{
                     meta.ruleId,
                     Severity::WARNING,
                     node.id,
-                    "This box may contain more than one independently arguable claim.",
-                    std::string{"Consider splitting independently supportable or disputable assertions into separate claim boxes."},
+                    "This box contains a marker that may introduce a second argumentative move.",
+                    std::string{"Verify that the box contains one claim; split a separately supportable or disputable move into its own box."},
                     meta.sourceEdition,
                     meta.sourceLocation,
                 });
