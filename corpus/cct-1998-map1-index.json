@@ -11,13 +11,17 @@
     "methodSource": "Can Computers Think? Handbook (1998)"
   },
   "status": "source-index",
-  "geometryStatus": "issue-areas-measured",
+  "geometryStatus": "issue-areas-measured; boxes-59-65-calibrated",
   "sourceGeometry": "horn-source-geometry:cct-1998:map-1",
+  "calibrationSlices": [
+    "horn-source-calibration:cct-1998:map-1:small-regions"
+  ],
   "notes": [
     "Issue-area names and focus-box numbers are source-backed.",
     "The handbook defines the lowest-numbered box in an issue area as its focus box.",
     "Issue-area background extents have been measured from a source raster and are stored separately in corpus/cct-1998-map1-geometry.json.",
-    "Claim-box geometry and relation routes remain unreconstructed."
+    "Boxes 59-65 and their four local relations are measured in corpus/cct-1998-map1-calibration-slice.json.",
+    "Remaining claim-box geometry and historical relation roads are unresolved."
   ],
   "issueAreas": [
     {
