@@ -6,6 +6,7 @@
 #include "celix/IShellCommand.h"
 
 #include <cstdio>
+#include <iterator>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -116,6 +117,8 @@ private:
     std::shared_ptr<celix::ServiceTracker<horn::rules::IHornRule>> tracker{};
 };
 
+} // namespace
+
 class HornAnalyzerBundleActivator final {
 public:
     explicit HornAnalyzerBundleActivator(const std::shared_ptr<celix::BundleContext>& ctx) {
@@ -139,5 +142,3 @@ private:
 };
 
 CELIX_GEN_CXX_BUNDLE_ACTIVATOR(HornAnalyzerBundleActivator)
-
-} // namespace
