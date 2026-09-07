@@ -1,26 +1,10 @@
 #include "horn/rules/IHornRule.h"
 
 #include <algorithm>
-#include <cctype>
 #include <memory>
 #include <string>
 
 namespace horn::rules {
-namespace {
-
-std::string lower(std::string value) {
-    std::transform(value.begin(), value.end(), value.begin(), [](unsigned char c) {
-        return static_cast<char>(std::tolower(c));
-    });
-    return value;
-}
-
-bool looksLikeFocusKind(const std::string& kind) {
-    const auto value = lower(kind);
-    return value == "focus-claim" || value == "focus_claim" || value == "focus";
-}
-
-} // namespace
 
 class FocusBoxRule final : public IHornRule {
 public:
@@ -37,7 +21,7 @@ public:
     std::vector<Diagnostic> evaluate(const HornDocumentView& document) const override {
         const auto meta = metadata();
         const auto count = static_cast<std::size_t>(std::count_if(document.nodes.begin(), document.nodes.end(), [](const HornNodeView& node) {
-            return looksLikeFocusKind(node.kind);
+            return node.focus;
         }));
 
         if (count > 0 || document.nodes.empty()) {
