@@ -53,9 +53,21 @@ export type HornEChartsTriptych = {
   argument: HornEChartsController;
   timeline: HornEChartsController;
   evidence: HornEChartsController;
+  focusNode(nodeId: string): void;
+  clearFocus(): void;
   resize(): void;
   dispose(): void;
 };
+
+const seriesIdByView: Record<HornEChartsView, string> = {
+  argument: "horn-argument",
+  timeline: "horn-timeline",
+  evidence: "horn-evidence",
+};
+
+function projectedNodeName(view: HornEChartsView, nodeId: string): string {
+  return view === "evidence" ? `node:${nodeId}` : nodeId;
+}
 
 export function mountHornEChartsTriptych(
   elements: Record<HornEChartsView, HTMLElement>,
@@ -64,19 +76,64 @@ export function mountHornEChartsTriptych(
   const argument = mountHornECharts(elements.argument, document, "argument");
   const timeline = mountHornECharts(elements.timeline, document, "timeline");
   const evidence = mountHornECharts(elements.evidence, document, "evidence");
-  const controllers = [argument, timeline, evidence];
+  const controllers = { argument, timeline, evidence };
+  const nodeIds = new Set(document.nodes.map((node) => node.id));
+
+  const clearFocus = (): void => {
+    for (const view of Object.keys(controllers) as HornEChartsView[]) {
+      controllers[view].chart.dispatchAction({
+        type: "downplay",
+        seriesId: seriesIdByView[view],
+      });
+    }
+  };
+
+  const focusNode = (nodeId: string): void => {
+    if (!nodeIds.has(nodeId)) {
+      throw new Error(`unknown Horn node: ${nodeId}`);
+    }
+
+    clearFocus();
+
+    for (const view of Object.keys(controllers) as HornEChartsView[]) {
+      controllers[view].chart.dispatchAction({
+        type: "highlight",
+        seriesId: seriesIdByView[view],
+        name: projectedNodeName(view, nodeId),
+      });
+    }
+  };
+
+  for (const view of Object.keys(controllers) as HornEChartsView[]) {
+    controllers[view].chart.on("click", (params) => {
+      const projectedName = params.name;
+      if (typeof projectedName !== "string") {
+        return;
+      }
+
+      const nodeId = projectedName.startsWith("node:")
+        ? projectedName.slice("node:".length)
+        : projectedName;
+
+      if (nodeIds.has(nodeId)) {
+        focusNode(nodeId);
+      }
+    });
+  }
 
   return {
     argument,
     timeline,
     evidence,
+    focusNode,
+    clearFocus,
     resize() {
-      for (const controller of controllers) {
+      for (const controller of Object.values(controllers)) {
         controller.resize();
       }
     },
     dispose() {
-      for (const controller of controllers) {
+      for (const controller of Object.values(controllers)) {
         controller.dispose();
       }
     },
