@@ -1,0 +1,93 @@
+{
+  "id": "horn-source-index:cct-1998:worldviews",
+  "version": "horn-source-index/0.1",
+  "title": "Can Computers Think? — worldview and postulate index",
+  "source": {
+    "work": "Mapping Great Debates: Can Computers Think?",
+    "year": 1998,
+    "creator": "Robert E. Horn",
+    "methodSource": "Can Computers Think? Handbook (1998)",
+    "companionSource": "Worldviews in Turing Debate"
+  },
+  "status": "source-index",
+  "notes": [
+    "This index records named postulate sets listed by the 1998 handbook.",
+    "Association of a protagonist with a school does not imply acceptance of every postulate in that school.",
+    "Postulate text is not reproduced here; this file is a structural index for source-faithful reconstruction."
+  ],
+  "maps": [
+    {
+      "map": 3,
+      "postulateSets": [
+        {
+          "id": "worldview:physical-symbol-systems",
+          "label": "Physical symbol systems hypothesis"
+        },
+        {
+          "id": "worldview:dialectical-paradigm",
+          "label": "The dialectical paradigm"
+        },
+        {
+          "id": "worldview:dreideggerianism",
+          "label": "Dreideggerianism (Dreyfus + Heidegger)"
+        },
+        {
+          "id": "worldview:ordinary-language",
+          "label": "Ordinary language"
+        },
+        {
+          "id": "worldview:experiential-realism",
+          "label": "Experiential realism"
+        },
+        {
+          "id": "worldview:subsumption-architecture",
+          "label": "Subsumption architecture"
+        },
+        {
+          "id": "worldview:situated-action",
+          "label": "Situated action"
+        }
+      ]
+    },
+    {
+      "map": 5,
+      "postulateSets": [
+        {
+          "id": "worldview:connectionism",
+          "label": "Connectionism"
+        },
+        {
+          "id": "worldview:dynamical-cognition",
+          "label": "The dynamical approach to cognition"
+        },
+        {
+          "id": "worldview:subsymbolic-paradigm",
+          "label": "The subsymbolic paradigm"
+        },
+        {
+          "id": "worldview:quasi-pictorial-image-psychology",
+          "label": "Quasi-pictorial image psychology"
+        },
+        {
+          "id": "worldview:gestalt-psychology",
+          "label": "Gestalt psychology"
+        }
+      ]
+    },
+    {
+      "map": 6,
+      "postulateSets": [
+        {
+          "id": "worldview:functionalism",
+          "label": "Functionalism"
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    {
+      "label": "Image psychology",
+      "reason": "The companion worldview sheet contains a Postulates of Image Psychology heading, but it is not separately listed in the handbook's Index of postulates. Keep source-visible but unpromoted until its map/status is reconciled."
+    }
+  ]
+}
