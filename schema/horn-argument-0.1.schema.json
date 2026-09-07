@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-argument-0.1.schema.json",
+  "title": "Horn argument",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "title",
+    "issueQuestion",
+    "issueType",
+    "sources",
+    "claims",
+    "relations",
+    "focusClaimId",
+    "streams"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "version": { "const": "horn-argument/0.1" },
+    "title": { "type": "string", "minLength": 1 },
+    "issueQuestion": { "type": "string", "minLength": 1 },
+    "issueType": {
+      "enum": [
+        "action-or-planning",
+        "terminology",
+        "ethics",
+        "law",
+        "goals",
+        "means",
+        "fact",
+        "explanation"
+      ]
+    },
+    "sources": { "type": "array", "items": { "$ref": "#/$defs/source" } },
+    "claims": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/claim" } },
+    "relations": { "type": "array", "items": { "$ref": "#/$defs/relation" } },
+    "focusClaimId": { "type": "string", "minLength": 1 },
+    "streams": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/stream" } },
+    "subarguments": { "type": "array", "items": { "$ref": "#/$defs/subargument" } },
+    "extensions": { "$ref": "#/$defs/extensions" }
+  },
+  "$defs": {
+    "extensions": { "type": "object", "additionalProperties": true },
+    "source": {
+      "type": "object",
+      "required": ["id", "citation"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "citation": { "type": "string", "minLength": 1 },
+        "short": { "type": "string" },
+        "year": { "type": "integer" },
+        "url": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "claimRole": { "enum": ["position", "grounds", "warrant", "backing", "rebuttal"] },
+    "claim": {
+      "type": "object",
+      "required": ["id", "role", "statement", "sourceIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "role": { "$ref": "#/$defs/claimRole" },
+        "title": { "type": "string" },
+        "statement": { "type": "string", "minLength": 1 },
+        "sourceIds": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "origin": { "enum": ["source-explicit", "source-implied", "cartographer-authored"] },
+        "normalizationNote": { "type": "string" },
+        "sourceLocator": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "relationKind": { "enum": ["supports", "disputes", "backs"] },
+    "relation": {
+      "type": "object",
+      "required": ["id", "kind", "from", "to"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "kind": { "$ref": "#/$defs/relationKind" },
+        "from": { "type": "string", "minLength": 1 },
+        "to": { "type": "string", "minLength": 1 },
+        "warrantClaimId": { "type": "string", "minLength": 1 },
+        "label": { "type": "string" },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "allOf": [
+        {
+          "if": { "required": ["warrantClaimId"] },
+          "then": { "properties": { "kind": { "const": "supports" } } }
+        }
+      ],
+      "additionalProperties": false
+    },
+    "stream": {
+      "type": "object",
+      "required": ["id", "focusClaimId", "claimIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "focusClaimId": { "type": "string", "minLength": 1 },
+        "claimIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    },
+    "subargument": {
+      "type": "object",
+      "required": ["id", "issueQuestion", "streamIds"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string" },
+        "issueQuestion": { "type": "string", "minLength": 1 },
+        "streamIds": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        },
+        "extensions": { "$ref": "#/$defs/extensions" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
