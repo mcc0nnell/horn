@@ -96,7 +96,7 @@ The core semantic claim roles are:
 
 These names intentionally follow the handbook rather than replacing them with generic graph vocabulary.
 
-A warrant is not a free-standing semantic edge. It belongs to a support move. `horn-argument/0.1` therefore attaches `warrantClaimId` to the relevant `supports` relation. `backs` relations run from backing claims to warrant claims. See ADR-0008.
+A warrant is not a free-standing semantic edge. It belongs to a support move. `horn-argument/0.1` therefore attaches `warrantClaimId` to the relevant `supports` relation. `backs` relations run from backing claims to warrant claims. See ADR-0013.
 
 ## Structural rules
 
@@ -124,7 +124,7 @@ This lets geometry, rendering, analysis, and executable projections refer to the
 
 ## Relationship to projections
 
-ADR-0006 remains valid, but projections now sit after semantic argument structure and, when needed, after cartography.
+ADR-0011 remains valid, but projections now sit after semantic argument structure and, when needed, after cartography.
 
 A consumer interested only in meaning may eventually project from a Horn argument artifact. A consumer that depends on authored spatial relationships may project from a Horn document. A target adapter must state which source representation it consumes.
 

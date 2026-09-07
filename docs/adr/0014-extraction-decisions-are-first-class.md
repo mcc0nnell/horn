@@ -91,7 +91,7 @@ horn-document/0.1
 
 Identity crosses the first seam through `claimId`: a selected or merged candidate states exactly which semantic claim it produced.
 
-Identity crosses the second seam through the claim/node identifiers defined by ADR-0007 and validated by `src/correspondence.ts`.
+Identity crosses the second seam through the claim/node identifiers defined by ADR-0012 and validated by `src/correspondence.ts`.
 
 Thus one mapped claim can be traced backward from mural geometry to argument semantics to the editorial decision and source span that produced it.
 
