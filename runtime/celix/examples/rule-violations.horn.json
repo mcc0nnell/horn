@@ -1,0 +1,34 @@
+{
+  "id": "horn:authored:test:rule-violations",
+  "version": "horn-document/0.1",
+  "authority": "authored",
+  "issueQuestion": "Should the prototype ship?",
+  "nodes": [
+    {
+      "id": "focus",
+      "number": 1,
+      "kind": "claim",
+      "focus": true,
+      "label": "The prototype should not ship?",
+      "text": "The prototype should not ship because the evidence is incomplete.",
+      "year": 2026
+    },
+    {
+      "id": "evidence",
+      "number": 2,
+      "kind": "grounds",
+      "label": "Evidence is incomplete",
+      "text": "Only one independent test has been completed.",
+      "year": 2026
+    }
+  ],
+  "relations": [
+    {
+      "id": "r-evidence-focus",
+      "kind": "supports",
+      "from": "evidence",
+      "to": "focus",
+      "label": "supports"
+    }
+  ]
+}
