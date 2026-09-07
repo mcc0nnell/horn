@@ -20,14 +20,11 @@ std::string requiredString(const rapidjson::Value& object, const char* key, cons
     return object[key].GetString();
 }
 
-std::string optionalString(const rapidjson::Value& object, const char* key) {
-    if (!object.IsObject() || !object.HasMember(key) || object[key].IsNull()) {
-        return {};
+int requiredInt(const rapidjson::Value& object, const char* key, const char* context) {
+    if (!object.IsObject() || !object.HasMember(key) || !object[key].IsInt()) {
+        throw std::runtime_error{std::string{context} + " requires integer field '" + key + "'"};
     }
-    if (!object[key].IsString()) {
-        throw std::runtime_error{std::string{"field '"} + key + "' must be a string when present"};
-    }
-    return object[key].GetString();
+    return object[key].GetInt();
 }
 
 std::optional<int> optionalInt(const rapidjson::Value& object, const char* key) {
@@ -73,8 +70,8 @@ HornDocumentView loadHornDocumentView(const std::filesystem::path& path) {
     HornDocumentView document{};
     document.id = requiredString(parsed, "id", "Horn document");
     document.version = requiredString(parsed, "version", "Horn document");
-    document.authority = optionalString(parsed, "authority");
-    document.issueQuestion = optionalString(parsed, "issueQuestion");
+    document.authority = requiredString(parsed, "authority", "Horn document");
+    document.issueQuestion = requiredString(parsed, "issueQuestion", "Horn document");
 
     if (!parsed.HasMember("nodes") || !parsed["nodes"].IsArray()) {
         throw std::runtime_error{"Horn document requires array field 'nodes'"};
@@ -82,11 +79,11 @@ HornDocumentView loadHornDocumentView(const std::filesystem::path& path) {
     for (const auto& value : parsed["nodes"].GetArray()) {
         HornNodeView node{};
         node.id = requiredString(value, "id", "Horn node");
+        node.number = requiredInt(value, "number", "Horn node");
         node.kind = requiredString(value, "kind", "Horn node");
-        node.label = optionalString(value, "label");
-        node.text = optionalString(value, "text");
+        node.label = requiredString(value, "label", "Horn node");
+        node.text = requiredString(value, "text", "Horn node");
         node.focus = optionalBool(value, "focus");
-        node.number = optionalInt(value, "number");
         node.year = optionalInt(value, "year");
         document.nodes.emplace_back(std::move(node));
     }
@@ -100,7 +97,7 @@ HornDocumentView loadHornDocumentView(const std::filesystem::path& path) {
         relation.kind = requiredString(value, "kind", "Horn relation");
         relation.from = requiredString(value, "from", "Horn relation");
         relation.to = requiredString(value, "to", "Horn relation");
-        relation.label = optionalString(value, "label");
+        relation.label = requiredString(value, "label", "Horn relation");
         document.relations.emplace_back(std::move(relation));
     }
 
