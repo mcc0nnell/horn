@@ -2,7 +2,7 @@
 
 Horn is an executable visual language for mapped argument. You do not look at a poster. You enter one.
 
-This repository is the **document kernel**: a portable `.horn.json` format, a validator, and the first slice — twelve claims from the Chinese Room cluster, authored in Horn’s language. It is not a game engine, not a graph viewer, and not RUSTBELT.
+This repository is the **document kernel**: a portable `.horn.json` format, a validator, and the first slice — twelve claims from the Chinese Room cluster, authored in Horn’s language. It is not a game engine, not a generic graph viewer, and not RUSTBELT.
 
 ## Product
 
@@ -52,6 +52,38 @@ Interaction is intentionally conventional: pointer drag pans, wheel/trackpad zoo
 
 See [`docs/adr/0005-camera-moves-the-window.md`](docs/adr/0005-camera-moves-the-window.md).
 
+## ECharts analytical projections
+
+`src/echarts/` derives disposable Apache ECharts views from the same canonical `HornDocument`. ECharts does **not** replace the mural renderer and does not own or rewrite Horn geometry.
+
+The first vertical slice exposes three projections:
+
+- **Argument** — analytical topology using the centers of authored Horn node rectangles. Authored route geometry is intentionally not reconstructed as graph edges.
+- **Timeline** — dated claims laid out chronologically.
+- **Evidence** — mapped and cartographic sources connected to the claims that cite them.
+
+```ts
+import {
+  mountHornECharts,
+  mountHornEChartsTriptych,
+  projectHornDocument,
+} from "./src/echarts";
+
+const projections = projectHornDocument(document);
+
+const controller = mountHornECharts(element, document, "argument");
+controller.setView("timeline");
+
+const triptych = mountHornEChartsTriptych(
+  { argument: argumentEl, timeline: timelineEl, evidence: evidenceEl },
+  document,
+);
+```
+
+The projection boundary is deliberate: ECharts options are derived state and are never serialized back into `.horn.json`. The canonical SVG mural remains the reference for Horn’s authored spatial grammar.
+
+See [`docs/adr/0006-echarts-is-an-analytical-projection.md`](docs/adr/0006-echarts-is-an-analytical-projection.md).
+
 Run the local contract checks with:
 
 ```sh
@@ -96,6 +128,7 @@ schema/        horn-document/0.1
 src/           TypeScript types + validator
 src/render/    pure SVG renderer + neutral CSS shell
 src/view/      immutable mural camera + browser controller
+src/echarts/   derived Argument / Timeline / Evidence projections
 docs/adr/      architectural decisions
 ```
 
