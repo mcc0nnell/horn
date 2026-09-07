@@ -11,6 +11,15 @@ export type HornEChartsProjection = {
   option: EChartsOption;
 };
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function nodeCenter(node: HornNode): { x: number; y: number } {
   return {
     x: node.geometry.x + node.geometry.w / 2,
@@ -24,9 +33,9 @@ function nodeTooltip(node: HornNode): string {
     .join(" · ");
 
   return [
-    `<strong>${node.label}</strong>`,
-    attribution,
-    node.text,
+    `<strong>${escapeHtml(node.label)}</strong>`,
+    escapeHtml(attribution),
+    escapeHtml(node.text),
   ]
     .filter((part) => part.length > 0)
     .join("<br/><br/>");
@@ -34,8 +43,8 @@ function nodeTooltip(node: HornNode): string {
 
 function citationTooltip(citation: Citation): string {
   return [
-    `<strong>${citation.short}</strong>`,
-    citation.citation,
+    `<strong>${escapeHtml(citation.short)}</strong>`,
+    escapeHtml(citation.citation),
     String(citation.year),
   ].join("<br/><br/>");
 }
