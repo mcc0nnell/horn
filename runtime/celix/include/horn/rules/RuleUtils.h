@@ -3,6 +3,7 @@
 #include "horn/rules/IHornRule.h"
 
 #include <algorithm>
+#include <cctype>
 #include <string_view>
 
 namespace horn::rules {
