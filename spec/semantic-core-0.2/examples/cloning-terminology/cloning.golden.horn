@@ -1,0 +1,102 @@
+horn 0.2;
+
+source horn_cloning_example {
+  title: "The Cloning Debate — Who Says What and Why?";
+  author: "Robert E. Horn";
+  year: 2003;
+  note: "Clean-room semantic fixture derived from the handbook example; not a facsimile.";
+}
+
+passage p_focus_support {
+  source: horn_cloning_example;
+  locator: "handbook example, terminology map";
+  text: "The example distinguishes the intended outcomes and ethical implications of nuclear transplantation from reproductive cloning.";
+}
+
+passage p_dispute {
+  source: horn_cloning_example;
+  locator: "handbook example, terminology map";
+  text: "The counter-position argues that the shared procedure and the possibility of enabling reproductive cloning justify retaining cloning terminology.";
+}
+
+debate cloning_terminology {
+  issue i_cloning_term {
+    type: terminology;
+    question: "Should somatic cell nuclear transfer for embryonic stem-cell research be called nuclear transplantation rather than therapeutic cloning?";
+  }
+
+  claim c_nuclear_transplantation {
+    text: "Somatic cell nuclear transfer for embryonic stem-cell research should be called nuclear transplantation.";
+    role: position;
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_focus_support;
+  }
+
+  claim c_different_end_products {
+    text: "Nuclear transplantation and reproductive cloning have materially different intended end products.";
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_focus_support;
+  }
+
+  claim c_term_matches_process_and_goal {
+    text: "The term nuclear transplantation describes both movement of nuclear material and the regenerative-medicine objective.";
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_focus_support;
+  }
+
+  claim c_ethics_differ {
+    text: "The ethical implications of nuclear transplantation differ from those of reproductive cloning.";
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_focus_support;
+  }
+
+  claim c_cloning_term_confuses_policy {
+    text: "Using cloning terminology can confuse policy makers and the public about the distinction between reproductive cloning and nuclear transplantation.";
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_focus_support;
+  }
+
+  claim c_shared_process_supports_cloning_term {
+    text: "Because the same basic transfer process can contribute to reproductive cloning, the cloning label remains defensible.";
+    role: rebuttal;
+    derivation: summarized;
+    editorial_state: publishable;
+    evidence_state: grounded;
+    evidence: p_dispute;
+  }
+
+  focus: c_nuclear_transplantation;
+
+  supports c_cloning_term_confuses_policy -> c_nuclear_transplantation;
+  supports c_different_end_products -> c_cloning_term_confuses_policy;
+  supports c_term_matches_process_and_goal -> c_cloning_term_confuses_policy;
+  supports c_ethics_differ -> c_cloning_term_confuses_policy;
+  disputes c_shared_process_supports_cloning_term -> c_nuclear_transplantation;
+
+  stream s_terminology_fit {
+    include: c_nuclear_transplantation;
+    include: c_cloning_term_confuses_policy;
+    include: c_different_end_products;
+    include: c_term_matches_process_and_goal;
+    include: c_ethics_differ;
+  }
+
+  stream s_shared_process_rebuttal {
+    include: c_nuclear_transplantation;
+    include: c_shared_process_supports_cloning_term;
+  }
+
+  display {
+    title_mode: title_is_claim;
+  }
+}
