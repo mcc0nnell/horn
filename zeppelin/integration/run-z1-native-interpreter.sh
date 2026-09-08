@@ -78,17 +78,25 @@ assert_note() {
   local manifest_out="$2"
   local signature_out="$3"
 
-  local runtime manifest validate inspect network audit mural digest expected_pin
+  local runtime manifest validate inspect query explain impact diff network audit mural digest expected_pin
   runtime="$(paragraph_data "$note_file" "%horn runtime" "TEXT")"
   manifest="$(paragraph_data "$note_file" "%horn manifest" "TEXT")"
   validate="$(paragraph_data "$note_file" "%horn validate" "TEXT")"
   inspect="$(paragraph_data "$note_file" "%horn inspect" "TEXT")"
+  query="$(paragraph_data "$note_file" "%horn query" "TEXT")"
+  explain="$(paragraph_data "$note_file" "%horn explain" "TEXT")"
+  impact="$(paragraph_data "$note_file" "%horn impact" "TEXT")"
+  diff="$(paragraph_data "$note_file" "%horn diff" "TEXT")"
   mural="$(paragraph_data "$note_file" "%horn render" "HTML")"
   network="$(paragraph_data "$note_file" "%horn network" "NETWORK")"
   audit="$(paragraph_data "$note_file" "%horn audit" "TEXT")"
   expected_pin="$(jq -er '.celix.commit' "$REPO_ROOT/native/celix-pin.json")"
 
   [[ -n "$runtime" ]] || fail "%horn runtime did not produce Celix probe output"
+  [[ -n "$query" ]] || fail "%horn query did not produce TEXT output"
+  [[ -n "$explain" ]] || fail "%horn explain did not produce TEXT output"
+  [[ -n "$impact" ]] || fail "%horn impact did not produce TEXT output"
+  [[ -n "$diff" ]] || fail "%horn diff did not produce TEXT output"
   [[ -n "$mural" ]] || fail "%horn render did not produce native HTML"
   [[ -n "$network" ]] || fail "%horn network did not produce native NETWORK output"
 
@@ -98,6 +106,10 @@ assert_note() {
     and .pin.commit == $pin
     and ([.services[].interface] | index("horn::IValidationService") != null)
     and ([.services[].interface] | index("horn::IProjectionService") != null)
+    and ([.services[].interface] | index("horn::IQueryService") != null)
+    and ([.services[].interface] | index("horn::IExplanationService") != null)
+    and ([.services[].interface] | index("horn::IImpactService") != null)
+    and ([.services[].interface] | index("horn::IDiffService") != null)
   ' <<<"$runtime" >/dev/null \
     || fail "runtime probe did not expose the pinned libhorn Celix service plane"
   jq -e '.projectionContract == "horn-zeppelin/0.1" and .renderer == "horn-svg"' <<<"$manifest" >/dev/null \
@@ -114,6 +126,37 @@ assert_note() {
     and .projections.frontier.version == "horn-projection/0.1"
   ' <<<"$inspect" >/dev/null \
     || fail "Celix inspect did not compose the expected headless projection packet"
+  jq -e '
+    .version == "horn-query-result/0.1"
+    and .runtime == "horn-runtime/0.1"
+    and .ok == true
+    and .op == "node-lookup"
+    and .node.id == "c1-machines-can-think"
+  ' <<<"$query" >/dev/null \
+    || fail "Celix query did not return the expected node lookup contract"
+  jq -e '
+    .version == "horn-explanation/0.1"
+    and .runtime == "horn-runtime/0.1"
+    and .ok == true
+    and .identity == "c1-machines-can-think"
+  ' <<<"$explain" >/dev/null \
+    || fail "Celix explanation did not return the expected identity contract"
+  jq -e '
+    .version == "horn-impact-report/0.1"
+    and .runtime == "horn-runtime/0.1"
+    and .mutatesSource == false
+    and .documentId == "horn:authored:2026:celix-845-specimen-001"
+  ' <<<"$impact" >/dev/null \
+    || fail "Celix impact report weakened the non-mutating evidence boundary"
+  jq -e '
+    .version == "horn-diff/0.1"
+    and .runtime == "horn-runtime/0.1"
+    and .before.documentId == "horn:authored:2026:chinese-room"
+    and .after.documentId == "horn:authored:2026:chinese-room"
+    and (.authoredGeometry | length) == 0
+    and (.content | length) == 0
+  ' <<<"$diff" >/dev/null \
+    || fail "Celix identity diff did not preserve the authored/derived boundary"
   jq -e '.hornProjection.fidelity == "lossy-semantic-projection" and .hornProjection.roundTrip == false' <<<"$network" >/dev/null \
     || fail "network weakened the lossy/non-round-trip boundary"
   jq -e '(.layerA | length) > 0 and (.layerB | length) > 0 and all(.layerA[]; .layer == "mapped") and all(.layerB[]; .layer == "cartographic")' <<<"$audit" >/dev/null \
@@ -141,6 +184,10 @@ if [[ ! -x "$HORN_CELIX" ]]; then
 fi
 [[ -x "$HORN_CELIX" ]] || fail "horn_celix was not built at $HORN_CELIX"
 "$HORN_CELIX" probe >/dev/null || fail "pinned horn_celix runtime probe failed before Zeppelin startup"
+(
+  cd "$REPO_ROOT"
+  npm run golden:celix
+) || fail "golden:celix failed before Zeppelin startup"
 
 "$ZEPPELIN_HOME/bin/zeppelin-daemon.sh" start
 wait_for_zeppelin

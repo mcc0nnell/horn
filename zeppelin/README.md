@@ -34,7 +34,7 @@ Supported paragraphs include:
 The direct reasoning commands are intentionally file-oriented. HORN documents and JSON request/support/evidence files must be repository-relative and are resolved before `ProcessBuilder` is invoked. No shell is used. Multi-operand commands accept single- or double-quoted operands, so paths containing spaces remain usable, for example:
 
 ```text
-%horn query maps/chinese-room-slice.horn.json "golden/reactor/queries/node lookup.json"
+%horn query "path/to/map with space.horn.json" "path/to/query with space.json"
 ```
 
 `render` becomes a native Zeppelin `HTML` result. `network` becomes a native `NETWORK` result. The network remains an explicitly lossy semantic/debug projection and is never accepted as HORN serialization input.
@@ -86,7 +86,7 @@ export HORN_REPO=/absolute/path/to/horn
 
 Restart Zeppelin after installation. `HORN_REPO` identifies the checkout containing the canonical maps, TypeScript presentation adapter, and native build. `HORN_CELIX` may override the default `build/native/horn_celix` path. `HORN_NPM` and `HORN_COMMAND_TIMEOUT_MILLIS` correspond to interpreter properties `horn.npm` and `horn.command.timeout.millis`.
 
-The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). [`integration/run-z1-native-interpreter.sh`](integration/run-z1-native-interpreter.sh) ensures the pinned native runtime is built, probes its service plane before Zeppelin starts, executes every `%horn` paragraph in the fixture, exports/re-imports the note, and executes every paragraph again. A failed direct reasoning command therefore fails the integration note even though the runtime contract goldens remain independently owned by `golden:celix`.
+The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). [`integration/run-z1-native-interpreter.sh`](integration/run-z1-native-interpreter.sh) builds/probes the pinned runtime when needed, runs `golden:celix`, executes every `%horn` paragraph, asserts the direct query/explanation/impact/diff contracts, exports/re-imports the note, and executes and asserts it again.
 
 ## Z1-A shell bridge
 
