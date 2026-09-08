@@ -24,7 +24,8 @@
     "invalidate": "tsx src/cli/invalidate.ts",
     "invalidate:celix": "tsx src/cli/invalidate.ts experiments/celix-845/evidence/sbom-physical-evidence.json experiments/celix-845/evidence/bindings.json",
     "validate:report": "tsx src/cli/validate-report.ts",
-    "golden:validation": "node golden/validation/compare.mjs"
+    "golden:validation": "node golden/validation/compare.mjs",
+    "golden:tape": "node golden/tape/compare.mjs"
   },
   "dependencies": {
     "echarts": "^6.1.0"

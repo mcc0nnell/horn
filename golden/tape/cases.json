@@ -1,0 +1,59 @@
+{
+  "source": "maps/cct-map1-small-regions.horn.json",
+  "fork": {
+    "left": "map1-arithmetic-rapaport",
+    "right": "map1-arithmetic-dretske",
+    "sharedPrefixEvents": 2,
+    "divergenceEvent": 3
+  },
+  "cases": [
+    {
+      "name": "map1-arithmetic-rapaport",
+      "plan": {
+        "version": "horn-tape-plan/0.1",
+        "actions": [
+          { "kind": "focus-node", "nodeId": "map1:box-63" },
+          { "kind": "open-citation", "citationId": "dretske-1990" },
+          { "kind": "follow-relation", "relationId": "map1:relation-64-63" },
+          { "kind": "open-citation", "citationId": "rapaport-1988" },
+          { "kind": "checkpoint", "label": "rapaport-rebuttal" }
+        ]
+      },
+      "expected": {
+        "documentId": "horn:cct-1998:map-1:small-regions",
+        "terminalNodeId": "map1:box-64",
+        "eventCount": 5,
+        "relationEvent": {
+          "seq": 3,
+          "relationId": "map1:relation-64-63",
+          "fromNodeId": "map1:box-63",
+          "toNodeId": "map1:box-64"
+        }
+      }
+    },
+    {
+      "name": "map1-arithmetic-dretske",
+      "plan": {
+        "version": "horn-tape-plan/0.1",
+        "actions": [
+          { "kind": "focus-node", "nodeId": "map1:box-63" },
+          { "kind": "open-citation", "citationId": "dretske-1990" },
+          { "kind": "follow-relation", "relationId": "map1:relation-65-63" },
+          { "kind": "open-citation", "citationId": "dretske-1990" },
+          { "kind": "checkpoint", "label": "dretske-grounds" }
+        ]
+      },
+      "expected": {
+        "documentId": "horn:cct-1998:map-1:small-regions",
+        "terminalNodeId": "map1:box-65",
+        "eventCount": 5,
+        "relationEvent": {
+          "seq": 3,
+          "relationId": "map1:relation-65-63",
+          "fromNodeId": "map1:box-63",
+          "toNodeId": "map1:box-65"
+        }
+      }
+    }
+  ]
+}
