@@ -9,6 +9,8 @@ namespace horn {
 inline constexpr std::string_view RUNTIME_API_VERSION = "horn-runtime/0.1";
 inline constexpr std::string_view DOCUMENT_CONTRACT = "horn-document/0.1";
 inline constexpr std::string_view PROJECTION_CONTRACT = "horn-projection/0.1";
+inline constexpr std::string_view QUERY_REQUEST_CONTRACT = "horn-query-request/0.1";
+inline constexpr std::string_view QUERY_RESULT_CONTRACT = "horn-query-result/0.1";
 
 enum class ProjectionView {
     Argument,
@@ -74,6 +76,23 @@ public:
     [[nodiscard]] virtual std::string projectDocument(
         std::string_view canonicalHornDocumentJson,
         ProjectionView view) const = 0;
+};
+
+/**
+ * Native deterministic query seam.
+ *
+ * Both parameters and the result are serialized Horn contract artifacts. A
+ * provider may answer graph, counterfactual, dominator, minimum-cut, and later
+ * proof-producing queries only after golden equivalence with the TypeScript
+ * reference implementation is established.
+ */
+class IQueryService {
+public:
+    virtual ~IQueryService() noexcept = default;
+
+    [[nodiscard]] virtual std::string queryDocument(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view hornQueryRequestJson) const = 0;
 };
 
 } // namespace horn
