@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-source-series-0.1.schema.json",
+  "title": "Horn source series registry",
+  "type": "object",
+  "required": [
+    "version",
+    "id",
+    "title",
+    "creator",
+    "year",
+    "authority",
+    "sourceRepository",
+    "maps",
+    "companionSources"
+  ],
+  "$defs": {
+    "sourceLocator": {
+      "type": "object",
+      "required": ["path", "gitBlobSha1", "bytes"],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^docs/.+"
+        },
+        "gitBlobSha1": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "version": { "const": "horn-source-series/0.1" },
+    "id": { "type": "string", "minLength": 1 },
+    "title": { "type": "string", "minLength": 1 },
+    "creator": { "type": "string", "minLength": 1 },
+    "year": { "type": "integer", "minimum": 1 },
+    "authority": {
+      "type": "object",
+      "required": ["role", "rule"],
+      "properties": {
+        "role": { "type": "string", "minLength": 1 },
+        "rule": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "sourceRepository": {
+      "type": "object",
+      "required": ["repository", "ref", "pathPolicy"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "ref": { "type": "string", "minLength": 1 },
+        "pathPolicy": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "maps": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/sourceLocator" },
+          {
+            "type": "object",
+            "required": ["map", "id", "question"],
+            "properties": {
+              "map": { "type": "integer", "minimum": 1 },
+              "id": { "type": "string", "minLength": 1 },
+              "question": { "type": "string", "minLength": 1 },
+              "relatedSource": { "$ref": "#/$defs/sourceLocator" }
+            }
+          }
+        ]
+      }
+    },
+    "companionSources": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "$ref": "#/$defs/sourceLocator" },
+          {
+            "type": "object",
+            "required": ["id"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
+}
