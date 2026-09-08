@@ -9,6 +9,14 @@ namespace horn {
 inline constexpr std::string_view RUNTIME_API_VERSION = "horn-runtime/0.1";
 inline constexpr std::string_view DOCUMENT_CONTRACT = "horn-document/0.1";
 inline constexpr std::string_view PROJECTION_CONTRACT = "horn-projection/0.1";
+inline constexpr std::string_view QUERY_CONTRACT = "horn-query/0.1";
+inline constexpr std::string_view QUERY_RESULT_CONTRACT = "horn-query-result/0.1";
+inline constexpr std::string_view EXPLANATION_CONTRACT = "horn-explanation/0.1";
+inline constexpr std::string_view IMPACT_CONTRACT = "horn-impact-report/0.1";
+inline constexpr std::string_view DIFF_CONTRACT = "horn-diff/0.1";
+inline constexpr std::string_view INSPECT_CONTRACT = "horn-inspect/0.1";
+inline constexpr std::string_view VALIDATION_REPORT_CONTRACT =
+    "horn-validation-report/0.1";
 
 enum class ProjectionView {
     Argument,
@@ -17,7 +25,8 @@ enum class ProjectionView {
     Frontier,
 };
 
-[[nodiscard]] inline constexpr std::string_view projectionViewName(ProjectionView view) noexcept {
+[[nodiscard]] inline constexpr std::string_view projectionViewName(
+    ProjectionView view) noexcept {
     switch (view) {
         case ProjectionView::Argument:
             return "argument";
@@ -74,6 +83,59 @@ public:
     [[nodiscard]] virtual std::string projectDocument(
         std::string_view canonicalHornDocumentJson,
         ProjectionView view) const = 0;
+};
+
+/**
+ * Artifact-based deterministic query seam, including counterfactual analysis.
+ * Implementations must not mutate the source artifact.
+ */
+class IQueryService {
+public:
+    virtual ~IQueryService() noexcept = default;
+
+    [[nodiscard]] virtual std::string query(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view queryRequestJson) const = 0;
+};
+
+/**
+ * Structured explanation of a Horn identity. Returns facts and paths, never
+ * speculative narration.
+ */
+class IExplanationService {
+public:
+    virtual ~IExplanationService() noexcept = default;
+
+    [[nodiscard]] virtual std::string explain(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view identity,
+        std::string_view supportingArtifactsJson) const = 0;
+};
+
+/**
+ * Evidence impact report. Describes consequences only; never rewrites,
+ * deletes, or silently downgrades an authored claim.
+ */
+class IImpactService {
+public:
+    virtual ~IImpactService() noexcept = default;
+
+    [[nodiscard]] virtual std::string assessImpact(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view evidenceSnapshotJson,
+        std::string_view bindingsJson) const = 0;
+};
+
+/**
+ * Deterministic semantic diff of two Horn artifacts.
+ */
+class IDiffService {
+public:
+    virtual ~IDiffService() noexcept = default;
+
+    [[nodiscard]] virtual std::string diff(
+        std::string_view beforeHornDocumentJson,
+        std::string_view afterHornDocumentJson) const = 0;
 };
 
 } // namespace horn
