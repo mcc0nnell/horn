@@ -10,23 +10,36 @@ The native runtime is deliberately artifact-first. Celix owns lifecycle, service
 - `IValidationService` — Phase 1 document validation, proven by golden equivalence.
 - `IProjectionService` — reserved analytical projection seam.
 - `IQueryService` — deterministic structural query seam from ADR-0017.
-- `IProofService` — reserved proof seam from ADR-0018; **no provider is registered yet**.
+- `IProofService` — replayable query-proof seam from ADR-0018; native candidate present, normal Celix registration still gated.
 
 ## Native query candidate
 
-`horn_query` is the first C++ implementation of `horn-query-request/0.1` -> `horn-query-result/0.1`.
-It implements the TypeScript reference operations:
+`horn_query` implements `horn-query-request/0.1` -> `horn-query-result/0.1` in C++ with no Celix dependency.
+
+Supported operations:
 
 - `graph`
 - `counterfactual`
 - `dominators`
 - `min-cut`
 
-The implementation preserves Horn's existing reader-direction rule: persisted relations remain semantic `response -> earlier claim`, while derived dialogue traversal reads `earlier claim -> response`.
+The implementation preserves Horn's reader-direction rule: persisted relations remain semantic `response -> earlier claim`, while derived dialogue traversal reads `earlier claim -> response`.
 
-The C++ library has no Celix dependency. `QueryBundleActivator.cc` is the prepared Celix adapter, but ADR-0017 requires equivalence before normal provider registration. CMake therefore keeps `HornQueryBundle` disabled by default behind `HORN_ENABLE_UNPROVEN_QUERY_PROVIDER=OFF`.
+`QueryBundleActivator.cc` is the prepared Celix adapter, but ADR-0017 requires equivalence before normal provider registration. CMake therefore keeps `HornQueryBundle` disabled by default behind `HORN_ENABLE_UNPROVEN_QUERY_PROVIDER=OFF`.
 
-The opt-in switch exists only for controlled lab work. It must not be interpreted as native Horn authority.
+## Native proof candidate
+
+`horn_proof` composes the native query kernel and ports the ADR-0018 proof contract:
+
+- canonical SHA-256 of the full Horn document;
+- versioned structural dependency witness;
+- deterministic query result;
+- content-addressed `horn-proof:<sha256>` identity;
+- replay verification with the same issue codes as the TypeScript reference.
+
+The proof kernel is also framework-free. `ProofBundleActivator.cc` is present only for controlled lab composition. Normal proof registration remains disabled behind `HORN_ENABLE_UNPROVEN_PROOF_PROVIDER=OFF` until proof goldens are green.
+
+The proof provider requires the query provider in lab mode. CMake rejects attempts to enable the proof bundle without the query bundle so the dependency order cannot be bypassed accidentally.
 
 ## Build without Celix
 
@@ -42,6 +55,13 @@ Run a native query:
 ./build/native/horn_query map.horn.json request.json
 ```
 
+Create and verify a native proof:
+
+```sh
+./build/native/horn_proof create map.horn.json request.json
+./build/native/horn_proof verify map.horn.json proof.json
+```
+
 ## Golden query equivalence
 
 Install the JS dependencies, build `horn_query`, then run:
@@ -52,12 +72,31 @@ node golden/query/compare.mjs
 
 Override the binary with `HORN_QUERY=/path/to/horn_query`.
 
-The harness runs the same checked-in query cases through the TypeScript reference and the native implementation, canonicalizes parsed JSON, and requires both to match the checked-in expected result.
+The harness runs the same checked-in query cases through the TypeScript reference and native implementation, canonicalizes parsed JSON, and requires both to match the checked-in expected result.
 
-Once that conformance evidence is green in the trusted external/local build environment, a later reviewed commit can promote `HornQueryBundle` from opt-in candidate to normal Celix provider. No GitHub Actions are required for this conformance path.
+## Golden proof equivalence
 
-## Proof gate
+Build `horn_proof`, then run:
 
-ADR-0018 is explicit: `IProofService` remains interface-only until native query equivalence exists and proof output gets its own golden coverage. This slice does not jump that gate.
+```sh
+node golden/proof/compare.mjs
+```
 
-Once query equivalence is established, the next native pass is replayable proof generation/verification, followed by receipt-bearing traversal and Vivisection adapters.
+Override the binary with `HORN_PROOF=/path/to/horn_proof`.
+
+The proof harness compares TypeScript and native proof creation against checked-in content-addressed proofs, then replays those exact proofs through both verifiers and requires the same verification report.
+
+No GitHub Actions are required for either conformance path. Run them locally or through the external CI plane.
+
+## Promotion order
+
+The authority gates remain explicit:
+
+1. establish native query equivalence;
+2. deliberately promote the query provider;
+3. establish native proof equivalence;
+4. deliberately promote the proof provider;
+5. add receipt-bearing traversal around canonical claim identities;
+6. make Vivisection, Zeppelin, ECharts, SVG, and immersive views consumers of the proven substrate.
+
+See ADR-0019 and ADR-0020.
