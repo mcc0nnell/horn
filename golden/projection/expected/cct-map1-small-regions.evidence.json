@@ -1,0 +1,162 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "bindings": [
+        {
+          "citationId": "turing-1950",
+          "id": "evidence:turing-1950:map1:box-59",
+          "nodeId": "map1:box-59"
+        },
+        {
+          "citationId": "turing-1950",
+          "id": "evidence:turing-1950:map1:box-60",
+          "nodeId": "map1:box-60"
+        },
+        {
+          "citationId": "turing-1950",
+          "id": "evidence:turing-1950:map1:box-61",
+          "nodeId": "map1:box-61"
+        },
+        {
+          "citationId": "turing-1950",
+          "id": "evidence:turing-1950:map1:box-62",
+          "nodeId": "map1:box-62"
+        },
+        {
+          "citationId": "jaki-1969",
+          "id": "evidence:jaki-1969:map1:box-63",
+          "nodeId": "map1:box-63"
+        },
+        {
+          "citationId": "dretske-1990",
+          "id": "evidence:dretske-1990:map1:box-63",
+          "nodeId": "map1:box-63"
+        },
+        {
+          "citationId": "rapaport-1988",
+          "id": "evidence:rapaport-1988:map1:box-64",
+          "nodeId": "map1:box-64"
+        },
+        {
+          "citationId": "dretske-1990",
+          "id": "evidence:dretske-1990:map1:box-65",
+          "nodeId": "map1:box-65"
+        }
+      ],
+      "citations": [
+        {
+          "id": "turing-1950",
+          "layer": "mapped",
+          "short": "Turing 1950",
+          "year": 1950
+        },
+        {
+          "id": "jaki-1969",
+          "layer": "mapped",
+          "short": "Jaki 1969",
+          "year": 1969
+        },
+        {
+          "id": "dretske-1990",
+          "layer": "mapped",
+          "short": "Dretske 1990",
+          "year": 1990
+        },
+        {
+          "id": "rapaport-1988",
+          "layer": "mapped",
+          "short": "Rapaport 1988",
+          "year": 1988
+        }
+      ],
+      "claims": [
+        {
+          "citationIds": [
+            "turing-1950"
+          ],
+          "focus": true,
+          "id": "map1:box-59",
+          "label": "The heads-in-the-sand objection.",
+          "number": 59
+        },
+        {
+          "citationIds": [
+            "turing-1950"
+          ],
+          "focus": false,
+          "id": "map1:box-60",
+          "label": "The transmigration consolation.",
+          "number": 60
+        },
+        {
+          "citationIds": [
+            "turing-1950"
+          ],
+          "focus": true,
+          "id": "map1:box-61",
+          "label": "The theological objection.",
+          "number": 61
+        },
+        {
+          "citationIds": [
+            "turing-1950"
+          ],
+          "focus": false,
+          "id": "map1:box-62",
+          "label": "The theological objection is ungrounded.",
+          "number": 62
+        },
+        {
+          "citationIds": [
+            "jaki-1969",
+            "dretske-1990"
+          ],
+          "focus": true,
+          "id": "map1:box-63",
+          "label": "Computers can't add, much less think.",
+          "number": 63
+        },
+        {
+          "citationIds": [
+            "rapaport-1988"
+          ],
+          "focus": false,
+          "id": "map1:box-64",
+          "label": "Computers can learn to add.",
+          "number": 64
+        },
+        {
+          "citationIds": [
+            "dretske-1990"
+          ],
+          "focus": false,
+          "id": "map1:box-65",
+          "label": "The marijuana-sniffing dog.",
+          "number": 65
+        }
+      ],
+      "contract": "horn-analysis/0.1",
+      "description": "Derived source-to-claim network across mapped and cartographic provenance layers.",
+      "runtime": "horn-runtime/0.1",
+      "title": "Evidence",
+      "view": "evidence"
+    }
+  },
+  "id": "horn:cct-1998:map-1:small-regions:evidence",
+  "nodes": [
+    "map1:box-59",
+    "map1:box-60",
+    "map1:box-61",
+    "map1:box-62",
+    "map1:box-63",
+    "map1:box-64",
+    "map1:box-65"
+  ],
+  "relations": [],
+  "source": {
+    "documentId": "horn:cct-1998:map-1:small-regions",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "evidence",
+  "version": "horn-projection/0.1"
+}

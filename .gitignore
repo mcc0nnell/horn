@@ -1,5 +1,6 @@
 node_modules/
 dist/
 build/
+golden/reactor/generated/
 *.tsbuildinfo
 .DS_Store

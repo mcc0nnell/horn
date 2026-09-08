@@ -1,0 +1,120 @@
+{
+  "citations": [
+    {
+      "citationId": "horn-cct-cartographic",
+      "nodeIds": [
+        "c1-machines-can-think",
+        "a1-stable-argumentation"
+      ]
+    },
+    {
+      "citationId": "searle-1980",
+      "nodeIds": [
+        "c5-chinese-room",
+        "g2-man-is-the-program",
+        "c4-syntax-not-semantics",
+        "c6-simulate-not-think",
+        "c7-systems-reply",
+        "c8-internalization"
+      ]
+    },
+    {
+      "citationId": "turing-1950",
+      "nodeIds": [
+        "c1-machines-can-think",
+        "c2-imitation-game",
+        "c3-substrate-independent",
+        "g1-universal-machine",
+        "w1-behavior-sufficient"
+      ]
+    },
+    {
+      "citationId": "yoshimi-2004",
+      "nodeIds": [
+        "a1-stable-argumentation"
+      ]
+    }
+  ],
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "nodes": [
+    {
+      "citationIds": [
+        "turing-1950",
+        "horn-cct-cartographic"
+      ],
+      "nodeId": "c1-machines-can-think"
+    },
+    {
+      "citationIds": [
+        "turing-1950"
+      ],
+      "nodeId": "c2-imitation-game"
+    },
+    {
+      "citationIds": [
+        "turing-1950"
+      ],
+      "nodeId": "c3-substrate-independent"
+    },
+    {
+      "citationIds": [
+        "turing-1950"
+      ],
+      "nodeId": "g1-universal-machine"
+    },
+    {
+      "citationIds": [
+        "turing-1950"
+      ],
+      "nodeId": "w1-behavior-sufficient"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "c5-chinese-room"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "g2-man-is-the-program"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "c4-syntax-not-semantics"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "c6-simulate-not-think"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "c7-systems-reply"
+    },
+    {
+      "citationIds": [
+        "searle-1980"
+      ],
+      "nodeId": "c8-internalization"
+    },
+    {
+      "citationIds": [
+        "horn-cct-cartographic",
+        "yoshimi-2004"
+      ],
+      "nodeId": "a1-stable-argumentation"
+    }
+  ],
+  "ok": true,
+  "op": "evidence-bound",
+  "runtime": "horn-runtime/0.1",
+  "version": "horn-query-result/0.1"
+}

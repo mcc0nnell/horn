@@ -1,0 +1,65 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "datedNodes": [
+        {
+          "id": "map1:box-59",
+          "label": "The heads-in-the-sand objection.",
+          "number": 59,
+          "year": 1950
+        },
+        {
+          "id": "map1:box-60",
+          "label": "The transmigration consolation.",
+          "number": 60,
+          "year": 1950
+        },
+        {
+          "id": "map1:box-61",
+          "label": "The theological objection.",
+          "number": 61,
+          "year": 1950
+        },
+        {
+          "id": "map1:box-62",
+          "label": "The theological objection is ungrounded.",
+          "number": 62,
+          "year": 1950
+        },
+        {
+          "id": "map1:box-64",
+          "label": "Computers can learn to add.",
+          "number": 64,
+          "year": 1988
+        },
+        {
+          "id": "map1:box-65",
+          "label": "The marijuana-sniffing dog.",
+          "number": 65,
+          "year": 1990
+        }
+      ],
+      "description": "Chronological projection of dated claims without changing the Horn document.",
+      "runtime": "horn-runtime/0.1",
+      "title": "Timeline",
+      "view": "timeline"
+    }
+  },
+  "id": "horn:cct-1998:map-1:small-regions:timeline",
+  "nodes": [
+    "map1:box-59",
+    "map1:box-60",
+    "map1:box-61",
+    "map1:box-62",
+    "map1:box-64",
+    "map1:box-65"
+  ],
+  "relations": [],
+  "source": {
+    "documentId": "horn:cct-1998:map-1:small-regions",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "timeline",
+  "version": "horn-projection/0.1"
+}

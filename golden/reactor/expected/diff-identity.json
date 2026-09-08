@@ -1,0 +1,81 @@
+{
+  "after": {
+    "documentId": "horn:authored:2026:chinese-room",
+    "documentVersion": "horn-document/0.1"
+  },
+  "authoredGeometry": [],
+  "before": {
+    "documentId": "horn:authored:2026:chinese-room",
+    "documentVersion": "horn-document/0.1"
+  },
+  "content": [],
+  "evidenceBindings": [],
+  "identities": {
+    "citations": {
+      "added": [],
+      "removed": []
+    },
+    "nodes": {
+      "added": [],
+      "removed": []
+    },
+    "regions": {
+      "added": [],
+      "removed": []
+    },
+    "relations": {
+      "added": [],
+      "removed": []
+    }
+  },
+  "projectionConsequences": {
+    "argument": {
+      "nodes": {
+        "added": [],
+        "removed": []
+      },
+      "relations": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "evidence": {
+      "nodes": {
+        "added": [],
+        "removed": []
+      },
+      "relations": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "frontier": {
+      "nodes": {
+        "added": [],
+        "removed": []
+      },
+      "relations": {
+        "added": [],
+        "removed": []
+      }
+    },
+    "timeline": {
+      "nodes": {
+        "added": [],
+        "removed": []
+      },
+      "relations": {
+        "added": [],
+        "removed": []
+      }
+    }
+  },
+  "provenance": [],
+  "runtime": "horn-runtime/0.1",
+  "topology": {
+    "addedRelations": [],
+    "changes": [],
+    "removedRelations": []
+  },
+  "version": "horn-diff/0.1"
+}

@@ -1,0 +1,27 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "inbound": [
+    {
+      "from": "c6-simulate-not-think",
+      "kind": "disputes",
+      "relationId": "r-c6-c1"
+    }
+  ],
+  "nodeId": "c1-machines-can-think",
+  "ok": true,
+  "op": "challenge-path",
+  "outbound": [],
+  "paths": [],
+  "reachable": {
+    "nodeIds": [
+      "c1-machines-can-think",
+      "c6-simulate-not-think"
+    ],
+    "relationIds": [
+      "r-c6-c1"
+    ]
+  },
+  "runtime": "horn-runtime/0.1",
+  "version": "horn-query-result/0.1"
+}

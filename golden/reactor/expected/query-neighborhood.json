@@ -1,0 +1,40 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "inbound": [
+    {
+      "from": "c2-imitation-game",
+      "id": "r-c2-c1",
+      "kind": "supports",
+      "label": "supported by",
+      "to": "c1-machines-can-think"
+    },
+    {
+      "from": "c3-substrate-independent",
+      "id": "r-c3-c1",
+      "kind": "supports",
+      "label": "supported by",
+      "to": "c1-machines-can-think"
+    },
+    {
+      "from": "w1-behavior-sufficient",
+      "id": "r-w1-c1",
+      "kind": "warrants",
+      "label": "warrant",
+      "to": "c1-machines-can-think"
+    },
+    {
+      "from": "c6-simulate-not-think",
+      "id": "r-c6-c1",
+      "kind": "disputes",
+      "label": "disputed by",
+      "to": "c1-machines-can-think"
+    }
+  ],
+  "nodeId": "c1-machines-can-think",
+  "ok": true,
+  "op": "neighborhood",
+  "outbound": [],
+  "runtime": "horn-runtime/0.1",
+  "version": "horn-query-result/0.1"
+}

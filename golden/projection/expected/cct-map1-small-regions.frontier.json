@@ -1,0 +1,184 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "description": "Reader-facing dialogue threads from focus boxes to their current terminal arguments.",
+      "placed": [
+        {
+          "depth": 0,
+          "focus": true,
+          "frontier": false,
+          "id": "map1:box-59",
+          "label": "The heads-in-the-sand objection.",
+          "lane": 0
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "map1:box-60",
+          "label": "The transmigration consolation.",
+          "lane": 1
+        },
+        {
+          "depth": 0,
+          "focus": true,
+          "frontier": false,
+          "id": "map1:box-61",
+          "label": "The theological objection.",
+          "lane": 2
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "map1:box-62",
+          "label": "The theological objection is ungrounded.",
+          "lane": 3
+        },
+        {
+          "depth": 0,
+          "focus": true,
+          "frontier": false,
+          "id": "map1:box-63",
+          "label": "Computers can't add, much less think.",
+          "lane": 4
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "map1:box-64",
+          "label": "Computers can learn to add.",
+          "lane": 5
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "map1:box-65",
+          "label": "The marijuana-sniffing dog.",
+          "lane": 6
+        }
+      ],
+      "readingEdges": [
+        {
+          "from": "map1:box-59",
+          "id": "reading:map1:relation-60-59",
+          "kind": "disputes",
+          "relationId": "map1:relation-60-59",
+          "to": "map1:box-60"
+        },
+        {
+          "from": "map1:box-61",
+          "id": "reading:map1:relation-62-61",
+          "kind": "disputes",
+          "relationId": "map1:relation-62-61",
+          "to": "map1:box-62"
+        },
+        {
+          "from": "map1:box-63",
+          "id": "reading:map1:relation-64-63",
+          "kind": "disputes",
+          "relationId": "map1:relation-64-63",
+          "to": "map1:box-64"
+        },
+        {
+          "from": "map1:box-63",
+          "id": "reading:map1:relation-65-63",
+          "kind": "supports",
+          "relationId": "map1:relation-65-63",
+          "to": "map1:box-65"
+        }
+      ],
+      "runtime": "horn-runtime/0.1",
+      "threads": [
+        {
+          "focusNodeId": "map1:box-59",
+          "frontierNodeIds": [
+            "map1:box-60"
+          ],
+          "steps": [
+            {
+              "depth": 0,
+              "nodeId": "map1:box-59"
+            },
+            {
+              "depth": 1,
+              "nodeId": "map1:box-60",
+              "parentNodeId": "map1:box-59",
+              "relationId": "map1:relation-60-59"
+            }
+          ]
+        },
+        {
+          "focusNodeId": "map1:box-61",
+          "frontierNodeIds": [
+            "map1:box-62"
+          ],
+          "steps": [
+            {
+              "depth": 0,
+              "nodeId": "map1:box-61"
+            },
+            {
+              "depth": 1,
+              "nodeId": "map1:box-62",
+              "parentNodeId": "map1:box-61",
+              "relationId": "map1:relation-62-61"
+            }
+          ]
+        },
+        {
+          "focusNodeId": "map1:box-63",
+          "frontierNodeIds": [
+            "map1:box-64",
+            "map1:box-65"
+          ],
+          "steps": [
+            {
+              "depth": 0,
+              "nodeId": "map1:box-63"
+            },
+            {
+              "depth": 1,
+              "nodeId": "map1:box-64",
+              "parentNodeId": "map1:box-63",
+              "relationId": "map1:relation-64-63"
+            },
+            {
+              "depth": 1,
+              "nodeId": "map1:box-65",
+              "parentNodeId": "map1:box-63",
+              "relationId": "map1:relation-65-63"
+            }
+          ]
+        }
+      ],
+      "title": "Frontier",
+      "view": "frontier"
+    }
+  },
+  "id": "horn:cct-1998:map-1:small-regions:frontier",
+  "nodes": [
+    "map1:box-59",
+    "map1:box-60",
+    "map1:box-61",
+    "map1:box-62",
+    "map1:box-63",
+    "map1:box-64",
+    "map1:box-65"
+  ],
+  "relations": [
+    "map1:relation-60-59",
+    "map1:relation-62-61",
+    "map1:relation-64-63",
+    "map1:relation-65-63"
+  ],
+  "source": {
+    "documentId": "horn:cct-1998:map-1:small-regions",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "frontier",
+  "version": "horn-projection/0.1"
+}

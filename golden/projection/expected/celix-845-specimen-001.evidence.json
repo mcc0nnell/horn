@@ -1,0 +1,300 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "bindings": [
+        {
+          "citationId": "celix-pr-845",
+          "id": "evidence:celix-pr-845:c1-sbom-ci",
+          "nodeId": "c1-sbom-ci"
+        },
+        {
+          "citationId": "commit-58d7feca",
+          "id": "evidence:commit-58d7feca:c1-sbom-ci",
+          "nodeId": "c1-sbom-ci"
+        },
+        {
+          "citationId": "review-3877380915",
+          "id": "evidence:review-3877380915:c2-binary-boundary",
+          "nodeId": "c2-binary-boundary"
+        },
+        {
+          "citationId": "review-3877393466",
+          "id": "evidence:review-3877393466:c2-binary-boundary",
+          "nodeId": "c2-binary-boundary"
+        },
+        {
+          "citationId": "commit-ce848f47",
+          "id": "evidence:commit-ce848f47:c3-package-bound",
+          "nodeId": "c3-package-bound"
+        },
+        {
+          "citationId": "comment-5447812243",
+          "id": "evidence:comment-5447812243:c3-package-bound",
+          "nodeId": "c3-package-bound"
+        },
+        {
+          "citationId": "comment-5447968454",
+          "id": "evidence:comment-5447968454:c4-no-binary-release",
+          "nodeId": "c4-no-binary-release"
+        },
+        {
+          "citationId": "comment-5470175760",
+          "id": "evidence:comment-5470175760:c4-no-binary-release",
+          "nodeId": "c4-no-binary-release"
+        },
+        {
+          "citationId": "review-3890016666",
+          "id": "evidence:review-3890016666:c5-reference-lock",
+          "nodeId": "c5-reference-lock"
+        },
+        {
+          "citationId": "review-3891087598",
+          "id": "evidence:review-3891087598:c6-safe-default",
+          "nodeId": "c6-safe-default"
+        },
+        {
+          "citationId": "review-3928184175",
+          "id": "evidence:review-3928184175:c6-safe-default",
+          "nodeId": "c6-safe-default"
+        },
+        {
+          "citationId": "review-3929923565",
+          "id": "evidence:review-3929923565:c6-safe-default",
+          "nodeId": "c6-safe-default"
+        },
+        {
+          "citationId": "review-3891087598",
+          "id": "evidence:review-3891087598:c7-audit",
+          "nodeId": "c7-audit"
+        },
+        {
+          "citationId": "comment-5531339760",
+          "id": "evidence:comment-5531339760:c8-dev-container",
+          "nodeId": "c8-dev-container"
+        },
+        {
+          "citationId": "review-3928184175",
+          "id": "evidence:review-3928184175:c9-open-boundary",
+          "nodeId": "c9-open-boundary"
+        },
+        {
+          "citationId": "review-3929923565",
+          "id": "evidence:review-3929923565:c9-open-boundary",
+          "nodeId": "c9-open-boundary"
+        },
+        {
+          "citationId": "comment-5531339760",
+          "id": "evidence:comment-5531339760:c9-open-boundary",
+          "nodeId": "c9-open-boundary"
+        },
+        {
+          "citationId": "horn-cartography",
+          "id": "evidence:horn-cartography:c9-open-boundary",
+          "nodeId": "c9-open-boundary"
+        }
+      ],
+      "citations": [
+        {
+          "id": "celix-pr-845",
+          "layer": "mapped",
+          "short": "Celix PR #845",
+          "year": 2026
+        },
+        {
+          "id": "commit-58d7feca",
+          "layer": "mapped",
+          "short": "58d7feca",
+          "year": 2026
+        },
+        {
+          "id": "review-3877380915",
+          "layer": "mapped",
+          "short": "PengZheng artifact-boundary objection",
+          "year": 2026
+        },
+        {
+          "id": "review-3877393466",
+          "layer": "mapped",
+          "short": "PengZheng binary/SBOM objection",
+          "year": 2026
+        },
+        {
+          "id": "commit-ce848f47",
+          "layer": "mapped",
+          "short": "ce848f47",
+          "year": 2026
+        },
+        {
+          "id": "comment-5447812243",
+          "layer": "mapped",
+          "short": "package-bound reformulation",
+          "year": 2026
+        },
+        {
+          "id": "comment-5447968454",
+          "layer": "mapped",
+          "short": "no binary release",
+          "year": 2026
+        },
+        {
+          "id": "comment-5470175760",
+          "layer": "mapped",
+          "short": "source-release framing",
+          "year": 2026
+        },
+        {
+          "id": "review-3890016666",
+          "layer": "mapped",
+          "short": "lockfile proposal",
+          "year": 2026
+        },
+        {
+          "id": "review-3891087598",
+          "layer": "mapped",
+          "short": "safe-default proposal",
+          "year": 2026
+        },
+        {
+          "id": "review-3928184175",
+          "layer": "mapped",
+          "short": "pnoltes prefers option b",
+          "year": 2026
+        },
+        {
+          "id": "review-3929923565",
+          "layer": "mapped",
+          "short": "PengZheng agrees",
+          "year": 2026
+        },
+        {
+          "id": "comment-5531339760",
+          "layer": "mapped",
+          "short": "dev-container alternative",
+          "year": 2026
+        },
+        {
+          "id": "horn-cartography",
+          "layer": "cartographic",
+          "short": "Horn 2003",
+          "year": 2003
+        }
+      ],
+      "claims": [
+        {
+          "citationIds": [
+            "celix-pr-845",
+            "commit-58d7feca"
+          ],
+          "focus": false,
+          "id": "c1-sbom-ci",
+          "label": "Generate a CycloneDX SBOM in Conan CI",
+          "number": 1
+        },
+        {
+          "citationIds": [
+            "review-3877380915",
+            "review-3877393466"
+          ],
+          "focus": false,
+          "id": "c2-binary-boundary",
+          "label": "An SBOM needs a concrete artifact boundary",
+          "number": 2
+        },
+        {
+          "citationIds": [
+            "commit-ce848f47",
+            "comment-5447812243"
+          ],
+          "focus": false,
+          "id": "c3-package-bound",
+          "label": "Bind the SBOM to the deployed Conan graph",
+          "number": 3
+        },
+        {
+          "citationIds": [
+            "comment-5447968454",
+            "comment-5470175760"
+          ],
+          "focus": false,
+          "id": "c4-no-binary-release",
+          "label": "But Celix does not make a binary release",
+          "number": 4
+        },
+        {
+          "citationIds": [
+            "review-3890016666"
+          ],
+          "focus": false,
+          "id": "c5-reference-lock",
+          "label": "Use a reproducible reference dependency state",
+          "number": 5
+        },
+        {
+          "citationIds": [
+            "review-3891087598",
+            "review-3928184175",
+            "review-3929923565"
+          ],
+          "focus": true,
+          "id": "c6-safe-default",
+          "label": "The reference state is a safe default, not a universal Celix graph",
+          "number": 6
+        },
+        {
+          "citationIds": [
+            "review-3891087598"
+          ],
+          "focus": false,
+          "id": "c7-audit",
+          "label": "The reference graph can be audited",
+          "number": 7
+        },
+        {
+          "citationIds": [
+            "comment-5531339760"
+          ],
+          "focus": false,
+          "id": "c8-dev-container",
+          "label": "A development container may be a concrete maintained artifact",
+          "number": 8
+        },
+        {
+          "citationIds": [
+            "review-3928184175",
+            "review-3929923565",
+            "comment-5531339760",
+            "horn-cartography"
+          ],
+          "focus": false,
+          "id": "c9-open-boundary",
+          "label": "Open: what does Celix ultimately warrant?",
+          "number": 9
+        }
+      ],
+      "contract": "horn-analysis/0.1",
+      "description": "Derived source-to-claim network across mapped and cartographic provenance layers.",
+      "runtime": "horn-runtime/0.1",
+      "title": "Evidence",
+      "view": "evidence"
+    }
+  },
+  "id": "horn:authored:2026:celix-845-specimen-001:evidence",
+  "nodes": [
+    "c1-sbom-ci",
+    "c2-binary-boundary",
+    "c3-package-bound",
+    "c4-no-binary-release",
+    "c5-reference-lock",
+    "c6-safe-default",
+    "c7-audit",
+    "c8-dev-container",
+    "c9-open-boundary"
+  ],
+  "relations": [],
+  "source": {
+    "documentId": "horn:authored:2026:celix-845-specimen-001",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "evidence",
+  "version": "horn-projection/0.1"
+}

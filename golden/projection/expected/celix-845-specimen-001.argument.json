@@ -1,0 +1,206 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "description": "Semantic response topology; relation routes are intentionally abstracted.",
+      "edges": [
+        {
+          "from": "c2-binary-boundary",
+          "id": "r1",
+          "kind": "disputes",
+          "label": "artifact boundary is not established",
+          "to": "c1-sbom-ci"
+        },
+        {
+          "from": "c3-package-bound",
+          "id": "r2",
+          "kind": "addresses",
+          "label": "binds SBOM and package to one resolution",
+          "to": "c2-binary-boundary"
+        },
+        {
+          "from": "c4-no-binary-release",
+          "id": "r3",
+          "kind": "disputes",
+          "label": "test artifact is not an official release boundary",
+          "to": "c3-package-bound"
+        },
+        {
+          "from": "c5-reference-lock",
+          "id": "r4",
+          "kind": "addresses",
+          "label": "moves authority from binary release to reproducible reference state",
+          "to": "c4-no-binary-release"
+        },
+        {
+          "from": "c5-reference-lock",
+          "id": "r5",
+          "kind": "supports",
+          "label": "lockfile makes one documented state reproducible",
+          "to": "c6-safe-default"
+        },
+        {
+          "from": "c7-audit",
+          "id": "r6",
+          "kind": "supports",
+          "label": "safe default becomes an actionable security-maintenance target",
+          "to": "c6-safe-default"
+        },
+        {
+          "from": "c8-dev-container",
+          "id": "r7",
+          "kind": "addresses",
+          "label": "offers a concrete artifact without requiring a binary distribution",
+          "to": "c4-no-binary-release"
+        },
+        {
+          "from": "c9-open-boundary",
+          "id": "r8",
+          "kind": "addresses",
+          "label": "marks the remaining authority boundary as unresolved",
+          "to": "c6-safe-default"
+        },
+        {
+          "from": "c9-open-boundary",
+          "id": "r9",
+          "kind": "addresses",
+          "label": "container role remains an emerging alternative",
+          "to": "c8-dev-container"
+        }
+      ],
+      "placed": [
+        {
+          "center": {
+            "x": 365,
+            "y": 375
+          },
+          "focus": false,
+          "id": "c1-sbom-ci",
+          "kind": "proposed-model",
+          "label": "Generate a CycloneDX SBOM in Conan CI",
+          "number": 1
+        },
+        {
+          "center": {
+            "x": 1065,
+            "y": 400
+          },
+          "focus": false,
+          "id": "c2-binary-boundary",
+          "kind": "rebuttal",
+          "label": "An SBOM needs a concrete artifact boundary",
+          "number": 2
+        },
+        {
+          "center": {
+            "x": 1065,
+            "y": 825
+          },
+          "focus": false,
+          "id": "c3-package-bound",
+          "kind": "implemented-model",
+          "label": "Bind the SBOM to the deployed Conan graph",
+          "number": 3
+        },
+        {
+          "center": {
+            "x": 1065,
+            "y": 1230
+          },
+          "focus": false,
+          "id": "c4-no-binary-release",
+          "kind": "rebuttal",
+          "label": "But Celix does not make a binary release",
+          "number": 4
+        },
+        {
+          "center": {
+            "x": 1805,
+            "y": 500
+          },
+          "focus": false,
+          "id": "c5-reference-lock",
+          "kind": "proposed-model",
+          "label": "Use a reproducible reference dependency state",
+          "number": 5
+        },
+        {
+          "center": {
+            "x": 1805,
+            "y": 1000
+          },
+          "focus": true,
+          "id": "c6-safe-default",
+          "kind": "claim",
+          "label": "The reference state is a safe default, not a universal Celix graph",
+          "number": 6
+        },
+        {
+          "center": {
+            "x": 1805,
+            "y": 1330
+          },
+          "focus": false,
+          "id": "c7-audit",
+          "kind": "grounds",
+          "label": "The reference graph can be audited",
+          "number": 7
+        },
+        {
+          "center": {
+            "x": 2580,
+            "y": 555
+          },
+          "focus": false,
+          "id": "c8-dev-container",
+          "kind": "proposed-model",
+          "label": "A development container may be a concrete maintained artifact",
+          "number": 8
+        },
+        {
+          "center": {
+            "x": 2580,
+            "y": 1135
+          },
+          "focus": false,
+          "id": "c9-open-boundary",
+          "kind": "unmapped-territory",
+          "label": "Open: what does Celix ultimately warrant?",
+          "number": 9
+        }
+      ],
+      "runtime": "horn-runtime/0.1",
+      "title": "Argument",
+      "view": "argument"
+    }
+  },
+  "id": "horn:authored:2026:celix-845-specimen-001:argument",
+  "nodes": [
+    "c1-sbom-ci",
+    "c2-binary-boundary",
+    "c3-package-bound",
+    "c4-no-binary-release",
+    "c5-reference-lock",
+    "c6-safe-default",
+    "c7-audit",
+    "c8-dev-container",
+    "c9-open-boundary"
+  ],
+  "relations": [
+    "r1",
+    "r2",
+    "r3",
+    "r4",
+    "r5",
+    "r6",
+    "r7",
+    "r8",
+    "r9"
+  ],
+  "source": {
+    "documentId": "horn:authored:2026:celix-845-specimen-001",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "argument",
+  "version": "horn-projection/0.1"
+}

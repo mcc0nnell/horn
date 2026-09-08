@@ -1,0 +1,9 @@
+{
+  "version": "horn-query/0.1",
+  "op": "counterfactual",
+  "suppress": {
+    "nodes": ["c5-chinese-room"],
+    "relations": [],
+    "evidenceBindings": []
+  }
+}

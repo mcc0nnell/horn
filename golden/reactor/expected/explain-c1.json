@@ -1,0 +1,140 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "evidence": {
+    "bindings": [],
+    "citationIds": [
+      "turing-1950",
+      "horn-cct-cartographic"
+    ]
+  },
+  "extraction": [],
+  "identity": "c1-machines-can-think",
+  "kind": "node",
+  "object": {
+    "author": "A. M. Turing",
+    "authorShort": "Turing",
+    "citationIds": [
+      "turing-1950",
+      "horn-cct-cartographic"
+    ],
+    "focus": true,
+    "id": "c1-machines-can-think",
+    "kind": "claim",
+    "label": "Machines can think",
+    "number": 1,
+    "origin": "debate",
+    "text": "Machines can think. A digital computer, suitably organized, is not merely a model of a mind. It is a candidate for thought.",
+    "year": 1950
+  },
+  "ok": true,
+  "origin": {
+    "after": {
+      "name": "Robert E. Horn",
+      "works": [
+        "Visual Language: Global Communication for the 21st Century (1998)",
+        "Mapping Great Debates: Can Computers Think? (1998)",
+        "Introduction to Argumentation Mapping (2003)"
+      ]
+    },
+    "documentAuthority": "authored",
+    "nodeOrigin": "debate"
+  },
+  "projections": {
+    "argument": true,
+    "evidence": true,
+    "frontier": [
+      {
+        "focusNodeId": "c1-machines-can-think",
+        "frontier": false
+      }
+    ],
+    "inFrontierProjection": true,
+    "timeline": true
+  },
+  "relations": {
+    "inbound": [
+      {
+        "from": "c2-imitation-game",
+        "id": "r-c2-c1",
+        "kind": "supports",
+        "label": "supported by",
+        "to": "c1-machines-can-think"
+      },
+      {
+        "from": "c3-substrate-independent",
+        "id": "r-c3-c1",
+        "kind": "supports",
+        "label": "supported by",
+        "to": "c1-machines-can-think"
+      },
+      {
+        "from": "w1-behavior-sufficient",
+        "id": "r-w1-c1",
+        "kind": "warrants",
+        "label": "warrant",
+        "to": "c1-machines-can-think"
+      },
+      {
+        "from": "c6-simulate-not-think",
+        "id": "r-c6-c1",
+        "kind": "disputes",
+        "label": "disputed by",
+        "to": "c1-machines-can-think"
+      }
+    ],
+    "outbound": []
+  },
+  "runtime": "horn-runtime/0.1",
+  "semantic": {
+    "origin": "source-implied",
+    "role": "position",
+    "sourceIds": [
+      "turing-1950"
+    ],
+    "statement": "Machines can think. A digital computer, suitably organized, is not merely a model of a mind. It is a candidate for thought."
+  },
+  "sources": [
+    {
+      "citation": "Turing, A. M. (1950). Computing Machinery and Intelligence. Mind, 59(236), 433–460.",
+      "id": "turing-1950",
+      "layer": "mapped",
+      "short": "Turing 1950",
+      "url": "https://doi.org/10.1093/mind/LIX.236.433",
+      "year": 1950
+    },
+    {
+      "citation": "Horn, R. E. (1998). Mapping Great Debates: Can Computers Think? MacroVU, Bainbridge Island, WA. This slice is an authored reconstruction of the Chinese Room cluster in Horn’s visual language — not a facsimile of a numbered MacroVU sheet, and not a substitute for the original posters.",
+      "id": "horn-cct-cartographic",
+      "layer": "cartographic",
+      "short": "Horn 1998 (after)",
+      "year": 1998
+    }
+  ],
+  "stale": [],
+  "version": "horn-explanation/0.1",
+  "warrants": {
+    "licensedSupports": [
+      {
+        "from": "c2-imitation-game",
+        "id": "r-c2-c1",
+        "to": "c1-machines-can-think",
+        "warrantClaimId": "w1-behavior-sufficient"
+      },
+      {
+        "from": "c3-substrate-independent",
+        "id": "r-c3-c1",
+        "to": "c1-machines-can-think"
+      }
+    ],
+    "roads": [
+      {
+        "from": "w1-behavior-sufficient",
+        "id": "r-w1-c1",
+        "kind": "warrants",
+        "label": "warrant",
+        "to": "c1-machines-can-think"
+      }
+    ]
+  }
+}

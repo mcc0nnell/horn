@@ -1,0 +1,96 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "description": "Reader-facing dialogue threads from focus boxes to their current terminal arguments.",
+      "placed": [
+        {
+          "depth": 0,
+          "focus": true,
+          "frontier": false,
+          "id": "c6-safe-default",
+          "label": "The reference state is a safe default, not a universal Celix graph",
+          "lane": 0
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "c5-reference-lock",
+          "label": "Use a reproducible reference dependency state",
+          "lane": 1
+        },
+        {
+          "depth": 1,
+          "focus": false,
+          "frontier": true,
+          "id": "c7-audit",
+          "label": "The reference graph can be audited",
+          "lane": 2
+        }
+      ],
+      "readingEdges": [
+        {
+          "from": "c6-safe-default",
+          "id": "reading:r5",
+          "kind": "supports",
+          "relationId": "r5",
+          "to": "c5-reference-lock"
+        },
+        {
+          "from": "c6-safe-default",
+          "id": "reading:r6",
+          "kind": "supports",
+          "relationId": "r6",
+          "to": "c7-audit"
+        }
+      ],
+      "runtime": "horn-runtime/0.1",
+      "threads": [
+        {
+          "focusNodeId": "c6-safe-default",
+          "frontierNodeIds": [
+            "c5-reference-lock",
+            "c7-audit"
+          ],
+          "steps": [
+            {
+              "depth": 0,
+              "nodeId": "c6-safe-default"
+            },
+            {
+              "depth": 1,
+              "nodeId": "c5-reference-lock",
+              "parentNodeId": "c6-safe-default",
+              "relationId": "r5"
+            },
+            {
+              "depth": 1,
+              "nodeId": "c7-audit",
+              "parentNodeId": "c6-safe-default",
+              "relationId": "r6"
+            }
+          ]
+        }
+      ],
+      "title": "Frontier",
+      "view": "frontier"
+    }
+  },
+  "id": "horn:authored:2026:celix-845-specimen-001:frontier",
+  "nodes": [
+    "c6-safe-default",
+    "c5-reference-lock",
+    "c7-audit"
+  ],
+  "relations": [
+    "r5",
+    "r6"
+  ],
+  "source": {
+    "documentId": "horn:authored:2026:celix-845-specimen-001",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "frontier",
+  "version": "horn-projection/0.1"
+}

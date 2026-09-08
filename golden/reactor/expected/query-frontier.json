@@ -1,0 +1,79 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "ok": true,
+  "op": "frontier",
+  "runtime": "horn-runtime/0.1",
+  "threads": [
+    {
+      "focusNodeId": "c1-machines-can-think",
+      "frontierNodeIds": [
+        "c3-substrate-independent",
+        "g1-universal-machine",
+        "c5-chinese-room",
+        "c8-internalization"
+      ],
+      "steps": [
+        {
+          "depth": 0,
+          "nodeId": "c1-machines-can-think"
+        },
+        {
+          "depth": 1,
+          "nodeId": "c2-imitation-game",
+          "parentNodeId": "c1-machines-can-think",
+          "relationId": "r-c2-c1"
+        },
+        {
+          "depth": 1,
+          "nodeId": "c3-substrate-independent",
+          "parentNodeId": "c1-machines-can-think",
+          "relationId": "r-c3-c1"
+        },
+        {
+          "depth": 1,
+          "nodeId": "c6-simulate-not-think",
+          "parentNodeId": "c1-machines-can-think",
+          "relationId": "r-c6-c1"
+        },
+        {
+          "depth": 2,
+          "nodeId": "g1-universal-machine",
+          "parentNodeId": "c2-imitation-game",
+          "relationId": "r-g1-c2"
+        },
+        {
+          "depth": 2,
+          "nodeId": "c4-syntax-not-semantics",
+          "parentNodeId": "c6-simulate-not-think",
+          "relationId": "r-c4-c6"
+        },
+        {
+          "depth": 3,
+          "nodeId": "g2-man-is-the-program",
+          "parentNodeId": "c4-syntax-not-semantics",
+          "relationId": "r-g2-c4"
+        },
+        {
+          "depth": 3,
+          "nodeId": "c7-systems-reply",
+          "parentNodeId": "c4-syntax-not-semantics",
+          "relationId": "r-c7-c4"
+        },
+        {
+          "depth": 4,
+          "nodeId": "c5-chinese-room",
+          "parentNodeId": "g2-man-is-the-program",
+          "relationId": "r-c5-g2"
+        },
+        {
+          "depth": 4,
+          "nodeId": "c8-internalization",
+          "parentNodeId": "c7-systems-reply",
+          "relationId": "r-c8-c7"
+        }
+      ]
+    }
+  ],
+  "version": "horn-query-result/0.1"
+}

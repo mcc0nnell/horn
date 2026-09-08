@@ -1,0 +1,86 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "datedNodes": [
+        {
+          "id": "c1-sbom-ci",
+          "label": "Generate a CycloneDX SBOM in Conan CI",
+          "number": 1,
+          "year": 2026
+        },
+        {
+          "id": "c2-binary-boundary",
+          "label": "An SBOM needs a concrete artifact boundary",
+          "number": 2,
+          "year": 2026
+        },
+        {
+          "id": "c3-package-bound",
+          "label": "Bind the SBOM to the deployed Conan graph",
+          "number": 3,
+          "year": 2026
+        },
+        {
+          "id": "c4-no-binary-release",
+          "label": "But Celix does not make a binary release",
+          "number": 4,
+          "year": 2026
+        },
+        {
+          "id": "c5-reference-lock",
+          "label": "Use a reproducible reference dependency state",
+          "number": 5,
+          "year": 2026
+        },
+        {
+          "id": "c6-safe-default",
+          "label": "The reference state is a safe default, not a universal Celix graph",
+          "number": 6,
+          "year": 2026
+        },
+        {
+          "id": "c7-audit",
+          "label": "The reference graph can be audited",
+          "number": 7,
+          "year": 2026
+        },
+        {
+          "id": "c8-dev-container",
+          "label": "A development container may be a concrete maintained artifact",
+          "number": 8,
+          "year": 2026
+        },
+        {
+          "id": "c9-open-boundary",
+          "label": "Open: what does Celix ultimately warrant?",
+          "number": 9,
+          "year": 2026
+        }
+      ],
+      "description": "Chronological projection of dated claims without changing the Horn document.",
+      "runtime": "horn-runtime/0.1",
+      "title": "Timeline",
+      "view": "timeline"
+    }
+  },
+  "id": "horn:authored:2026:celix-845-specimen-001:timeline",
+  "nodes": [
+    "c1-sbom-ci",
+    "c2-binary-boundary",
+    "c3-package-bound",
+    "c4-no-binary-release",
+    "c5-reference-lock",
+    "c6-safe-default",
+    "c7-audit",
+    "c8-dev-container",
+    "c9-open-boundary"
+  ],
+  "relations": [],
+  "source": {
+    "documentId": "horn:authored:2026:celix-845-specimen-001",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "timeline",
+  "version": "horn-projection/0.1"
+}

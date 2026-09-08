@@ -1,0 +1,12 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "ok": true,
+  "op": "orphans",
+  "runtime": "horn-runtime/0.1",
+  "unreferencedCitations": [],
+  "unreferencedNodes": [
+    "a1-stable-argumentation"
+  ],
+  "version": "horn-query-result/0.1"
+}

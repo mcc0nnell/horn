@@ -1,0 +1,142 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "description": "Semantic response topology; relation routes are intentionally abstracted.",
+      "edges": [
+        {
+          "from": "map1:box-60",
+          "id": "map1:relation-60-59",
+          "kind": "disputes",
+          "label": "is disputed by",
+          "to": "map1:box-59"
+        },
+        {
+          "from": "map1:box-62",
+          "id": "map1:relation-62-61",
+          "kind": "disputes",
+          "label": "is disputed by",
+          "to": "map1:box-61"
+        },
+        {
+          "from": "map1:box-64",
+          "id": "map1:relation-64-63",
+          "kind": "disputes",
+          "label": "is disputed by",
+          "to": "map1:box-63"
+        },
+        {
+          "from": "map1:box-65",
+          "id": "map1:relation-65-63",
+          "kind": "supports",
+          "label": "is supported by",
+          "to": "map1:box-63"
+        }
+      ],
+      "placed": [
+        {
+          "center": {
+            "x": 3895,
+            "y": 2582
+          },
+          "focus": true,
+          "id": "map1:box-59",
+          "kind": "focus-claim",
+          "label": "The heads-in-the-sand objection.",
+          "number": 59
+        },
+        {
+          "center": {
+            "x": 4531.5,
+            "y": 2588
+          },
+          "focus": false,
+          "id": "map1:box-60",
+          "kind": "rebuttal",
+          "label": "The transmigration consolation.",
+          "number": 60
+        },
+        {
+          "center": {
+            "x": 3911.5,
+            "y": 3014.5
+          },
+          "focus": true,
+          "id": "map1:box-61",
+          "kind": "focus-claim",
+          "label": "The theological objection.",
+          "number": 61
+        },
+        {
+          "center": {
+            "x": 4434.5,
+            "y": 3013.5
+          },
+          "focus": false,
+          "id": "map1:box-62",
+          "kind": "rebuttal",
+          "label": "The theological objection is ungrounded.",
+          "number": 62
+        },
+        {
+          "center": {
+            "x": 3929,
+            "y": 3467
+          },
+          "focus": true,
+          "id": "map1:box-63",
+          "kind": "focus-claim",
+          "label": "Computers can't add, much less think.",
+          "number": 63
+        },
+        {
+          "center": {
+            "x": 4439.5,
+            "y": 3465
+          },
+          "focus": false,
+          "id": "map1:box-64",
+          "kind": "rebuttal",
+          "label": "Computers can learn to add.",
+          "number": 64
+        },
+        {
+          "center": {
+            "x": 4149.5,
+            "y": 3699.5
+          },
+          "focus": false,
+          "id": "map1:box-65",
+          "kind": "grounds",
+          "label": "The marijuana-sniffing dog.",
+          "number": 65
+        }
+      ],
+      "runtime": "horn-runtime/0.1",
+      "title": "Argument",
+      "view": "argument"
+    }
+  },
+  "id": "horn:cct-1998:map-1:small-regions:argument",
+  "nodes": [
+    "map1:box-59",
+    "map1:box-60",
+    "map1:box-61",
+    "map1:box-62",
+    "map1:box-63",
+    "map1:box-64",
+    "map1:box-65"
+  ],
+  "relations": [
+    "map1:relation-60-59",
+    "map1:relation-62-61",
+    "map1:relation-64-63",
+    "map1:relation-65-63"
+  ],
+  "source": {
+    "documentId": "horn:cct-1998:map-1:small-regions",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "argument",
+  "version": "horn-projection/0.1"
+}

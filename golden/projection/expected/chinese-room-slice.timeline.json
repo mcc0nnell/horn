@@ -1,0 +1,107 @@
+{
+  "extensions": {
+    "x-analysis": {
+      "contract": "horn-analysis/0.1",
+      "datedNodes": [
+        {
+          "id": "c1-machines-can-think",
+          "label": "Machines can think",
+          "number": 1,
+          "year": 1950
+        },
+        {
+          "id": "c2-imitation-game",
+          "label": "The imitation game",
+          "number": 2,
+          "year": 1950
+        },
+        {
+          "id": "c3-substrate-independent",
+          "label": "Substrate independence",
+          "number": 3,
+          "year": 1950
+        },
+        {
+          "id": "g1-universal-machine",
+          "label": "Universal discrete-state machine",
+          "number": 4,
+          "year": 1950
+        },
+        {
+          "id": "w1-behavior-sufficient",
+          "label": "Behavioral warrant",
+          "number": 5,
+          "year": 1950
+        },
+        {
+          "id": "c5-chinese-room",
+          "label": "The Chinese Room",
+          "number": 6,
+          "year": 1980
+        },
+        {
+          "id": "g2-man-is-the-program",
+          "label": "The man implements the program",
+          "number": 7,
+          "year": 1980
+        },
+        {
+          "id": "c4-syntax-not-semantics",
+          "label": "Syntax is not semantics",
+          "number": 8,
+          "year": 1980
+        },
+        {
+          "id": "c6-simulate-not-think",
+          "label": "Simulation is not thought",
+          "number": 9,
+          "year": 1980
+        },
+        {
+          "id": "c7-systems-reply",
+          "label": "The systems reply",
+          "number": 10,
+          "year": 1980
+        },
+        {
+          "id": "c8-internalization",
+          "label": "Internalization",
+          "number": 11,
+          "year": 1980
+        },
+        {
+          "id": "a1-stable-argumentation",
+          "label": "Relatively stable argumentation",
+          "number": 12,
+          "year": 2026
+        }
+      ],
+      "description": "Chronological projection of dated claims without changing the Horn document.",
+      "runtime": "horn-runtime/0.1",
+      "title": "Timeline",
+      "view": "timeline"
+    }
+  },
+  "id": "horn:authored:2026:chinese-room:timeline",
+  "nodes": [
+    "c1-machines-can-think",
+    "c2-imitation-game",
+    "c3-substrate-independent",
+    "g1-universal-machine",
+    "w1-behavior-sufficient",
+    "c5-chinese-room",
+    "g2-man-is-the-program",
+    "c4-syntax-not-semantics",
+    "c6-simulate-not-think",
+    "c7-systems-reply",
+    "c8-internalization",
+    "a1-stable-argumentation"
+  ],
+  "relations": [],
+  "source": {
+    "documentId": "horn:authored:2026:chinese-room",
+    "documentVersion": "horn-document/0.1"
+  },
+  "target": "timeline",
+  "version": "horn-projection/0.1"
+}
