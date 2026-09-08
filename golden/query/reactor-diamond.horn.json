@@ -1,0 +1,32 @@
+{
+  "id": "horn:test:golden-reactor-diamond",
+  "version": "horn-document/0.1",
+  "vocabulary": ["argumentation"],
+  "unitSize": "concept-diagram",
+  "authority": "authored",
+  "after": { "name": "Robert E. Horn", "works": ["Mapping Great Debates"] },
+  "title": "Golden reactor diamond",
+  "subtitle": "Native query equivalence fixture",
+  "issueQuestion": "Do TypeScript and C++ derive the same structure?",
+  "canvas": { "width": 1000, "height": 500, "unit": "test", "origin": "top-left" },
+  "regions": [],
+  "nodes": [
+    { "id": "focus", "number": 1, "kind": "focus-claim", "origin": "authored", "focus": true, "label": "focus", "text": "focus", "geometry": { "x": 20, "y": 20, "w": 80, "h": 40 }, "citationIds": ["cartographic"] },
+    { "id": "a", "number": 2, "kind": "claim", "origin": "authored", "label": "a", "text": "a", "geometry": { "x": 140, "y": 20, "w": 80, "h": 40 }, "citationIds": ["cartographic"] },
+    { "id": "b", "number": 3, "kind": "claim", "origin": "authored", "label": "b", "text": "b", "geometry": { "x": 140, "y": 100, "w": 80, "h": 40 }, "citationIds": ["cartographic"] },
+    { "id": "join", "number": 4, "kind": "claim", "origin": "authored", "label": "join", "text": "join", "geometry": { "x": 280, "y": 60, "w": 80, "h": 40 }, "citationIds": ["cartographic"] },
+    { "id": "target", "number": 5, "kind": "claim", "origin": "authored", "label": "target", "text": "target", "geometry": { "x": 420, "y": 60, "w": 80, "h": 40 }, "citationIds": ["cartographic"] },
+    { "id": "unrelated", "number": 6, "kind": "gloss", "origin": "authored", "label": "unrelated", "text": "unrelated", "geometry": { "x": 20, "y": 180, "w": 80, "h": 40 }, "citationIds": ["cartographic"] }
+  ],
+  "relations": [
+    { "id": "a-focus", "kind": "supports", "from": "a", "to": "focus", "label": "supports" },
+    { "id": "b-focus", "kind": "disputes", "from": "b", "to": "focus", "label": "disputes" },
+    { "id": "join-a", "kind": "supports", "from": "join", "to": "a", "label": "supports" },
+    { "id": "join-b", "kind": "disputes", "from": "join", "to": "b", "label": "disputes" },
+    { "id": "target-join", "kind": "supports", "from": "target", "to": "join", "label": "supports" },
+    { "id": "unrelated-focus", "kind": "addresses", "from": "unrelated", "to": "focus", "label": "addresses" }
+  ],
+  "citations": [{ "id": "cartographic", "layer": "cartographic", "citation": "test", "short": "test", "year": 2026 }],
+  "readingPath": ["focus", "a", "b", "join", "target"],
+  "rights": "test fixture"
+}

@@ -1,36 +1,63 @@
 # libhorn native runtime
 
-native/ is the first Apache Celix surface for Horn.
+`native/` is Horn's Apache Celix surface. TypeScript remains the reference while native behavior advances through explicit golden equivalence.
 
-Contract-first slice. TypeScript remains the reference while native behavior is proven by golden equivalence.
+The native runtime is deliberately artifact-first. Celix owns lifecycle, service discovery, and composition; it does not own Horn semantics or authored geometry.
 
-## What is here
+## Current services
 
-- IRuntimeDescriptor, IValidationService (Phase 1), IProjectionService seam (Phase 2).
-- horn_validation / horn_validate CLI (no Celix required).
-- HornContractBundle + HornContractRuntime when Celix is available.
+- `IRuntimeDescriptor` — native contract metadata.
+- `IValidationService` — Phase 1 document validation, proven by golden equivalence.
+- `IProjectionService` — reserved analytical projection seam.
+- `IQueryService` — deterministic structural query seam from ADR-0017.
+- `IProofService` — reserved proof seam from ADR-0018; **no provider is registered yet**.
 
-Service I/O remains serialized JSON artifacts.
+## Native query candidate
 
-## Build
+`horn_query` is the first C++ implementation of `horn-query-request/0.1` -> `horn-query-result/0.1`.
+It implements the TypeScript reference operations:
 
-Celix is not required for Phase 1 golden validation:
+- `graph`
+- `counterfactual`
+- `dominators`
+- `min-cut`
 
-    cmake -S native -B build/native
-    cmake --build build/native --target horn_validate
-    ./build/native/horn_validate maps/chinese-room-slice.horn.json
+The implementation preserves Horn's existing reader-direction rule: persisted relations remain semantic `response -> earlier claim`, while derived dialogue traversal reads `earlier claim -> response`.
 
-If Celix is missing, only horn_validation + horn_validate are built.
+The C++ library has no Celix dependency. `QueryBundleActivator.cc` is the prepared Celix adapter, but ADR-0017 requires equivalence before normal provider registration. CMake therefore keeps `HornQueryBundle` disabled by default behind `HORN_ENABLE_UNPROVEN_QUERY_PROVIDER=OFF`.
 
-When Celix is present, HornContractBundle and HornContractRuntime are also built.
+The opt-in switch exists only for controlled lab work. It must not be interpreted as native Horn authority.
 
-## Golden validation
+## Build without Celix
 
-Install deps, then run validate:report and golden:validation.
-Override native binary via HORN_VALIDATE.
-Regenerate expected with compare.mjs --generate-expected.
-See docs/adr/0015-golden-validation-equivalence.md.
+```sh
+cmake -S native -B build/native
+cmake --build build/native
+ctest --test-dir build/native --output-on-failure
+```
 
-## Next
+Run a native query:
 
-Phase 2: golden analytical projections.
+```sh
+./build/native/horn_query map.horn.json request.json
+```
+
+## Golden query equivalence
+
+Install the JS dependencies, build `horn_query`, then run:
+
+```sh
+node golden/query/compare.mjs
+```
+
+Override the binary with `HORN_QUERY=/path/to/horn_query`.
+
+The harness runs the same checked-in query cases through the TypeScript reference and the native implementation, canonicalizes parsed JSON, and requires both to match the checked-in expected result.
+
+Once that conformance evidence is green in the trusted external/local build environment, a later reviewed commit can promote `HornQueryBundle` from opt-in candidate to normal Celix provider. No GitHub Actions are required for this conformance path.
+
+## Proof gate
+
+ADR-0018 is explicit: `IProofService` remains interface-only until native query equivalence exists and proof output gets its own golden coverage. This slice does not jump that gate.
+
+Once query equivalence is established, the next native pass is replayable proof generation/verification, followed by receipt-bearing traversal and Vivisection adapters.
