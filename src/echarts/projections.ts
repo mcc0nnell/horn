@@ -90,10 +90,10 @@ export function projectArgument(document: HornDocument): EChartsOption {
           id: relation.id,
           source: relation.from,
           target: relation.to,
-          value: relation.kind,
+          value: 1,
           label: {
             show: true,
-            formatter: relation.label,
+            formatter: `${relation.kind}: ${relation.label}`,
           },
         })),
         lineStyle: {
@@ -225,7 +225,7 @@ export function projectEvidence(document: HornDocument): EChartsOption {
               id: `evidence:${citationId}:${node.id}`,
               source: `citation:${citationId}`,
               target: `node:${node.id}`,
-              value: "cites",
+              value: 1,
             })),
         ),
         lineStyle: {
@@ -252,7 +252,8 @@ export function projectFrontier(document: HornDocument): EChartsOption {
     id: string;
     source: string;
     target: string;
-    value: string;
+    value: number;
+    name: string;
   }> = [];
   let lane = 0;
 
@@ -282,7 +283,8 @@ export function projectFrontier(document: HornDocument): EChartsOption {
           id: `reading:${step.relationId}`,
           source: step.parentNodeId,
           target: step.nodeId,
-          value: relation?.kind ?? "response",
+          value: 1,
+          name: relation?.kind ?? "response",
         });
       }
     }

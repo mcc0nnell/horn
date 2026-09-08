@@ -163,7 +163,8 @@ test("frontier projection reverses semantic response direction into reader order
       id: "reading:relation-b-a",
       source: "claim-a",
       target: "claim-b",
-      value: "supports",
+      value: 1,
+      name: "supports",
     },
   ]);
   assert.deepEqual(fixture, before);
