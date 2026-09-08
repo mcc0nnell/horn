@@ -1,0 +1,7 @@
+{
+  "version": "horn-validation-report/0.1",
+  "documentContract": "horn-document/0.1",
+  "documentId": "horn:cct-1998:map-1:small-regions",
+  "ok": true,
+  "issues": []
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-validation-report-0.1.schema.json",
+  "title": "Horn validation report",
+  "type": "object",
+  "required": ["version", "documentContract", "documentId", "ok", "issues"],
+  "properties": {
+    "version": { "const": "horn-validation-report/0.1" },
+    "documentContract": { "const": "horn-document/0.1" },
+    "documentId": { "type": "string" },
+    "ok": { "type": "boolean" },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

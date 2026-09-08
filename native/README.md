@@ -1,62 +1,36 @@
 # libhorn native runtime
 
-`native/` is the first Apache Celix surface for Horn.
+native/ is the first Apache Celix surface for Horn.
 
-It is intentionally a contract-first slice. The existing Horn document kernel remains authoritative, and the TypeScript/Zeppelin/ECharts work remains the reference implementation while native behavior is brought up behind golden equivalence tests.
+Contract-first slice. TypeScript remains the reference while native behavior is proven by golden equivalence.
 
 ## What is here
 
-- `horn::IRuntimeDescriptor` — advertises the runtime, document, and projection contracts.
-- `horn::IValidationService` — stable Celix seam for document validation.
-- `horn::IProjectionService` — stable Celix seam for analytical projections.
-- `HornContractBundle` — a real Celix bundle that registers the runtime descriptor service.
-- `HornContractRuntime` — a minimal Celix container for exercising the bundle.
+- IRuntimeDescriptor, IValidationService (Phase 1), IProjectionService seam (Phase 2).
+- horn_validation / horn_validate CLI (no Celix required).
+- HornContractBundle + HornContractRuntime when Celix is available.
 
-The validation and projection interfaces deliberately exchange serialized contract artifacts instead of exposing native Horn domain structs. This keeps the C++ ABI from freezing a semantic model while `horn-argument` and the analytical projection contracts are still being hardened.
-
-## Invariants
-
-The native runtime must not:
-
-- become a second serialization authority for `.horn.json`;
-- rewrite authored Horn geometry;
-- invent historical relation routes;
-- make ECharts options part of the semantic core;
-- make Zeppelin part of the runtime ABI.
-
-ECharts is a client projection. Zeppelin is a workbench. Celix is the native service runtime.
+Service I/O remains serialized JSON artifacts.
 
 ## Build
 
-Apache Celix must be discoverable by CMake.
+Celix is not required for Phase 1 golden validation:
 
-```sh
-cmake -S native -B build/native
-cmake --build build/native
-./build/native/deploy/HornContractRuntime/HornContractRuntime
-```
+    cmake -S native -B build/native
+    cmake --build build/native --target horn_validate
+    ./build/native/horn_validate maps/chinese-room-slice.horn.json
 
-The current Celix C++ model uses `celix::BundleContext::registerService` for service publication, `add_celix_bundle` for bundle packaging, and `add_celix_container` for a runnable container. This slice follows that model directly.
+If Celix is missing, only horn_validation + horn_validate are built.
 
-## Next native milestone
+When Celix is present, HornContractBundle and HornContractRuntime are also built.
 
-Do not implement native semantic behavior by guessing at the TypeScript implementation.
+## Golden validation
 
-The next step is a golden corpus that runs the same canonical Horn artifact through both runtimes and compares normalized outputs. Only after that proof should `IValidationService` and `IProjectionService` receive native providers.
+Install deps, then run validate:report and golden:validation.
+Override native binary via HORN_VALIDATE.
+Regenerate expected with compare.mjs --generate-expected.
+See docs/adr/0015-golden-validation-equivalence.md.
 
-Target sequence:
+## Next
 
-```text
-canonical .horn.json
-      |--------------------|
-      v                    v
-TypeScript reference    libhorn/Celix
-      |                    |
-      v                    v
-normalized validation / projection artifact
-      |____________________|
-               |
-          exact compare
-```
-
-No GitHub Actions configuration is introduced by this native slice.
+Phase 2: golden analytical projections.
