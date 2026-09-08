@@ -1,6 +1,6 @@
 # libhorn on Apache Celix
 
-Status: initial landed architecture
+Status: analysis reactor landed; native authority still gated by golden equivalence
 
 ## Purpose
 
@@ -46,11 +46,11 @@ For the first native contract, Celix services therefore consume and emit seriali
 
 When the semantic core stabilizes, native domain types may be added behind an explicit versioned ABI. They must not silently replace the serialized compatibility surface.
 
-## Initial Celix services
+## Celix services
 
 ### `horn::IRuntimeDescriptor`
 
-Available now. It advertises:
+Advertises:
 
 - runtime API: `horn-runtime/0.1`;
 - document contract: `horn-document/0.1`;
@@ -59,13 +59,29 @@ Available now. It advertises:
 
 ### `horn::IValidationService`
 
-Phase1 provider returns normalized report JSON from canonical document JSON. Equivalence with validate.ts is proven by golden:validation.
+Returns normalized `horn-validation-report/0.1` JSON from canonical document JSON.
 
 ### `horn::IProjectionService`
 
-Reserved seam for analytical projection generation. A provider is intentionally not landed until its normalized output can be compared against the TypeScript ECharts projection reference.
+Returns a renderer-neutral `horn-projection/0.1` artifact. Analytical facts that are not Horn identities live under `extensions["x-analysis"]`. ECharts option objects are forbidden.
 
-The projection service returns a Horn projection artifact, not an ECharts option. Rendering libraries remain clients of the runtime.
+### `horn::IQueryService`
+
+Serialized JSON request (`horn-query/0.1`) to serialized JSON result (`horn-query-result/0.1`). Counterfactual analysis is a query operation and never mutates the source artifact.
+
+### `horn::IExplanationService`
+
+Structured explanation of one identity. Optional supporting artifacts may be supplied as a JSON object. The kernel does not generate narrative.
+
+### `horn::IImpactService`
+
+Evidence snapshot + bindings + current document → `horn-impact-report/0.1`. The report describes consequences only.
+
+### `horn::IDiffService`
+
+Before/after Horn artifacts → `horn-diff/0.1`, with authored geometry separated from derived projection consequences.
+
+`horn_inspect` composes these services. It is not itself a semantic authority.
 
 ## Projection rule
 
@@ -86,23 +102,19 @@ A future `%horn` interpreter should discover libhorn services and call them thro
 
 ### Phase 0 — contract bundle
 
-Landed here. Proves Apache Celix packaging, container startup, service publication, and the versioned service boundary.
+Landed. Proves Apache Celix packaging, container startup, service publication, and the versioned service boundary.
 
 ### Phase 1 — golden validation
 
-Phase 1 is landed. Use validate:report and golden:validation; see ADR-0015.
-
-Acceptance rule: no native-specific interpretation of Horn semantics.
+Landed. Use `validate:report` and `golden:validation`; see ADR-0015.
 
 ### Phase 2 — golden analytical projections
 
-Define a renderer-neutral projection artifact and compare TypeScript and native projection output for the four initial views.
-
-Acceptance rule: ECharts receives data from the projection contract; ECharts-specific options remain outside libhorn.
+Landed as renderer-neutral projection artifacts. See ADR-0016 and `golden:projection`.
 
 ### Phase 3 — query and provenance services
 
-Move deterministic graph queries, provenance traversal, and semantic diff into native services once their contracts are stable.
+Landed as artifact-based query, explanation, impact, diff, and inspect composition. Equivalence is proven by `golden:reactor` and `golden:torture`.
 
 ### Phase 4 — native authority
 

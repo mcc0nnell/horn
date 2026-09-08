@@ -160,6 +160,22 @@ The projection boundary is deliberate: ECharts options are derived state and are
 
 See [`docs/adr/0006-echarts-is-an-analytical-projection.md`](docs/adr/0006-echarts-is-an-analytical-projection.md) and [`docs/adr/0007-semantic-and-reading-direction-are-distinct.md`](docs/adr/0007-semantic-and-reading-direction-are-distinct.md).
 
+## libhorn analysis reactor
+
+`native/` is the headless C++ / Apache Celix runtime. It consumes canonical Horn artifacts and emits derived analysis artifacts. It does not become a round-trip authoring path.
+
+Renderer-neutral projections, deterministic queries (including counterfactuals), explanation, evidence impact, semantic diff, and `horn_inspect` composition live behind serialized JSON service seams. TypeScript remains the semantic reference until golden equivalence is demonstrated.
+
+```sh
+cmake -S native -B build/native && cmake --build build/native
+npm test
+npm run golden:validation
+npm run golden:projection
+npm run golden:reactor
+```
+
+See [`docs/adr/0016-libhorn-deterministic-analysis-reactor.md`](docs/adr/0016-libhorn-deterministic-analysis-reactor.md) and [`docs/libhorn-celix.md`](docs/libhorn-celix.md).
+
 Run the local contract checks with:
 
 ```sh

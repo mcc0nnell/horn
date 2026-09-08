@@ -1,36 +1,54 @@
 # libhorn native runtime
 
-native/ is the first Apache Celix surface for Horn.
+`native/` is the Apache Celix surface and headless analysis reactor for Horn.
 
-Contract-first slice. TypeScript remains the reference while native behavior is proven by golden equivalence.
+Contract-first. TypeScript remains the reference until a behavior has golden
+equivalence. Canonical Horn artifacts stay authoritative; analyses are derived
+and disposable.
 
 ## What is here
 
-- IRuntimeDescriptor, IValidationService (Phase 1), IProjectionService seam (Phase 2).
-- horn_validation / horn_validate CLI (no Celix required).
-- HornContractBundle + HornContractRuntime when Celix is available.
+- `IRuntimeDescriptor`
+- `IValidationService` (Phase 1)
+- `IProjectionService` (renderer-neutral analytical views)
+- `IQueryService` (including counterfactual analysis)
+- `IExplanationService`
+- `IImpactService`
+- `IDiffService`
+- CLIs: `horn_validate`, `horn_project`, `horn_query`, `horn_explain`,
+  `horn_impact`, `horn_diff`, `horn_inspect`
+- `HornContractBundle` + `HornContractRuntime` when Celix is available
 
-Service I/O remains serialized JSON artifacts.
+Service I/O remains serialized JSON artifacts. There are no ECharts option
+objects in libhorn.
 
 ## Build
 
-Celix is not required for Phase 1 golden validation:
+Celix is not required for the analysis CLIs:
 
     cmake -S native -B build/native
-    cmake --build build/native --target horn_validate
+    cmake --build build/native
     ./build/native/horn_validate maps/chinese-room-slice.horn.json
+    ./build/native/horn_project maps/chinese-room-slice.horn.json argument
+    ./build/native/horn_inspect maps/chinese-room-slice.horn.json --projection frontier
 
-If Celix is missing, only horn_validation + horn_validate are built.
+If Celix is missing, only the libraries and CLIs are built.
 
-When Celix is present, HornContractBundle and HornContractRuntime are also built.
+When Celix is present, `HornContractBundle` registers the providers with
+explicit contract version properties. `horn_inspect` composes the same
+algorithms without introducing network transport or application policy.
 
-## Golden validation
+## Golden analysis
 
-Install deps, then run validate:report and golden:validation.
-Override native binary via HORN_VALIDATE.
-Regenerate expected with compare.mjs --generate-expected.
-See docs/adr/0015-golden-validation-equivalence.md.
+Install deps, then:
 
-## Next
+    npm test
+    npm run golden:validation
+    npm run golden:projection
+    npm run golden:reactor
+    npm run golden:torture
 
-Phase 2: golden analytical projections.
+Override native binaries with `HORN_VALIDATE`, `HORN_PROJECT`, or
+`HORN_NATIVE_BIN`. Regenerate expected artifacts with `--generate-expected`.
+
+See `docs/adr/0016-libhorn-deterministic-analysis-reactor.md`.
