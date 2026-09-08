@@ -1,0 +1,31 @@
+[
+  {
+    "name": "graph",
+    "request": {
+      "version": "horn-query-request/0.1",
+      "operation": "graph",
+      "focusNodeId": "focus"
+    },
+    "expected": {
+      "proofId": "horn-proof:151f137270f9f63e5eaf5bb9b5c3dd9e1fa3f96319263c1f6cec5eb772ea2944",
+      "sourceSha256": "f2f8e742305e87465e5064ea4141f88d1844602569965c9325c52fbcfe83fb7b",
+      "dependencySha256": "a11de36d84e23fba8eb3fdedc366b148087f87740c1cfab90e0ff20503df4afd"
+    }
+  },
+  {
+    "name": "counterfactual",
+    "request": {
+      "version": "horn-query-request/0.1",
+      "operation": "counterfactual",
+      "focusNodeId": "focus",
+      "suppress": {
+        "nodeIds": ["join"]
+      }
+    },
+    "expected": {
+      "proofId": "horn-proof:7b223f4ced3f8e1e9e44e999a19de8dd1723e40e22239f7dffda7990680cd56c",
+      "sourceSha256": "f2f8e742305e87465e5064ea4141f88d1844602569965c9325c52fbcfe83fb7b",
+      "dependencySha256": "a11de36d84e23fba8eb3fdedc366b148087f87740c1cfab90e0ff20503df4afd"
+    }
+  }
+]
