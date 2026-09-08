@@ -1,0 +1,36 @@
+{
+  "affectedIdentities": [],
+  "affectedProjections": {
+    "argument": [],
+    "evidence": [],
+    "frontier": [],
+    "timeline": []
+  },
+  "changedFingerprints": [],
+  "directlyStale": [],
+  "documentId": "horn:authored:2026:celix-845-specimen-001",
+  "documentVersion": "horn-document/0.1",
+  "mutatesSource": false,
+  "observedFingerprint": "sha256:9fd2d18e8bd1c1a3ed03c9fefb4f562c2b0a73ebbfbfc5d1c23c0e39a3abc176",
+  "runtime": "horn-runtime/0.1",
+  "transitivelyAffected": [],
+  "transitivelyAffectedRelations": [],
+  "unaffected": [
+    "c1-sbom-ci",
+    "c2-binary-boundary",
+    "c3-package-bound",
+    "c4-no-binary-release",
+    "c5-reference-lock",
+    "c6-safe-default",
+    "c7-audit",
+    "c8-dev-container",
+    "c9-open-boundary"
+  ],
+  "unchangedFingerprints": [
+    {
+      "evidenceId": "celix-845-resolved-dependency-graph",
+      "fingerprint": "sha256:9fd2d18e8bd1c1a3ed03c9fefb4f562c2b0a73ebbfbfc5d1c23c0e39a3abc176"
+    }
+  ],
+  "version": "horn-impact-report/0.1"
+}

@@ -1,0 +1,78 @@
+{
+  "bundle": {
+    "id": 1,
+    "symbolicName": "org.mcc0nnell.horn.runtime.contract"
+  },
+  "ok": true,
+  "pin": {
+    "commit": "270c784d20dabd0b1f6418c7ee2195822ec9ef90",
+    "repository": "https://github.com/apache/celix.git",
+    "version": "3.0.0"
+  },
+  "projectionViews": [
+    "argument",
+    "timeline",
+    "evidence",
+    "frontier"
+  ],
+  "runtime": "horn-runtime/0.1",
+  "services": [
+    {
+      "interface": "horn::IDiffService",
+      "properties": {
+        "horn.diff.contract": "horn-diff/0.1",
+        "horn.document.contract": "horn-document/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IExplanationService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.explanation.contract": "horn-explanation/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IImpactService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.impact.contract": "horn-impact-report/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IProjectionService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.projection.contract": "horn-projection/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IQueryService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.query.contract": "horn-query/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IRuntimeDescriptor",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.projection.contract": "horn-projection/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
+      "interface": "horn::IValidationService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.runtime.api": "horn-runtime/0.1",
+        "horn.validation.report": "horn-validation-report/0.1"
+      }
+    }
+  ],
+  "version": "horn-celix-probe/0.1"
+}

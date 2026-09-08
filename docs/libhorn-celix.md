@@ -1,6 +1,6 @@
 # libhorn on Apache Celix
 
-Status: analysis reactor landed; native authority still gated by golden equivalence
+Status: analysis reactor landed; Celix is pinned (ADR-0017); native authority still gated by golden equivalence
 
 ## Purpose
 
@@ -83,6 +83,14 @@ Before/after Horn artifacts → `horn-diff/0.1`, with authored geometry separate
 
 `horn_inspect` composes these services. It is not itself a semantic authority.
 
+Apache Celix is pinned at an exact commit in `native/celix-pin.json`. CMake
+fetches that commit into the build prefix when `HORN_WITH_CELIX=ON`. A host
+Celix install is not used. See ADR-0017.
+
+`horn_celix` starts a framework, installs `HornContractBundle`, and invokes the
+six analysis services plus `IRuntimeDescriptor` through discovery. `golden:celix`
+compares TypeScript, standalone native CLIs, and native-under-Celix.
+
 ## Projection rule
 
 Horn has two different visual obligations:
@@ -102,7 +110,7 @@ A future `%horn` interpreter should discover libhorn services and call them thro
 
 ### Phase 0 — contract bundle
 
-Landed. Proves Apache Celix packaging, container startup, service publication, and the versioned service boundary.
+Landed. Proves Apache Celix packaging, container startup, service publication, and the versioned service boundary. Celix itself is now a pinned fetch (ADR-0017), not a host-provided accident.
 
 ### Phase 1 — golden validation
 

@@ -167,14 +167,17 @@ See [`docs/adr/0006-echarts-is-an-analytical-projection.md`](docs/adr/0006-echar
 Renderer-neutral projections, deterministic queries (including counterfactuals), explanation, evidence impact, semantic diff, and `horn_inspect` composition live behind serialized JSON service seams. TypeScript remains the semantic reference until golden equivalence is demonstrated.
 
 ```sh
-cmake -S native -B build/native && cmake --build build/native
+cmake -S native -B build/native -DHORN_WITH_CELIX=ON && cmake --build build/native
 npm test
 npm run golden:validation
 npm run golden:projection
 npm run golden:reactor
+npm run golden:celix
 ```
 
-See [`docs/adr/0016-libhorn-deterministic-analysis-reactor.md`](docs/adr/0016-libhorn-deterministic-analysis-reactor.md) and [`docs/libhorn-celix.md`](docs/libhorn-celix.md).
+Apache Celix is pinned at an exact commit (`native/celix-pin.json`). The default native build fetches that pin; it does not use a host-installed Celix. `horn_celix` exercises the six analysis services inside a real framework.
+
+See [`docs/adr/0016-libhorn-deterministic-analysis-reactor.md`](docs/adr/0016-libhorn-deterministic-analysis-reactor.md), [`docs/adr/0017-libhorn-pins-celix.md`](docs/adr/0017-libhorn-pins-celix.md) and [`docs/libhorn-celix.md`](docs/libhorn-celix.md).
 
 Run the local contract checks with:
 

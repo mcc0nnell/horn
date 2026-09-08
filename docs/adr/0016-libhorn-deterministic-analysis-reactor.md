@@ -124,10 +124,13 @@ deferred work:
 
 Remaining work before libhorn can become the preferred Horn headless runtime:
 
-- Celix bundle/container tests in an environment that actually has Apache Celix;
 - native golden coverage of extraction/correspondence validators;
 - an explicit ABI freeze of native domain types, only after the semantic core
   is stable;
 - a `%horn` Zeppelin adapter that discovers these services;
 - performance benchmarks, which must not become CI gates yet;
 - any LLM/narration layer, which remains outside the deterministic kernel.
+
+Celix bundle/container exercise landed in ADR-0017: the runtime is pinned to an
+exact Apache Celix commit and `golden:celix` compares TypeScript, standalone
+native, and native-under-Celix.

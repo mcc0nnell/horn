@@ -1,0 +1,24 @@
+{
+  "documentId": "horn:authored:2026:chinese-room",
+  "documentVersion": "horn-document/0.1",
+  "node": {
+    "author": "A. M. Turing",
+    "authorShort": "Turing",
+    "citationIds": [
+      "turing-1950",
+      "horn-cct-cartographic"
+    ],
+    "focus": true,
+    "id": "c1-machines-can-think",
+    "kind": "claim",
+    "label": "Machines can think",
+    "number": 1,
+    "origin": "debate",
+    "text": "Machines can think. A digital computer, suitably organized, is not merely a model of a mind. It is a candidate for thought.",
+    "year": 1950
+  },
+  "ok": true,
+  "op": "node-lookup",
+  "runtime": "horn-runtime/0.1",
+  "version": "horn-query-result/0.1"
+}

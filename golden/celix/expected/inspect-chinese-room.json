@@ -1,0 +1,960 @@
+{
+  "explanations": [],
+  "impact": null,
+  "projections": {
+    "argument": {
+      "extensions": {
+        "x-analysis": {
+          "contract": "horn-analysis/0.1",
+          "description": "Semantic response topology; relation routes are intentionally abstracted.",
+          "edges": [
+            {
+              "from": "c2-imitation-game",
+              "id": "r-c2-c1",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "c1-machines-can-think"
+            },
+            {
+              "from": "c3-substrate-independent",
+              "id": "r-c3-c1",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "c1-machines-can-think"
+            },
+            {
+              "from": "g1-universal-machine",
+              "id": "r-g1-c2",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "c2-imitation-game"
+            },
+            {
+              "from": "w1-behavior-sufficient",
+              "id": "r-w1-c1",
+              "kind": "warrants",
+              "label": "warrant",
+              "to": "c1-machines-can-think"
+            },
+            {
+              "from": "c5-chinese-room",
+              "id": "r-c5-g2",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "g2-man-is-the-program"
+            },
+            {
+              "from": "g2-man-is-the-program",
+              "id": "r-g2-c4",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "c4-syntax-not-semantics"
+            },
+            {
+              "from": "c4-syntax-not-semantics",
+              "id": "r-c4-c6",
+              "kind": "supports",
+              "label": "supported by",
+              "to": "c6-simulate-not-think"
+            },
+            {
+              "from": "c6-simulate-not-think",
+              "id": "r-c6-c1",
+              "kind": "disputes",
+              "label": "disputed by",
+              "to": "c1-machines-can-think"
+            },
+            {
+              "from": "c7-systems-reply",
+              "id": "r-c7-c4",
+              "kind": "disputes",
+              "label": "disputed by",
+              "to": "c4-syntax-not-semantics"
+            },
+            {
+              "from": "c8-internalization",
+              "id": "r-c8-c7",
+              "kind": "disputes",
+              "label": "disputed by",
+              "to": "c7-systems-reply"
+            }
+          ],
+          "placed": [
+            {
+              "center": {
+                "x": 1300,
+                "y": 414
+              },
+              "focus": true,
+              "id": "c1-machines-can-think",
+              "kind": "claim",
+              "label": "Machines can think",
+              "number": 1
+            },
+            {
+              "center": {
+                "x": 430,
+                "y": 393
+              },
+              "focus": false,
+              "id": "c2-imitation-game",
+              "kind": "claim",
+              "label": "The imitation game",
+              "number": 2
+            },
+            {
+              "center": {
+                "x": 430,
+                "y": 661
+              },
+              "focus": false,
+              "id": "c3-substrate-independent",
+              "kind": "claim",
+              "label": "Substrate independence",
+              "number": 3
+            },
+            {
+              "center": {
+                "x": 430,
+                "y": 919
+              },
+              "focus": false,
+              "id": "g1-universal-machine",
+              "kind": "grounds",
+              "label": "Universal discrete-state machine",
+              "number": 4
+            },
+            {
+              "center": {
+                "x": 430,
+                "y": 1187
+              },
+              "focus": false,
+              "id": "w1-behavior-sufficient",
+              "kind": "warrant",
+              "label": "Behavioral warrant",
+              "number": 5
+            },
+            {
+              "center": {
+                "x": 2170,
+                "y": 403
+              },
+              "focus": false,
+              "id": "c5-chinese-room",
+              "kind": "example",
+              "label": "The Chinese Room",
+              "number": 6
+            },
+            {
+              "center": {
+                "x": 2170,
+                "y": 671
+              },
+              "focus": false,
+              "id": "g2-man-is-the-program",
+              "kind": "grounds",
+              "label": "The man implements the program",
+              "number": 7
+            },
+            {
+              "center": {
+                "x": 2170,
+                "y": 929
+              },
+              "focus": false,
+              "id": "c4-syntax-not-semantics",
+              "kind": "claim",
+              "label": "Syntax is not semantics",
+              "number": 8
+            },
+            {
+              "center": {
+                "x": 2170,
+                "y": 1207
+              },
+              "focus": false,
+              "id": "c6-simulate-not-think",
+              "kind": "claim",
+              "label": "Simulation is not thought",
+              "number": 9
+            },
+            {
+              "center": {
+                "x": 1300,
+                "y": 757
+              },
+              "focus": false,
+              "id": "c7-systems-reply",
+              "kind": "rebuttal",
+              "label": "The systems reply",
+              "number": 10
+            },
+            {
+              "center": {
+                "x": 1300,
+                "y": 1035
+              },
+              "focus": false,
+              "id": "c8-internalization",
+              "kind": "rebuttal",
+              "label": "Internalization",
+              "number": 11
+            },
+            {
+              "center": {
+                "x": 1300,
+                "y": 1325
+              },
+              "focus": false,
+              "id": "a1-stable-argumentation",
+              "kind": "gloss",
+              "label": "Relatively stable argumentation",
+              "number": 12
+            }
+          ],
+          "runtime": "horn-runtime/0.1",
+          "title": "Argument",
+          "view": "argument"
+        }
+      },
+      "id": "horn:authored:2026:chinese-room:argument",
+      "nodes": [
+        "c1-machines-can-think",
+        "c2-imitation-game",
+        "c3-substrate-independent",
+        "g1-universal-machine",
+        "w1-behavior-sufficient",
+        "c5-chinese-room",
+        "g2-man-is-the-program",
+        "c4-syntax-not-semantics",
+        "c6-simulate-not-think",
+        "c7-systems-reply",
+        "c8-internalization",
+        "a1-stable-argumentation"
+      ],
+      "relations": [
+        "r-c2-c1",
+        "r-c3-c1",
+        "r-g1-c2",
+        "r-w1-c1",
+        "r-c5-g2",
+        "r-g2-c4",
+        "r-c4-c6",
+        "r-c6-c1",
+        "r-c7-c4",
+        "r-c8-c7"
+      ],
+      "source": {
+        "documentId": "horn:authored:2026:chinese-room",
+        "documentVersion": "horn-document/0.1"
+      },
+      "target": "argument",
+      "version": "horn-projection/0.1"
+    },
+    "evidence": {
+      "extensions": {
+        "x-analysis": {
+          "bindings": [
+            {
+              "citationId": "turing-1950",
+              "id": "evidence:turing-1950:c1-machines-can-think",
+              "nodeId": "c1-machines-can-think"
+            },
+            {
+              "citationId": "horn-cct-cartographic",
+              "id": "evidence:horn-cct-cartographic:c1-machines-can-think",
+              "nodeId": "c1-machines-can-think"
+            },
+            {
+              "citationId": "turing-1950",
+              "id": "evidence:turing-1950:c2-imitation-game",
+              "nodeId": "c2-imitation-game"
+            },
+            {
+              "citationId": "turing-1950",
+              "id": "evidence:turing-1950:c3-substrate-independent",
+              "nodeId": "c3-substrate-independent"
+            },
+            {
+              "citationId": "turing-1950",
+              "id": "evidence:turing-1950:g1-universal-machine",
+              "nodeId": "g1-universal-machine"
+            },
+            {
+              "citationId": "turing-1950",
+              "id": "evidence:turing-1950:w1-behavior-sufficient",
+              "nodeId": "w1-behavior-sufficient"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:c5-chinese-room",
+              "nodeId": "c5-chinese-room"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:g2-man-is-the-program",
+              "nodeId": "g2-man-is-the-program"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:c4-syntax-not-semantics",
+              "nodeId": "c4-syntax-not-semantics"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:c6-simulate-not-think",
+              "nodeId": "c6-simulate-not-think"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:c7-systems-reply",
+              "nodeId": "c7-systems-reply"
+            },
+            {
+              "citationId": "searle-1980",
+              "id": "evidence:searle-1980:c8-internalization",
+              "nodeId": "c8-internalization"
+            },
+            {
+              "citationId": "horn-cct-cartographic",
+              "id": "evidence:horn-cct-cartographic:a1-stable-argumentation",
+              "nodeId": "a1-stable-argumentation"
+            },
+            {
+              "citationId": "yoshimi-2004",
+              "id": "evidence:yoshimi-2004:a1-stable-argumentation",
+              "nodeId": "a1-stable-argumentation"
+            }
+          ],
+          "citations": [
+            {
+              "id": "turing-1950",
+              "layer": "mapped",
+              "short": "Turing 1950",
+              "year": 1950
+            },
+            {
+              "id": "horn-cct-cartographic",
+              "layer": "cartographic",
+              "short": "Horn 1998 (after)",
+              "year": 1998
+            },
+            {
+              "id": "searle-1980",
+              "layer": "mapped",
+              "short": "Searle 1980",
+              "year": 1980
+            },
+            {
+              "id": "yoshimi-2004",
+              "layer": "cartographic",
+              "short": "Yoshimi 2004",
+              "year": 2004
+            }
+          ],
+          "claims": [
+            {
+              "citationIds": [
+                "turing-1950",
+                "horn-cct-cartographic"
+              ],
+              "focus": true,
+              "id": "c1-machines-can-think",
+              "label": "Machines can think",
+              "number": 1
+            },
+            {
+              "citationIds": [
+                "turing-1950"
+              ],
+              "focus": false,
+              "id": "c2-imitation-game",
+              "label": "The imitation game",
+              "number": 2
+            },
+            {
+              "citationIds": [
+                "turing-1950"
+              ],
+              "focus": false,
+              "id": "c3-substrate-independent",
+              "label": "Substrate independence",
+              "number": 3
+            },
+            {
+              "citationIds": [
+                "turing-1950"
+              ],
+              "focus": false,
+              "id": "g1-universal-machine",
+              "label": "Universal discrete-state machine",
+              "number": 4
+            },
+            {
+              "citationIds": [
+                "turing-1950"
+              ],
+              "focus": false,
+              "id": "w1-behavior-sufficient",
+              "label": "Behavioral warrant",
+              "number": 5
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "c5-chinese-room",
+              "label": "The Chinese Room",
+              "number": 6
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "g2-man-is-the-program",
+              "label": "The man implements the program",
+              "number": 7
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "c4-syntax-not-semantics",
+              "label": "Syntax is not semantics",
+              "number": 8
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "c6-simulate-not-think",
+              "label": "Simulation is not thought",
+              "number": 9
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "c7-systems-reply",
+              "label": "The systems reply",
+              "number": 10
+            },
+            {
+              "citationIds": [
+                "searle-1980"
+              ],
+              "focus": false,
+              "id": "c8-internalization",
+              "label": "Internalization",
+              "number": 11
+            },
+            {
+              "citationIds": [
+                "horn-cct-cartographic",
+                "yoshimi-2004"
+              ],
+              "focus": false,
+              "id": "a1-stable-argumentation",
+              "label": "Relatively stable argumentation",
+              "number": 12
+            }
+          ],
+          "contract": "horn-analysis/0.1",
+          "description": "Derived source-to-claim network across mapped and cartographic provenance layers.",
+          "runtime": "horn-runtime/0.1",
+          "title": "Evidence",
+          "view": "evidence"
+        }
+      },
+      "id": "horn:authored:2026:chinese-room:evidence",
+      "nodes": [
+        "c1-machines-can-think",
+        "c2-imitation-game",
+        "c3-substrate-independent",
+        "g1-universal-machine",
+        "w1-behavior-sufficient",
+        "c5-chinese-room",
+        "g2-man-is-the-program",
+        "c4-syntax-not-semantics",
+        "c6-simulate-not-think",
+        "c7-systems-reply",
+        "c8-internalization",
+        "a1-stable-argumentation"
+      ],
+      "relations": [],
+      "source": {
+        "documentId": "horn:authored:2026:chinese-room",
+        "documentVersion": "horn-document/0.1"
+      },
+      "target": "evidence",
+      "version": "horn-projection/0.1"
+    },
+    "frontier": {
+      "extensions": {
+        "x-analysis": {
+          "contract": "horn-analysis/0.1",
+          "description": "Reader-facing dialogue threads from focus boxes to their current terminal arguments.",
+          "placed": [
+            {
+              "depth": 0,
+              "focus": true,
+              "frontier": false,
+              "id": "c1-machines-can-think",
+              "label": "Machines can think",
+              "lane": 0
+            },
+            {
+              "depth": 1,
+              "focus": false,
+              "frontier": false,
+              "id": "c2-imitation-game",
+              "label": "The imitation game",
+              "lane": 1
+            },
+            {
+              "depth": 1,
+              "focus": false,
+              "frontier": true,
+              "id": "c3-substrate-independent",
+              "label": "Substrate independence",
+              "lane": 2
+            },
+            {
+              "depth": 1,
+              "focus": false,
+              "frontier": false,
+              "id": "c6-simulate-not-think",
+              "label": "Simulation is not thought",
+              "lane": 3
+            },
+            {
+              "depth": 2,
+              "focus": false,
+              "frontier": true,
+              "id": "g1-universal-machine",
+              "label": "Universal discrete-state machine",
+              "lane": 4
+            },
+            {
+              "depth": 2,
+              "focus": false,
+              "frontier": false,
+              "id": "c4-syntax-not-semantics",
+              "label": "Syntax is not semantics",
+              "lane": 5
+            },
+            {
+              "depth": 3,
+              "focus": false,
+              "frontier": false,
+              "id": "g2-man-is-the-program",
+              "label": "The man implements the program",
+              "lane": 6
+            },
+            {
+              "depth": 3,
+              "focus": false,
+              "frontier": false,
+              "id": "c7-systems-reply",
+              "label": "The systems reply",
+              "lane": 7
+            },
+            {
+              "depth": 4,
+              "focus": false,
+              "frontier": true,
+              "id": "c5-chinese-room",
+              "label": "The Chinese Room",
+              "lane": 8
+            },
+            {
+              "depth": 4,
+              "focus": false,
+              "frontier": true,
+              "id": "c8-internalization",
+              "label": "Internalization",
+              "lane": 9
+            }
+          ],
+          "readingEdges": [
+            {
+              "from": "c1-machines-can-think",
+              "id": "reading:r-c2-c1",
+              "kind": "supports",
+              "relationId": "r-c2-c1",
+              "to": "c2-imitation-game"
+            },
+            {
+              "from": "c1-machines-can-think",
+              "id": "reading:r-c3-c1",
+              "kind": "supports",
+              "relationId": "r-c3-c1",
+              "to": "c3-substrate-independent"
+            },
+            {
+              "from": "c1-machines-can-think",
+              "id": "reading:r-c6-c1",
+              "kind": "disputes",
+              "relationId": "r-c6-c1",
+              "to": "c6-simulate-not-think"
+            },
+            {
+              "from": "c2-imitation-game",
+              "id": "reading:r-g1-c2",
+              "kind": "supports",
+              "relationId": "r-g1-c2",
+              "to": "g1-universal-machine"
+            },
+            {
+              "from": "c6-simulate-not-think",
+              "id": "reading:r-c4-c6",
+              "kind": "supports",
+              "relationId": "r-c4-c6",
+              "to": "c4-syntax-not-semantics"
+            },
+            {
+              "from": "c4-syntax-not-semantics",
+              "id": "reading:r-g2-c4",
+              "kind": "supports",
+              "relationId": "r-g2-c4",
+              "to": "g2-man-is-the-program"
+            },
+            {
+              "from": "c4-syntax-not-semantics",
+              "id": "reading:r-c7-c4",
+              "kind": "disputes",
+              "relationId": "r-c7-c4",
+              "to": "c7-systems-reply"
+            },
+            {
+              "from": "g2-man-is-the-program",
+              "id": "reading:r-c5-g2",
+              "kind": "supports",
+              "relationId": "r-c5-g2",
+              "to": "c5-chinese-room"
+            },
+            {
+              "from": "c7-systems-reply",
+              "id": "reading:r-c8-c7",
+              "kind": "disputes",
+              "relationId": "r-c8-c7",
+              "to": "c8-internalization"
+            }
+          ],
+          "runtime": "horn-runtime/0.1",
+          "threads": [
+            {
+              "focusNodeId": "c1-machines-can-think",
+              "frontierNodeIds": [
+                "c3-substrate-independent",
+                "g1-universal-machine",
+                "c5-chinese-room",
+                "c8-internalization"
+              ],
+              "steps": [
+                {
+                  "depth": 0,
+                  "nodeId": "c1-machines-can-think"
+                },
+                {
+                  "depth": 1,
+                  "nodeId": "c2-imitation-game",
+                  "parentNodeId": "c1-machines-can-think",
+                  "relationId": "r-c2-c1"
+                },
+                {
+                  "depth": 1,
+                  "nodeId": "c3-substrate-independent",
+                  "parentNodeId": "c1-machines-can-think",
+                  "relationId": "r-c3-c1"
+                },
+                {
+                  "depth": 1,
+                  "nodeId": "c6-simulate-not-think",
+                  "parentNodeId": "c1-machines-can-think",
+                  "relationId": "r-c6-c1"
+                },
+                {
+                  "depth": 2,
+                  "nodeId": "g1-universal-machine",
+                  "parentNodeId": "c2-imitation-game",
+                  "relationId": "r-g1-c2"
+                },
+                {
+                  "depth": 2,
+                  "nodeId": "c4-syntax-not-semantics",
+                  "parentNodeId": "c6-simulate-not-think",
+                  "relationId": "r-c4-c6"
+                },
+                {
+                  "depth": 3,
+                  "nodeId": "g2-man-is-the-program",
+                  "parentNodeId": "c4-syntax-not-semantics",
+                  "relationId": "r-g2-c4"
+                },
+                {
+                  "depth": 3,
+                  "nodeId": "c7-systems-reply",
+                  "parentNodeId": "c4-syntax-not-semantics",
+                  "relationId": "r-c7-c4"
+                },
+                {
+                  "depth": 4,
+                  "nodeId": "c5-chinese-room",
+                  "parentNodeId": "g2-man-is-the-program",
+                  "relationId": "r-c5-g2"
+                },
+                {
+                  "depth": 4,
+                  "nodeId": "c8-internalization",
+                  "parentNodeId": "c7-systems-reply",
+                  "relationId": "r-c8-c7"
+                }
+              ]
+            }
+          ],
+          "title": "Frontier",
+          "view": "frontier"
+        }
+      },
+      "id": "horn:authored:2026:chinese-room:frontier",
+      "nodes": [
+        "c1-machines-can-think",
+        "c2-imitation-game",
+        "c3-substrate-independent",
+        "c6-simulate-not-think",
+        "g1-universal-machine",
+        "c4-syntax-not-semantics",
+        "g2-man-is-the-program",
+        "c7-systems-reply",
+        "c5-chinese-room",
+        "c8-internalization"
+      ],
+      "relations": [
+        "r-c2-c1",
+        "r-c3-c1",
+        "r-c6-c1",
+        "r-g1-c2",
+        "r-c4-c6",
+        "r-g2-c4",
+        "r-c7-c4",
+        "r-c5-g2",
+        "r-c8-c7"
+      ],
+      "source": {
+        "documentId": "horn:authored:2026:chinese-room",
+        "documentVersion": "horn-document/0.1"
+      },
+      "target": "frontier",
+      "version": "horn-projection/0.1"
+    },
+    "timeline": {
+      "extensions": {
+        "x-analysis": {
+          "contract": "horn-analysis/0.1",
+          "datedNodes": [
+            {
+              "id": "c1-machines-can-think",
+              "label": "Machines can think",
+              "number": 1,
+              "year": 1950
+            },
+            {
+              "id": "c2-imitation-game",
+              "label": "The imitation game",
+              "number": 2,
+              "year": 1950
+            },
+            {
+              "id": "c3-substrate-independent",
+              "label": "Substrate independence",
+              "number": 3,
+              "year": 1950
+            },
+            {
+              "id": "g1-universal-machine",
+              "label": "Universal discrete-state machine",
+              "number": 4,
+              "year": 1950
+            },
+            {
+              "id": "w1-behavior-sufficient",
+              "label": "Behavioral warrant",
+              "number": 5,
+              "year": 1950
+            },
+            {
+              "id": "c5-chinese-room",
+              "label": "The Chinese Room",
+              "number": 6,
+              "year": 1980
+            },
+            {
+              "id": "g2-man-is-the-program",
+              "label": "The man implements the program",
+              "number": 7,
+              "year": 1980
+            },
+            {
+              "id": "c4-syntax-not-semantics",
+              "label": "Syntax is not semantics",
+              "number": 8,
+              "year": 1980
+            },
+            {
+              "id": "c6-simulate-not-think",
+              "label": "Simulation is not thought",
+              "number": 9,
+              "year": 1980
+            },
+            {
+              "id": "c7-systems-reply",
+              "label": "The systems reply",
+              "number": 10,
+              "year": 1980
+            },
+            {
+              "id": "c8-internalization",
+              "label": "Internalization",
+              "number": 11,
+              "year": 1980
+            },
+            {
+              "id": "a1-stable-argumentation",
+              "label": "Relatively stable argumentation",
+              "number": 12,
+              "year": 2026
+            }
+          ],
+          "description": "Chronological projection of dated claims without changing the Horn document.",
+          "runtime": "horn-runtime/0.1",
+          "title": "Timeline",
+          "view": "timeline"
+        }
+      },
+      "id": "horn:authored:2026:chinese-room:timeline",
+      "nodes": [
+        "c1-machines-can-think",
+        "c2-imitation-game",
+        "c3-substrate-independent",
+        "g1-universal-machine",
+        "w1-behavior-sufficient",
+        "c5-chinese-room",
+        "g2-man-is-the-program",
+        "c4-syntax-not-semantics",
+        "c6-simulate-not-think",
+        "c7-systems-reply",
+        "c8-internalization",
+        "a1-stable-argumentation"
+      ],
+      "relations": [],
+      "source": {
+        "documentId": "horn:authored:2026:chinese-room",
+        "documentVersion": "horn-document/0.1"
+      },
+      "target": "timeline",
+      "version": "horn-projection/0.1"
+    }
+  },
+  "queries": [
+    {
+      "documentId": "horn:authored:2026:chinese-room",
+      "documentVersion": "horn-document/0.1",
+      "ok": true,
+      "op": "frontier",
+      "runtime": "horn-runtime/0.1",
+      "threads": [
+        {
+          "focusNodeId": "c1-machines-can-think",
+          "frontierNodeIds": [
+            "c3-substrate-independent",
+            "g1-universal-machine",
+            "c5-chinese-room",
+            "c8-internalization"
+          ],
+          "steps": [
+            {
+              "depth": 0,
+              "nodeId": "c1-machines-can-think"
+            },
+            {
+              "depth": 1,
+              "nodeId": "c2-imitation-game",
+              "parentNodeId": "c1-machines-can-think",
+              "relationId": "r-c2-c1"
+            },
+            {
+              "depth": 1,
+              "nodeId": "c3-substrate-independent",
+              "parentNodeId": "c1-machines-can-think",
+              "relationId": "r-c3-c1"
+            },
+            {
+              "depth": 1,
+              "nodeId": "c6-simulate-not-think",
+              "parentNodeId": "c1-machines-can-think",
+              "relationId": "r-c6-c1"
+            },
+            {
+              "depth": 2,
+              "nodeId": "g1-universal-machine",
+              "parentNodeId": "c2-imitation-game",
+              "relationId": "r-g1-c2"
+            },
+            {
+              "depth": 2,
+              "nodeId": "c4-syntax-not-semantics",
+              "parentNodeId": "c6-simulate-not-think",
+              "relationId": "r-c4-c6"
+            },
+            {
+              "depth": 3,
+              "nodeId": "g2-man-is-the-program",
+              "parentNodeId": "c4-syntax-not-semantics",
+              "relationId": "r-g2-c4"
+            },
+            {
+              "depth": 3,
+              "nodeId": "c7-systems-reply",
+              "parentNodeId": "c4-syntax-not-semantics",
+              "relationId": "r-c7-c4"
+            },
+            {
+              "depth": 4,
+              "nodeId": "c5-chinese-room",
+              "parentNodeId": "g2-man-is-the-program",
+              "relationId": "r-c5-g2"
+            },
+            {
+              "depth": 4,
+              "nodeId": "c8-internalization",
+              "parentNodeId": "c7-systems-reply",
+              "relationId": "r-c8-c7"
+            }
+          ]
+        }
+      ],
+      "version": "horn-query-result/0.1"
+    }
+  ],
+  "runtime": "horn-runtime/0.1",
+  "source": {
+    "digest": "sha256:a18565ce9ab0a13773f30246edcac7069faf55c2fd3aa5accbf3d9e90a60533e",
+    "documentId": "horn:authored:2026:chinese-room",
+    "documentVersion": "horn-document/0.1"
+  },
+  "validation": {
+    "documentContract": "horn-document/0.1",
+    "documentId": "horn:authored:2026:chinese-room",
+    "issues": [],
+    "ok": true,
+    "version": "horn-validation-report/0.1"
+  },
+  "version": "horn-inspect/0.1"
+}

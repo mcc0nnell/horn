@@ -27,7 +27,8 @@
     "golden:validation": "node golden/validation/compare.mjs",
     "golden:projection": "node golden/projection/compare.mjs",
     "golden:reactor": "node golden/reactor/compare.mjs",
-    "golden:torture": "node golden/reactor/torture.mjs"
+    "golden:torture": "node golden/reactor/torture.mjs",
+    "golden:celix": "node golden/celix/compare.mjs"
   },
   "dependencies": {
     "echarts": "^6.1.0"
