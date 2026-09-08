@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-evidence-impact-request-0.1.schema.json",
+  "title": "Horn evidence impact request",
+  "type": "object",
+  "required": ["version", "queries"],
+  "properties": {
+    "version": { "const": "horn-evidence-impact-request/0.1" },
+    "queries": {
+      "type": "array",
+      "items": { "$ref": "./horn-query-request-0.1.schema.json" }
+    }
+  },
+  "additionalProperties": false
+}
