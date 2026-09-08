@@ -82,6 +82,19 @@ Reserved seam for analytical projection generation. A provider is intentionally 
 
 The projection service returns a Horn projection artifact, not an ECharts option. Rendering libraries remain clients of the runtime.
 
+### `horn::IQueryService`
+
+Reserved seam for deterministic structural analysis. It consumes canonical Horn document JSON plus `horn-query-request/0.1` and returns `horn-query-result/0.1`.
+
+The TypeScript reference currently defines the first query operations:
+
+- `graph` — reader-facing dialogue reachability and frontier;
+- `counterfactual` — hypothetical node/relation suppression with impact reporting;
+- `dominators` — nodes present on every selected dialogue path to a target;
+- `min-cut` — one deterministic minimum internal vertex cut between focus and target.
+
+The native provider is intentionally not registered yet. See ADR-0017. It must demonstrate golden equivalence with the TypeScript reference before becoming a Celix service implementation.
+
 ## Projection rule
 
 Horn has two different visual obligations:
@@ -90,6 +103,14 @@ Horn has two different visual obligations:
 - analytical projections may abstract that geometry to answer a question.
 
 The runtime must keep those obligations distinct. A timeline, evidence network, frontier view, or argument topology may be generated from a Horn document, but none is allowed to rewrite the document it came from.
+
+## Query rule
+
+Deterministic query output is also derived and disposable.
+
+Reader-facing query traversal follows the existing Horn rule that semantic relation direction and reading direction are distinct. The query layer never rewrites persisted `from`, `to`, route geometry, authored claims, or source provenance.
+
+Counterfactual suppression is hypothetical only. Dominators and minimum cuts are graph-theoretic properties of the selected relation vocabulary, not assertions about truth or evidential sufficiency.
 
 ## Zeppelin rule
 
@@ -121,9 +142,17 @@ Define a renderer-neutral projection artifact and compare TypeScript and native 
 
 Acceptance rule: ECharts receives data from the projection contract; ECharts-specific options remain outside libhorn.
 
-### Phase 3 — query and provenance services
+### Phase 2.5 — deterministic query reference
 
-Move deterministic graph queries, provenance traversal, and semantic diff into native services once their contracts are stable.
+Stabilize `horn-query-request/0.1` and `horn-query-result/0.1` around graph, counterfactual, dominator, and minimum-cut fixtures. Establish stable ordering and exact expected outputs.
+
+Acceptance rule: query results are deterministic, source-preserving, and never mutate authored Horn state.
+
+### Phase 3 — native query and provenance services
+
+Port deterministic query behavior into `IQueryService`, then move provenance traversal and semantic diff into native services once their contracts are stable.
+
+Acceptance rule: no native query provider registration before TypeScript/native golden equivalence.
 
 ### Phase 4 — native authority
 
