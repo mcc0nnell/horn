@@ -6,12 +6,20 @@
       "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution."
     },
     {
+      "title": "Runtime",
+      "text": "%horn runtime"
+    },
+    {
       "title": "Manifest",
       "text": "%horn manifest maps/chinese-room-slice.horn.json"
     },
     {
       "title": "Validate",
       "text": "%horn validate maps/chinese-room-slice.horn.json"
+    },
+    {
+      "title": "Inspect",
+      "text": "%horn inspect maps/chinese-room-slice.horn.json"
     },
     {
       "title": "Mural",
@@ -27,7 +35,7 @@
     },
     {
       "title": "Authority boundary",
-      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. It invokes the same transport-neutral HORN adapter proven by Z1-A. The network is a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
+      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation and inspection use the pinned Celix-discovered libhorn services. The network remains a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
     }
   ]
 }

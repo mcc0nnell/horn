@@ -7,6 +7,7 @@ REPO_ROOT="${HORN_REPO:-$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)}"
 ZEPPELIN_URL="${ZEPPELIN_URL:-http://127.0.0.1:8080}"
 FIXTURE="$REPO_ROOT/zeppelin/notebooks/chinese-room-z1-horn.json"
 export HORN_REPO="$REPO_ROOT"
+export HORN_CELIX="${HORN_CELIX:-$REPO_ROOT/build/native/horn_celix}"
 
 fail() {
   echo "HORN-Z1 native interpreter failure: $*" >&2
@@ -77,20 +78,42 @@ assert_note() {
   local manifest_out="$2"
   local signature_out="$3"
 
-  local manifest validate network audit mural digest
+  local runtime manifest validate inspect network audit mural digest expected_pin
+  runtime="$(paragraph_data "$note_file" "%horn runtime" "TEXT")"
   manifest="$(paragraph_data "$note_file" "%horn manifest" "TEXT")"
   validate="$(paragraph_data "$note_file" "%horn validate" "TEXT")"
+  inspect="$(paragraph_data "$note_file" "%horn inspect" "TEXT")"
   mural="$(paragraph_data "$note_file" "%horn render" "HTML")"
   network="$(paragraph_data "$note_file" "%horn network" "NETWORK")"
   audit="$(paragraph_data "$note_file" "%horn audit" "TEXT")"
+  expected_pin="$(jq -er '.celix.commit' "$REPO_ROOT/native/celix-pin.json")"
 
+  [[ -n "$runtime" ]] || fail "%horn runtime did not produce Celix probe output"
   [[ -n "$mural" ]] || fail "%horn render did not produce native HTML"
   [[ -n "$network" ]] || fail "%horn network did not produce native NETWORK output"
 
+  jq -e --arg pin "$expected_pin" '
+    .version == "horn-celix-probe/0.1"
+    and .ok == true
+    and .pin.commit == $pin
+    and ([.services[].interface] | index("horn::IValidationService") != null)
+    and ([.services[].interface] | index("horn::IProjectionService") != null)
+  ' <<<"$runtime" >/dev/null \
+    || fail "runtime probe did not expose the pinned libhorn Celix service plane"
   jq -e '.projectionContract == "horn-zeppelin/0.1" and .renderer == "horn-svg"' <<<"$manifest" >/dev/null \
     || fail "manifest contract is missing or wrong"
-  jq -e '.valid == true and (.issues | length == 0)' <<<"$validate" >/dev/null \
-    || fail "validate did not report a clean HORN document"
+  jq -e '.version == "horn-validation-report/0.1" and .ok == true and (.issues | length == 0)' <<<"$validate" >/dev/null \
+    || fail "Celix validation did not report a clean HORN document"
+  jq -e '
+    .version == "horn-inspect/0.1"
+    and .runtime == "horn-runtime/0.1"
+    and .validation.ok == true
+    and .projections.argument.version == "horn-projection/0.1"
+    and .projections.timeline.version == "horn-projection/0.1"
+    and .projections.evidence.version == "horn-projection/0.1"
+    and .projections.frontier.version == "horn-projection/0.1"
+  ' <<<"$inspect" >/dev/null \
+    || fail "Celix inspect did not compose the expected headless projection packet"
   jq -e '.hornProjection.fidelity == "lossy-semantic-projection" and .hornProjection.roundTrip == false' <<<"$network" >/dev/null \
     || fail "network weakened the lossy/non-round-trip boundary"
   jq -e '(.layerA | length) > 0 and (.layerB | length) > 0 and all(.layerA[]; .layer == "mapped") and all(.layerB[]; .layer == "cartographic")' <<<"$audit" >/dev/null \
@@ -111,6 +134,13 @@ assert_note() {
     loss: .hornProjection
   }' <<<"$network" >"$signature_out"
 }
+
+if [[ ! -x "$HORN_CELIX" ]]; then
+  cmake -S "$REPO_ROOT/native" -B "$REPO_ROOT/build/native" -DHORN_WITH_CELIX=ON
+  cmake --build "$REPO_ROOT/build/native" --parallel
+fi
+[[ -x "$HORN_CELIX" ]] || fail "horn_celix was not built at $HORN_CELIX"
+"$HORN_CELIX" probe >/dev/null || fail "pinned horn_celix runtime probe failed before Zeppelin startup"
 
 "$ZEPPELIN_HOME/bin/zeppelin-daemon.sh" start
 wait_for_zeppelin

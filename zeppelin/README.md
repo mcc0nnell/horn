@@ -76,7 +76,7 @@ export HORN_REPO=/absolute/path/to/horn
 
 Restart Zeppelin after installation. `HORN_REPO` identifies the checkout containing the canonical maps, TypeScript presentation adapter, and native build. `HORN_CELIX` may override the default `build/native/horn_celix` path. `HORN_NPM` and `HORN_COMMAND_TIMEOUT_MILLIS` correspond to interpreter properties `horn.npm` and `horn.command.timeout.millis`.
 
-The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). The existing round-trip harness remains presentation-focused; the Celix service-plane contract is independently covered by `golden:celix`. A future integration slice can make the Zeppelin fixture itself assert the runtime probe without changing HORN semantics.
+The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). [`integration/run-z1-native-interpreter.sh`](integration/run-z1-native-interpreter.sh) ensures the pinned native runtime is built, probes its service plane before Zeppelin starts, executes `%horn runtime`, Celix-backed validation and inspection, and the presentation projections, then exports/re-imports the note and rechecks the runtime and semantic boundaries.
 
 ## Z1-A shell bridge
 
