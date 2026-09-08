@@ -1,13 +1,13 @@
 # libhorn on Apache Celix
 
-Status: analysis reactor landed; Celix is pinned (ADR-0017); native authority still gated by golden equivalence
+Status: analysis reactor landed; Celix is pinned (ADR-0017); ephemeral reasoning sessions are Celix-owned (ADR-0019); native authority still gated by golden equivalence
 
 ## Purpose
 
 Horn is growing two execution surfaces at once:
 
 1. a fast TypeScript/Zeppelin/ECharts environment for discovering interaction and projection semantics;
-2. a durable native runtime for validation, query, provenance, diff, and projection services.
+2. a durable native runtime for validation, query, provenance, diff, projection, and reasoning-session services.
 
 `libhorn` is the second surface. It lives in this repository under `native/` until it has an independent release and ABI lifecycle.
 
@@ -19,24 +19,25 @@ The native runtime does not replace Horn's existing authority rules.
 canonical Horn artifacts
         |
         v
-+-----------------------+
-|       libhorn         |
-|     C++ / Celix       |
-|                       |
-| validation   query    |
-| provenance   diff     |
-| projection services   |
-+-----------+-----------+
-            |
-      projection artifact
-        +---+---+
-        |       |
-        v       v
-   Zeppelin   ECharts
-   workbench  analytical UI
++-----------------------------+
+|           libhorn           |
+|         C++ / Celix         |
+|                             |
+| validation      query       |
+| projection      explain     |
+| impact          diff        |
+| reasoning-session service   |
++-------------+---------------+
+              |
+      derived result/session
+          +---+---+
+          |       |
+          v       v
+     Zeppelin   ECharts
+     workbench  analytical UI
 ```
 
-The canonical `.horn.json` document remains the serialization authority for the authored mural. Analytical projections are derived views. They must never become a round-trip source for historical or authored geometry.
+The canonical `.horn.json` document remains the serialization authority for the authored mural. Analytical projections and reasoning sessions are derived views/state. They must never become a round-trip source for historical or authored geometry.
 
 ## Why the native ABI is artifact-based first
 
@@ -81,15 +82,24 @@ Evidence snapshot + bindings + current document → `horn-impact-report/0.1`. Th
 
 Before/after Horn artifacts → `horn-diff/0.1`, with authored geometry separated from derived projection consequences.
 
-`horn_inspect` composes these services. It is not itself a semantic authority.
+### `horn::IReasoningSessionService`
 
-Apache Celix is pinned at an exact commit in `native/celix-pin.json`. CMake
-fetches that commit into the build prefix when `HORN_WITH_CELIX=ON`. A host
-Celix install is not used. See ADR-0017.
+Owns ephemeral composition across the existing analysis services. The service consumes `horn-reasoning-session-request/0.1` and returns `horn-reasoning-session-response/0.1`, carrying a `horn-reasoning-session/0.1` envelope between calls.
 
-`horn_celix` starts a framework, installs `HornContractBundle`, and invokes the
-six analysis services plus `IRuntimeDescriptor` through discovery. `golden:celix`
-compares TypeScript, standalone native CLIs, and native-under-Celix.
+The session service owns binding replacement, `@name` / JSON Pointer resolution, binding digests, downstream Celix service discovery, and the `horn-reasoning-bindings/0.1` summary. It is state-carrying by envelope rather than process-persistent, so a fresh `horn_celix` process can execute each step without moving composition semantics into the caller.
+
+Canonical document inputs are explicit `authority: "canonical"` values. A derived binding reference can never satisfy a document operand. This runtime check is authoritative even for callers that bypass Zeppelin. See ADR-0019.
+
+`horn_inspect` composes validation/projection/query/explanation/impact for a broad inspection packet. `IReasoningSessionService` composes derived results across calls. Neither is a serialization authority.
+
+Apache Celix is pinned at an exact commit in `native/celix-pin.json`. CMake fetches that commit into the build prefix when `HORN_WITH_CELIX=ON`. A host Celix install is not used. See ADR-0017.
+
+`horn_celix` starts a framework, installs `HornContractBundle`, and invokes the discovered libhorn services. Its `session` command is a thin transport into `IReasoningSessionService`; it does not implement binding semantics itself.
+
+`golden:celix` now proves two things:
+
+1. TypeScript, standalone native CLIs, and native-under-Celix remain semantically equivalent for the established analysis contracts;
+2. the Celix reasoning-session plane executes `query → bind → JSON Pointer → explain` and rejects derived-result promotion into a canonical document position.
 
 ## Projection rule
 
@@ -102,9 +112,14 @@ The runtime must keep those obligations distinct. A timeline, evidence network, 
 
 ## Zeppelin rule
 
-Zeppelin is a runtime envelope and workbench, not a Horn authority.
+Zeppelin is a runtime envelope and workbench, not a Horn authority or composition engine.
 
-A future `%horn` interpreter should discover libhorn services and call them through a thin adapter. Notebook state may select a document, query, or projection, but a notebook export must not silently mutate the canonical Horn artifact.
+The `%horn` interpreter has two responsibilities around native reasoning:
+
+- resolve repository-relative literal/canonical inputs and package them into calls;
+- retain the returned `horn-reasoning-session/0.1` envelope opaquely for each note.
+
+For composed paragraphs, Zeppelin sends binding references such as `@lookup#/node/id` to `IReasoningSessionService` unchanged. It does not resolve JSON Pointers, compute binding digests, or decide replacement semantics. Notebook export still serializes paragraphs rather than session values, so replay reconstructs derived state through Celix service calls.
 
 ## Migration sequence
 
@@ -123,6 +138,10 @@ Landed as renderer-neutral projection artifacts. See ADR-0016 and `golden:projec
 ### Phase 3 — query and provenance services
 
 Landed as artifact-based query, explanation, impact, diff, and inspect composition. Equivalence is proven by `golden:reactor` and `golden:torture`.
+
+### Phase 3B — reasoning sessions
+
+Landed on the Celix-session branch. `IReasoningSessionService` moves ephemeral derived-result composition out of Zeppelin and into the discovered native service plane while retaining the non-promotion rule. See ADR-0019 and `golden/celix/session.mjs`.
 
 ### Phase 4 — native authority
 
