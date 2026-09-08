@@ -1,0 +1,22 @@
+[
+  {
+    "name": "graph",
+    "request": {"version":"horn-query-request/0.1","operation":"graph","focusNodeId":"focus"},
+    "expected": {"version":"horn-query-result/0.1","requestVersion":"horn-query-request/0.1","operation":"graph","source":{"documentId":"horn:test:golden-reactor-diamond","documentVersion":"horn-document/0.1"},"result":{"focusNodeId":"focus","nodeIds":["focus","a","b","join","target"],"edges":[{"relationId":"a-focus","kind":"supports","earlierNodeId":"focus","responseNodeId":"a"},{"relationId":"b-focus","kind":"disputes","earlierNodeId":"focus","responseNodeId":"b"},{"relationId":"join-a","kind":"supports","earlierNodeId":"a","responseNodeId":"join"},{"relationId":"join-b","kind":"disputes","earlierNodeId":"b","responseNodeId":"join"},{"relationId":"target-join","kind":"supports","earlierNodeId":"join","responseNodeId":"target"}],"frontierNodeIds":["target"]}}
+  },
+  {
+    "name": "counterfactual",
+    "request": {"version":"horn-query-request/0.1","operation":"counterfactual","focusNodeId":"focus","suppress":{"nodeIds":["join"]}},
+    "expected": {"version":"horn-query-result/0.1","requestVersion":"horn-query-request/0.1","operation":"counterfactual","source":{"documentId":"horn:test:golden-reactor-diamond","documentVersion":"horn-document/0.1"},"result":{"focusNodeId":"focus","suppressedNodeIds":["join"],"suppressedRelationIds":[],"baseline":{"reachableNodeIds":["focus","a","b","join","target"],"frontierNodeIds":["target"]},"result":{"reachableNodeIds":["focus","a","b"],"frontierNodeIds":["a","b"]},"disconnectedNodeIds":["join","target"],"frontierDelta":{"addedNodeIds":["a","b"],"removedNodeIds":["target"]}}}
+  },
+  {
+    "name": "dominators",
+    "request": {"version":"horn-query-request/0.1","operation":"dominators","focusNodeId":"focus","targetNodeId":"target"},
+    "expected": {"version":"horn-query-result/0.1","requestVersion":"horn-query-request/0.1","operation":"dominators","source":{"documentId":"horn:test:golden-reactor-diamond","documentVersion":"horn-document/0.1"},"result":{"focusNodeId":"focus","targetNodeId":"target","dominatorNodeIds":["focus","join","target"],"strictDominatorNodeIds":["join"]}}
+  },
+  {
+    "name": "min-cut",
+    "request": {"version":"horn-query-request/0.1","operation":"min-cut","focusNodeId":"focus","targetNodeId":"target"},
+    "expected": {"version":"horn-query-result/0.1","requestVersion":"horn-query-request/0.1","operation":"min-cut","source":{"documentId":"horn:test:golden-reactor-diamond","documentVersion":"horn-document/0.1"},"result":{"focusNodeId":"focus","targetNodeId":"target","finite":true,"cardinality":1,"cutNodeIds":["join"]}}
+  }
+]
