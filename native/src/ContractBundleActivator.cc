@@ -61,7 +61,8 @@ public:
     if (!session.contains("version")) {
         session["version"] = std::string{horn::REASONING_SESSION_CONTRACT};
     }
-    if (horn::asString(session.value("version", horn::json())) != horn::REASONING_SESSION_CONTRACT) {
+    if (horn::asString(session.value("version", horn::json())) !=
+        std::string{horn::REASONING_SESSION_CONTRACT}) {
         throw std::runtime_error("Unsupported Horn reasoning session contract");
     }
     if (!session.contains("id") || !session.at("id").is_string() ||
@@ -75,17 +76,19 @@ public:
     return session;
 }
 
-[[nodiscard]] const horn::json& findBinding(
+[[nodiscard]] horn::json findBinding(
     const horn::json& session,
     std::string_view name) {
-    for (const auto& binding : horn::arrayOrEmpty(session, "bindings")) {
+    const std::string expectedName{name};
+    const auto& bindings = session.at("bindings");
+    for (const auto& binding : bindings) {
         if (binding.is_object() &&
-            horn::asString(binding.value("name", horn::json())) == name &&
+            horn::asString(binding.value("name", horn::json())) == expectedName &&
             binding.contains("value")) {
             return binding;
         }
     }
-    throw std::runtime_error("Unknown Horn reasoning binding @" + std::string{name});
+    throw std::runtime_error("Unknown Horn reasoning binding @" + expectedName);
 }
 
 [[nodiscard]] horn::json resolveReference(
@@ -102,8 +105,8 @@ public:
         throw std::runtime_error("Invalid Horn reasoning binding name " + name);
     }
 
-    const auto& binding = findBinding(session, name);
-    const horn::json& value = binding.at("value");
+    const horn::json binding = findBinding(session, name);
+    const horn::json value = binding.at("value");
     if (hash == std::string_view::npos) {
         return value;
     }
@@ -149,7 +152,8 @@ public:
             std::string{label} + " must be an explicit canonical Horn document value");
     }
     const auto& document = operand.at("value");
-    if (horn::asString(document.value("version", horn::json())) != horn::DOCUMENT_CONTRACT) {
+    if (horn::asString(document.value("version", horn::json())) !=
+        std::string{horn::DOCUMENT_CONTRACT}) {
         throw std::runtime_error(
             std::string{label} + " is not a " + std::string{horn::DOCUMENT_CONTRACT});
     }
@@ -202,19 +206,20 @@ void bindResult(
     }
     auto& bindings = session["bindings"];
     horn::json replacement = horn::json::object();
-    replacement["command"] = command;
+    replacement["command"] = std::string{command};
     replacement["contract"] = result.is_object()
         ? horn::asString(result.value("version", horn::json()))
         : "";
-    replacement["name"] = name;
+    replacement["name"] = std::string{name};
     replacement["sha256"] = horn::sha256Prefixed(horn::dumpCompactSorted(result));
     replacement["value"] = result;
 
     horn::json next = horn::json::array();
     bool replaced = false;
+    const std::string expectedName{name};
     for (const auto& binding : bindings) {
         if (binding.is_object() &&
-            horn::asString(binding.value("name", horn::json())) == name) {
+            horn::asString(binding.value("name", horn::json())) == expectedName) {
             if (!replaced) {
                 next.push_back(replacement);
                 replaced = true;
@@ -260,7 +265,7 @@ public:
         const horn::json request = horn::json::parse(reasoningSessionRequestJson);
         if (!request.is_object() ||
             horn::asString(request.value("version", horn::json())) !=
-                horn::REASONING_SESSION_REQUEST_CONTRACT) {
+                std::string{horn::REASONING_SESSION_REQUEST_CONTRACT}) {
             throw std::runtime_error("Unsupported Horn reasoning session request contract");
         }
         if (!request.contains("command") || !request.at("command").is_object()) {
