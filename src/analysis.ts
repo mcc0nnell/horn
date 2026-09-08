@@ -162,11 +162,10 @@ export function analyzeHornCounterfactual(
 ): HornCounterfactualResult {
   const order = stableNodeOrder(document);
   const baseline = deriveHornDialogueGraph(document, focusNodeId, {
-    relationKinds: options.relationKinds,
+    ...(options.relationKinds ? { relationKinds: options.relationKinds } : {}),
   });
   const result = deriveHornDialogueGraph(document, focusNodeId, options);
 
-  const baselineNodes = new Set(baseline.nodeIds);
   const resultNodes = new Set(result.nodeIds);
   const baselineFrontier = deriveHornDialogueFrontier(baseline);
   const resultFrontier = deriveHornDialogueFrontier(result);
