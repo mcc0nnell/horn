@@ -8,6 +8,7 @@ export type HornSourceLocator = {
   gitBlobSha1: string;
   bytes: number;
   role?: string;
+  aliases?: string[];
 };
 
 export type HornSourceSeriesMap = HornSourceLocator & {
@@ -52,6 +53,10 @@ function validBlobSha1(value: unknown): value is string {
   return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
 }
 
+function validRepositoryPath(value: string): boolean {
+  return value.startsWith("docs/") || value.startsWith("public/horn/");
+}
+
 function validateLocator(
   issues: HornSourceSeriesIssue[],
   value: unknown,
@@ -64,10 +69,10 @@ function validateLocator(
 
   if (!nonEmptyString(value.path)) {
     issues.push({ code: "missing-source-path", message: `${subject} needs a path` });
-  } else if (!value.path.startsWith("docs/")) {
+  } else if (!validRepositoryPath(value.path)) {
     issues.push({
-      code: "source-outside-docs",
-      message: `${subject} must reference the calibrated docs/ source copy`,
+      code: "source-outside-registry-roots",
+      message: `${subject} must reference docs/ or public/horn/ in the source repository`,
     });
   }
 
@@ -83,6 +88,33 @@ function validateLocator(
       code: "invalid-source-size",
       message: `${subject} needs a positive integer byte length`,
     });
+  }
+
+  if (value.aliases !== undefined) {
+    if (!Array.isArray(value.aliases)) {
+      issues.push({ code: "invalid-source-aliases", message: `${subject} aliases must be an array` });
+    } else {
+      const aliases = new Set<string>();
+      for (const [index, alias] of value.aliases.entries()) {
+        if (!nonEmptyString(alias)) {
+          issues.push({ code: "invalid-source-alias", message: `${subject} alias ${index} must be a non-empty path` });
+          continue;
+        }
+        if (!validRepositoryPath(alias)) {
+          issues.push({
+            code: "source-alias-outside-registry-roots",
+            message: `${subject} alias ${alias} must reference docs/ or public/horn/`,
+          });
+        }
+        if (alias === value.path) {
+          issues.push({ code: "source-alias-equals-path", message: `${subject} alias duplicates its primary path` });
+        }
+        if (aliases.has(alias)) {
+          issues.push({ code: "duplicate-source-alias", message: `${subject} repeats alias ${alias}` });
+        }
+        aliases.add(alias);
+      }
+    }
   }
 }
 
