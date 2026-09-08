@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-proof-verification-0.1.schema.json",
+  "title": "Horn proof verification report",
+  "type": "object",
+  "required": ["version", "proofId", "sourceDocumentId", "ok", "issues"],
+  "properties": {
+    "version": { "const": "horn-proof-verification/0.1" },
+    "proofId": {
+      "anyOf": [
+        { "type": "string", "pattern": "^horn-proof:[0-9a-f]{64}$" },
+        { "type": "null" }
+      ]
+    },
+    "sourceDocumentId": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string", "minLength": 1 },
+          "message": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

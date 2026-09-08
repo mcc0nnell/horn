@@ -11,6 +11,8 @@ inline constexpr std::string_view DOCUMENT_CONTRACT = "horn-document/0.1";
 inline constexpr std::string_view PROJECTION_CONTRACT = "horn-projection/0.1";
 inline constexpr std::string_view QUERY_REQUEST_CONTRACT = "horn-query-request/0.1";
 inline constexpr std::string_view QUERY_RESULT_CONTRACT = "horn-query-result/0.1";
+inline constexpr std::string_view PROOF_CONTRACT = "horn-proof/0.1";
+inline constexpr std::string_view PROOF_VERIFICATION_CONTRACT = "horn-proof-verification/0.1";
 
 enum class ProjectionView {
     Argument,
@@ -83,8 +85,8 @@ public:
  *
  * Both parameters and the result are serialized Horn contract artifacts. A
  * provider may answer graph, counterfactual, dominator, minimum-cut, and later
- * proof-producing queries only after golden equivalence with the TypeScript
- * reference implementation is established.
+ * query operations only after golden equivalence with the TypeScript reference
+ * implementation is established.
  */
 class IQueryService {
 public:
@@ -93,6 +95,27 @@ public:
     [[nodiscard]] virtual std::string queryDocument(
         std::string_view canonicalHornDocumentJson,
         std::string_view hornQueryRequestJson) const = 0;
+};
+
+/**
+ * Native proof orchestration seam.
+ *
+ * Proof generation and verification bind deterministic query results to the
+ * canonical document digest and the structural dependency witness. A provider
+ * should compose equivalent query behavior; it does not create a new Horn
+ * semantic authority.
+ */
+class IProofService {
+public:
+    virtual ~IProofService() noexcept = default;
+
+    [[nodiscard]] virtual std::string createProof(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view hornQueryRequestJson) const = 0;
+
+    [[nodiscard]] virtual std::string verifyProof(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view hornProofJson) const = 0;
 };
 
 } // namespace horn
