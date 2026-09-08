@@ -58,6 +58,16 @@
       }
     },
     {
+      "interface": "horn::IReasoningSessionService",
+      "properties": {
+        "horn.document.contract": "horn-document/0.1",
+        "horn.reasoning.session.contract": "horn-reasoning-session/0.1",
+        "horn.reasoning.session.request": "horn-reasoning-session-request/0.1",
+        "horn.reasoning.session.response": "horn-reasoning-session-response/0.1",
+        "horn.runtime.api": "horn-runtime/0.1"
+      }
+    },
+    {
       "interface": "horn::IRuntimeDescriptor",
       "properties": {
         "horn.document.contract": "horn-document/0.1",
