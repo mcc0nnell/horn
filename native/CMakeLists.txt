@@ -1,6 +1,10 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.19)
 
 project(libhorn VERSION 0.1.0 LANGUAGES CXX)
+
+option(HORN_WITH_CELIX
+    "Build HornContractBundle against the pinned Apache Celix (fetched, not host-installed)"
+    ON)
 
 add_library(horn_runtime_api INTERFACE)
 target_include_directories(horn_runtime_api
@@ -78,11 +82,10 @@ add_executable(horn_inspect src/horn_inspect_main.cc)
 target_link_libraries(horn_inspect PRIVATE horn_reactor)
 target_compile_features(horn_inspect PRIVATE cxx_std_17)
 
-# Celix packaging is optional so the analysis libraries + CLIs can still build
-# on hosts without Apache Celix installed.
-find_package(Celix QUIET)
-if(Celix_FOUND)
-    message(STATUS "Celix found — building HornContractBundle and container")
+# Celix is pinned and fetched. Analysis CLIs still build when HORN_WITH_CELIX=OFF.
+if(HORN_WITH_CELIX)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/HornPinCelix.cmake")
+    message(STATUS "Celix pin ${HORN_CELIX_VERSION} @ ${HORN_CELIX_COMMIT}")
     add_celix_bundle(HornContractBundle
         NAME "Horn Runtime Contract"
         SYMBOLIC_NAME "org.mcc0nnell.horn.runtime.contract"
@@ -93,12 +96,27 @@ if(Celix_FOUND)
     target_link_libraries(HornContractBundle PRIVATE horn_runtime_api horn_reactor)
     target_compile_features(HornContractBundle PRIVATE cxx_std_17)
 
+    add_executable(horn_celix src/horn_celix_main.cc)
+    target_link_libraries(horn_celix PRIVATE horn_reactor Celix::framework)
+    target_compile_features(horn_celix PRIVATE cxx_std_17)
+    add_dependencies(horn_celix HornContractBundle)
+    get_target_property(HORN_BUNDLE_FILE HornContractBundle BUNDLE_FILE)
+    target_compile_definitions(horn_celix PRIVATE
+        HORN_CONTRACT_BUNDLE_FILE="${HORN_BUNDLE_FILE}"
+        HORN_CELIX_COMMIT="${HORN_CELIX_COMMIT}"
+        HORN_CELIX_VERSION="${HORN_CELIX_VERSION}"
+        HORN_CELIX_REPOSITORY="${HORN_CELIX_REPOSITORY}"
+    )
+    set_target_properties(horn_celix PROPERTIES
+        BUILD_RPATH "${HORN_CELIX_PREFIX}/lib;${HORN_DEPS_PREFIX}/lib"
+        INSTALL_RPATH "$ORIGIN/../lib;${HORN_CELIX_PREFIX}/lib;${HORN_DEPS_PREFIX}/lib"
+    )
+
     add_celix_container(HornContractRuntime
         CXX
         BUNDLES
             HornContractBundle
     )
 else()
-    message(STATUS "Celix not found — building analysis libraries and CLIs only")
-    message(STATUS "Install Apache Celix and reconfigure to build HornContractBundle")
+    message(STATUS "HORN_WITH_CELIX=OFF — building analysis libraries and CLIs only")
 endif()

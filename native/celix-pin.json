@@ -1,0 +1,38 @@
+{
+  "version": "horn-celix-pin/0.1",
+  "interpretationBoundary": "This pin is a documented safe-default for building HornContractBundle from a clean tree. It does not warrant that this graph is Celix's canonical, released, or universally applicable dependency state.",
+  "celix": {
+    "repository": "https://github.com/apache/celix.git",
+    "commit": "270c784d20dabd0b1f6418c7ee2195822ec9ef90",
+    "version": "3.0.0",
+    "archive": "https://github.com/apache/celix/archive/270c784d20dabd0b1f6418c7ee2195822ec9ef90.tar.gz",
+    "archiveSha256": "b6f54dafcd918321617dec25ac2863030250d69574036579a7da2578af0e099e"
+  },
+  "libraries": {
+    "zlib": {
+      "version": "1.3.1",
+      "archive": "https://github.com/madler/zlib/releases/download/v1.3.1/zlib-1.3.1.tar.gz",
+      "archiveSha256": "9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23"
+    },
+    "libzip": {
+      "version": "1.11.4",
+      "archive": "https://github.com/nih-at/libzip/releases/download/v1.11.4/libzip-1.11.4.tar.gz",
+      "archiveSha256": "82e9f2f2421f9d7c2466bbc3173cd09595a88ea37db0d559a9d0a2dc60dc722e"
+    },
+    "libuv": {
+      "version": "1.51.0",
+      "archive": "https://github.com/libuv/libuv/archive/refs/tags/v1.51.0.tar.gz",
+      "archiveSha256": "27e55cf7083913bfb6826ca78cde9de7647cded648d35f24163f2d31bb9f51cd"
+    },
+    "jansson": {
+      "version": "2.14",
+      "archive": "https://github.com/akheron/jansson/releases/download/v2.14/jansson-2.14.tar.gz",
+      "archiveSha256": "5798d010e41cf8d76b66236cfb2f2543c8d082181d16bc3085ab49538d4b9929"
+    }
+  },
+  "uuidHeaderDeb": {
+    "url": "http://deb.debian.org/debian/pool/main/u/util-linux/uuid-dev_2.38.1-5+deb12u3_amd64.deb",
+    "sha256": "d66c5719adc05b6f5cbac926e093846c865f0b1a2095e6d781df8a7ce1f34cbf",
+    "note": "Used only when uuid/uuid.h is missing. Prefer distro uuid-dev in a clean container."
+  }
+}
