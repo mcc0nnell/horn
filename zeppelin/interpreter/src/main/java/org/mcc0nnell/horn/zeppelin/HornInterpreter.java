@@ -3,16 +3,14 @@ package org.mcc0nnell.horn.zeppelin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -31,12 +29,12 @@ import org.apache.zeppelin.interpreter.InterpreterResult.Type;
 /**
  * Thin Apache Zeppelin interpreter for canonical HORN documents.
  *
- * <p>This class deliberately contains no HORN validation, rendering, graph,
- * provenance, or layout semantics. Presentation views delegate to the
- * transport-neutral TypeScript adapter. Headless analysis delegates to
- * horn_celix, which discovers the pinned libhorn services inside a real Celix
- * framework. Notebook composition is derived and ephemeral: named results live
- * only in interpreter memory and can never replace canonical HORN documents.</p>
+ * <p>This class deliberately contains no HORN validation, graph, provenance,
+ * binding-resolution, JSON-Pointer, or reasoning-session semantics. Presentation
+ * views delegate to the transport-neutral TypeScript adapter. Direct headless
+ * analysis delegates to horn_celix. Composed analysis transports an opaque
+ * note-scoped session envelope to IReasoningSessionService, which owns binding
+ * resolution and service orchestration inside Celix.</p>
  */
 public class HornInterpreter extends Interpreter {
   static final String PROP_REPO = "horn.repo";
@@ -46,7 +44,9 @@ public class HornInterpreter extends Interpreter {
 
   private static final long DEFAULT_TIMEOUT_MILLIS = 60_000L;
   private static final String DEFAULT_NOTE_KEY = "__horn_default_note__";
-  private static final String BINDINGS_CONTRACT = "horn-zeppelin-bindings/0.1";
+  private static final String SESSION_CONTRACT = "horn-reasoning-session/0.1";
+  private static final String SESSION_REQUEST_CONTRACT = "horn-reasoning-session-request/0.1";
+  private static final String SESSION_RESPONSE_CONTRACT = "horn-reasoning-session-response/0.1";
   private static final ObjectMapper JSON = new ObjectMapper();
   private static final Set<String> PRESENTATION_COMMANDS =
       Set.of("render", "network", "audit", "manifest");
@@ -54,10 +54,12 @@ public class HornInterpreter extends Interpreter {
       Set.of("validate", "inspect");
   private static final Set<String> MULTI_OPERAND_ANALYSIS_COMMANDS =
       Set.of("query", "explain", "impact", "diff");
-  private static final Set<String> BINDABLE_COMMANDS =
-      Set.of("runtime", "validate", "inspect", "query", "explain", "impact", "diff");
+  private static final Set<String> SESSION_BINDABLE_COMMANDS =
+      Set.of("validate", "query", "explain", "impact", "diff");
 
-  private final Map<String, Map<String, Binding>> bindingsByNote = new ConcurrentHashMap<>();
+  /** Opaque envelopes returned by IReasoningSessionService, keyed only by note id. */
+  private final Map<String, JsonNode> sessionsByNote = new ConcurrentHashMap<>();
+
   private Path repositoryRoot;
   private String npmCommand;
   private Path celixCommand;
@@ -109,9 +111,9 @@ public class HornInterpreter extends Interpreter {
 
   @Override
   public void close() {
-    bindingsByNote.clear();
-    // No persistent runtime is owned by the interpreter. horn_celix owns one
-    // framework for the duration of each headless command.
+    sessionsByNote.clear();
+    // No persistent native runtime is owned by the interpreter. The opaque
+    // session envelope is transported to a fresh horn_celix process per call.
   }
 
   @Override
@@ -121,24 +123,16 @@ public class HornInterpreter extends Interpreter {
       String noteKey = noteKey(context);
       HornCommand command = parse(statement);
 
-      if ("bindings".equals(command.view)) {
-        return bindingsResult(noteKey);
-      }
-
-      CommandResult commandResult;
       if (PRESENTATION_COMMANDS.contains(command.view)) {
         Path relativeDocument = resolveDocument(command.operands.get(0));
-        commandResult = executeCli(command.view, relativeDocument);
-      } else {
-        try (ResolvedInvocation invocation = buildCelixInvocation(command, noteKey)) {
-          commandResult = executeCelix(command.view, invocation.args);
-        }
+        return mapCommandResult(command.view, executeCli(command.view, relativeDocument));
       }
 
-      if (command.bindingName != null && commandResult.exitCode == 0) {
-        bind(noteKey, command.bindingName, command.view, commandResult.output);
+      if (requiresReasoningSession(command)) {
+        return mapCommandResult(command.view, executeSession(command, noteKey));
       }
-      return mapCommandResult(command.view, commandResult);
+
+      return mapCommandResult(command.view, executeCelix(command.view, buildDirectCelixArgs(command)));
     } catch (InterpreterException exception) {
       return new InterpreterResult(Code.ERROR, Type.TEXT, exception.getMessage());
     } catch (IOException exception) {
@@ -152,8 +146,7 @@ public class HornInterpreter extends Interpreter {
 
   @Override
   public void cancel(InterpreterContext context) {
-    // Z1-B is FIFO and each command has a hard timeout. Process-scoped cancellation
-    // can be added later without changing the HORN authority boundary.
+    // Commands are FIFO and each process has a hard timeout.
   }
 
   @Override
@@ -193,191 +186,223 @@ public class HornInterpreter extends Interpreter {
     return executeProcess(command);
   }
 
-  private ResolvedInvocation buildCelixInvocation(HornCommand command, String noteKey)
-      throws InterpreterException, IOException {
-    List<String> args = new ArrayList<>();
-    List<Path> temporaryFiles = new ArrayList<>();
-    try {
-      switch (command.view) {
-        case "runtime":
-          args.add("probe");
-          break;
-        case "validate":
-          args.add("validate");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          break;
-        case "inspect":
-          args.add("inspect");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          args.add("--projection");
-          args.add("argument");
-          args.add("--projection");
-          args.add("timeline");
-          args.add("--projection");
-          args.add("evidence");
-          args.add("--projection");
-          args.add("frontier");
-          break;
-        case "query":
-          args.add("query");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          args.add(resolveJsonOperand(
-              "HORN query request", command.operands.get(1), noteKey, temporaryFiles).toString());
-          break;
-        case "explain":
-          args.add("explain");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          args.add(resolveScalarOperand("HORN explanation identity", command.operands.get(1), noteKey));
-          for (int index = 2; index < command.operands.size(); index++) {
-            args.add(resolveJsonOperand(
-                "HORN explanation support",
-                command.operands.get(index),
-                noteKey,
-                temporaryFiles).toString());
-          }
-          break;
-        case "impact":
-          args.add("impact");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          args.add(resolveJsonOperand(
-              "HORN evidence", command.operands.get(1), noteKey, temporaryFiles).toString());
-          args.add(resolveJsonOperand(
-              "HORN bindings", command.operands.get(2), noteKey, temporaryFiles).toString());
-          break;
-        case "diff":
-          args.add("diff");
-          args.add(absoluteDocument(command.operands.get(0)).toString());
-          args.add(absoluteDocument(command.operands.get(1)).toString());
-          break;
-        default:
-          throw new InterpreterException("Unsupported Celix-backed HORN view: " + command.view);
+  private boolean requiresReasoningSession(HornCommand command) {
+    if ("bindings".equals(command.view) || command.bindingName != null) {
+      return true;
+    }
+    for (String operand : command.operands) {
+      if (isBindingReference(operand)) {
+        return true;
       }
-      return new ResolvedInvocation(args, temporaryFiles);
-    } catch (InterpreterException | IOException exception) {
-      deleteTemporaryFiles(temporaryFiles);
-      throw exception;
+    }
+    return false;
+  }
+
+  private CommandResult executeSession(HornCommand command, String noteKey)
+      throws IOException, InterruptedException, InterpreterException {
+    if (!"bindings".equals(command.view)
+        && !SESSION_BINDABLE_COMMANDS.contains(command.view)) {
+      throw new InterpreterException(
+          "Celix reasoning sessions currently compose validate, query, explain, impact, and diff");
+    }
+
+    ObjectNode request = JSON.createObjectNode();
+    request.put("version", SESSION_REQUEST_CONTRACT);
+    request.set("session", sessionForNote(noteKey).deepCopy());
+    request.set("command", buildSessionCommand(command));
+    if (command.bindingName != null) {
+      request.put("bind", command.bindingName);
+    }
+
+    Path requestFile = Files.createTempFile("horn-zeppelin-session-", ".json");
+    try {
+      Files.writeString(
+          requestFile,
+          JSON.writerWithDefaultPrettyPrinter().writeValueAsString(request) + "\n",
+          StandardCharsets.UTF_8);
+      CommandResult nativeResult = executeCelix("session", List.of("session", requestFile.toString()));
+      if (nativeResult.exitCode != 0) {
+        return nativeResult;
+      }
+
+      JsonNode response;
+      try {
+        response = JSON.readTree(nativeResult.output);
+      } catch (JsonProcessingException exception) {
+        throw new InterpreterException(
+            "Celix reasoning session returned invalid JSON: " + exception.getOriginalMessage());
+      }
+      if (response == null
+          || !SESSION_RESPONSE_CONTRACT.equals(response.path("version").asText())
+          || !response.has("session")
+          || !response.has("result")) {
+        throw new InterpreterException("Celix reasoning session returned an unexpected envelope");
+      }
+
+      // Zeppelin treats this as opaque transport state. Binding interpretation,
+      // selectors, metadata, and replacement rules remain inside Celix.
+      sessionsByNote.put(noteKey, response.get("session").deepCopy());
+      String resultText = JSON.writerWithDefaultPrettyPrinter()
+          .writeValueAsString(response.get("result")) + "\n";
+      return new CommandResult(0, resultText);
+    } catch (JsonProcessingException exception) {
+      throw new InterpreterException("Unable to serialize HORN reasoning session request");
+    } finally {
+      Files.deleteIfExists(requestFile);
     }
   }
 
-  private Path absoluteDocument(String documentPath) throws InterpreterException {
-    if (isBindingReference(documentPath)) {
+  private ObjectNode buildSessionCommand(HornCommand command)
+      throws InterpreterException, IOException {
+    ObjectNode out = JSON.createObjectNode();
+    out.put("op", command.view);
+    switch (command.view) {
+      case "bindings":
+        break;
+      case "validate":
+        out.set("document", canonicalDocumentOperand(command.operands.get(0)));
+        break;
+      case "query":
+        out.set("document", canonicalDocumentOperand(command.operands.get(0)));
+        out.set("request", jsonOperand("HORN query request", command.operands.get(1)));
+        break;
+      case "explain":
+        out.set("document", canonicalDocumentOperand(command.operands.get(0)));
+        out.set("identity", scalarOperand(command.operands.get(1)));
+        ArrayNode support = out.putArray("support");
+        for (int index = 2; index < command.operands.size(); index++) {
+          support.add(jsonOperand("HORN explanation support", command.operands.get(index)));
+        }
+        break;
+      case "impact":
+        out.set("document", canonicalDocumentOperand(command.operands.get(0)));
+        out.set("evidence", jsonOperand("HORN evidence", command.operands.get(1)));
+        out.set("bindings", jsonOperand("HORN bindings", command.operands.get(2)));
+        break;
+      case "diff":
+        out.set("before", canonicalDocumentOperand(command.operands.get(0)));
+        out.set("after", canonicalDocumentOperand(command.operands.get(1)));
+        break;
+      default:
+        throw new InterpreterException("Unsupported Celix reasoning session view: " + command.view);
+    }
+    return out;
+  }
+
+  private ObjectNode canonicalDocumentOperand(String path)
+      throws InterpreterException, IOException {
+    if (isBindingReference(path)) {
       throw new InterpreterException(
           "Derived notebook bindings cannot be used as HORN documents; canonical document operands"
               + " must remain repository .horn.json files");
     }
-    return repositoryRoot.resolve(resolveDocument(documentPath)).normalize();
+    Path document = absoluteDocument(path);
+    ObjectNode operand = JSON.createObjectNode();
+    operand.put("authority", "canonical");
+    try {
+      operand.set("value", JSON.readTree(Files.readString(document, StandardCharsets.UTF_8)));
+    } catch (JsonProcessingException exception) {
+      throw new InterpreterException("HORN document is not valid JSON: " + path);
+    }
+    return operand;
   }
 
-  private Path resolveJsonOperand(
-      String label, String operand, String noteKey, List<Path> temporaryFiles)
+  private ObjectNode jsonOperand(String label, String operand)
       throws InterpreterException, IOException {
-    if (!isBindingReference(operand)) {
-      return resolveRepositoryFile(label, operand, ".json");
+    ObjectNode encoded = JSON.createObjectNode();
+    if (isBindingReference(operand)) {
+      encoded.put("ref", operand);
+      return encoded;
     }
-
-    JsonNode selected = resolveBindingReference(noteKey, operand);
-    Path temporary = Files.createTempFile("horn-zeppelin-binding-", ".json");
-    Files.writeString(
-        temporary,
-        JSON.writeValueAsString(selected) + "\n",
-        StandardCharsets.UTF_8);
-    temporaryFiles.add(temporary);
-    return temporary;
-  }
-
-  private String resolveScalarOperand(String label, String operand, String noteKey)
-      throws InterpreterException {
-    if (!isBindingReference(operand)) {
-      return operand;
-    }
-
-    JsonNode selected = resolveBindingReference(noteKey, operand);
-    if (selected.isNull() || selected.isContainerNode()) {
-      throw new InterpreterException(
-          label + " reference must select a scalar JSON value: " + operand);
-    }
-    return selected.asText();
-  }
-
-  private JsonNode resolveBindingReference(String noteKey, String reference)
-      throws InterpreterException {
-    BindingReference parsed = parseBindingReference(reference);
-    Binding binding = bindingsForNote(noteKey).get(parsed.name);
-    if (binding == null) {
-      throw new InterpreterException("Unknown HORN notebook binding: @" + parsed.name);
-    }
-    if (parsed.pointer.isEmpty()) {
-      return binding.value;
-    }
-
-    JsonNode selected;
+    Path file = resolveRepositoryFile(label, operand, ".json");
     try {
-      selected = binding.value.at(parsed.pointer);
-    } catch (IllegalArgumentException exception) {
-      throw new InterpreterException(
-          "Invalid JSON Pointer in HORN notebook binding reference " + reference + ": "
-              + exception.getMessage());
-    }
-    if (selected.isMissingNode()) {
-      throw new InterpreterException("HORN notebook binding selector did not resolve: " + reference);
-    }
-    return selected;
-  }
-
-  private void bind(String noteKey, String name, String view, String output)
-      throws InterpreterException {
-    JsonNode value;
-    try {
-      value = JSON.readTree(output);
+      encoded.set("value", JSON.readTree(Files.readString(file, StandardCharsets.UTF_8)));
     } catch (JsonProcessingException exception) {
-      throw new InterpreterException(
-          "Cannot bind HORN " + view + " result because it is not a JSON value: "
-              + exception.getOriginalMessage());
+      throw new InterpreterException(label + " is not valid JSON: " + operand);
     }
-    if (value == null) {
-      throw new InterpreterException("Cannot bind empty HORN " + view + " result");
-    }
-    bindingsForNote(noteKey).put(name, new Binding(name, view, value, sha256(output)));
+    return encoded;
   }
 
-  private InterpreterResult bindingsResult(String noteKey) throws InterpreterException {
-    List<Binding> bindings = new ArrayList<>(bindingsForNote(noteKey).values());
-    bindings.sort(Comparator.comparing(binding -> binding.name));
-
-    List<Map<String, String>> rows = new ArrayList<>();
-    for (Binding binding : bindings) {
-      String contract = binding.value.path("version").isTextual()
-          ? binding.value.path("version").asText()
-          : "";
-      Map<String, String> row = new LinkedHashMap<>();
-      row.put("name", binding.name);
-      row.put("command", binding.view);
-      row.put("contract", contract);
-      row.put("sha256", binding.sha256);
-      rows.add(row);
+  private ObjectNode scalarOperand(String operand) {
+    ObjectNode encoded = JSON.createObjectNode();
+    if (isBindingReference(operand)) {
+      encoded.put("ref", operand);
+    } else {
+      encoded.put("value", operand);
     }
-
-    Map<String, Object> envelope = new LinkedHashMap<>();
-    envelope.put("version", BINDINGS_CONTRACT);
-    envelope.put("ephemeral", true);
-    envelope.put("bindings", rows);
-    try {
-      String output = JSON.writerWithDefaultPrettyPrinter().writeValueAsString(envelope) + "\n";
-      return new InterpreterResult(Code.SUCCESS, Type.TEXT, output);
-    } catch (JsonProcessingException exception) {
-      throw new InterpreterException("Unable to serialize HORN notebook bindings");
-    }
+    return encoded;
   }
 
-  private Map<String, Binding> bindingsForNote(String noteKey) {
-    return bindingsByNote.computeIfAbsent(noteKey, ignored -> new ConcurrentHashMap<>());
+  private JsonNode sessionForNote(String noteKey) {
+    return sessionsByNote.computeIfAbsent(noteKey, key -> {
+      ObjectNode initial = JSON.createObjectNode();
+      initial.put("version", SESSION_CONTRACT);
+      initial.put("id", key);
+      initial.put("ephemeral", true);
+      initial.putArray("bindings");
+      return initial;
+    });
   }
 
-  private static String noteKey(InterpreterContext context) {
-    if (context == null || context.getNoteId() == null || context.getNoteId().trim().isEmpty()) {
-      return DEFAULT_NOTE_KEY;
+  private List<String> buildDirectCelixArgs(HornCommand command)
+      throws InterpreterException {
+    List<String> args = new ArrayList<>();
+    switch (command.view) {
+      case "runtime":
+        args.add("probe");
+        break;
+      case "validate":
+        args.add("validate");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        break;
+      case "inspect":
+        args.add("inspect");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add("--projection");
+        args.add("argument");
+        args.add("--projection");
+        args.add("timeline");
+        args.add("--projection");
+        args.add("evidence");
+        args.add("--projection");
+        args.add("frontier");
+        break;
+      case "query":
+        args.add("query");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(resolveRepositoryFile(
+            "HORN query request", command.operands.get(1), ".json").toString());
+        break;
+      case "explain":
+        args.add("explain");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(command.operands.get(1));
+        for (int index = 2; index < command.operands.size(); index++) {
+          args.add(resolveRepositoryFile(
+              "HORN explanation support", command.operands.get(index), ".json").toString());
+        }
+        break;
+      case "impact":
+        args.add("impact");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(resolveRepositoryFile(
+            "HORN evidence", command.operands.get(1), ".json").toString());
+        args.add(resolveRepositoryFile(
+            "HORN bindings", command.operands.get(2), ".json").toString());
+        break;
+      case "diff":
+        args.add("diff");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(absoluteDocument(command.operands.get(1)).toString());
+        break;
+      default:
+        throw new InterpreterException("Unsupported Celix-backed HORN view: " + command.view);
     }
-    return context.getNoteId();
+    return args;
+  }
+
+  private Path absoluteDocument(String documentPath) throws InterpreterException {
+    return repositoryRoot.resolve(resolveDocument(documentPath)).normalize();
   }
 
   private CommandResult executeProcess(List<String> command)
@@ -433,6 +458,7 @@ public class HornInterpreter extends Interpreter {
       case "explain":
       case "impact":
       case "diff":
+      case "bindings":
         return new InterpreterResult(Code.SUCCESS, Type.TEXT, output);
       default:
         throw new InterpreterException("Unsupported HORN view: " + view);
@@ -474,8 +500,9 @@ public class HornInterpreter extends Interpreter {
         throw usage("HORN let is missing a command");
       }
       HornCommand inner = parseCore(nested);
-      if (!BINDABLE_COMMANDS.contains(inner.view)) {
-        throw usage("HORN let can bind only Celix-backed analysis results");
+      if (!SESSION_BINDABLE_COMMANDS.contains(inner.view)) {
+        throw usage(
+            "HORN let can bind validate, query, explain, impact, or diff through the Celix session service");
       }
       return new HornCommand(inner.view, inner.operands, name);
     }
@@ -608,7 +635,7 @@ public class HornInterpreter extends Interpreter {
       throws InterpreterException {
     if (isBindingReference(path)) {
       throw new InterpreterException(
-          label + " expects a repository file; use a binding only where derived JSON is accepted");
+          label + " expects a repository file; derived references are resolved by the Celix session service");
     }
 
     Path requested;
@@ -639,26 +666,17 @@ public class HornInterpreter extends Interpreter {
     return value != null && value.startsWith("@");
   }
 
-  private static BindingReference parseBindingReference(String reference)
-      throws InterpreterException {
-    if (!isBindingReference(reference) || reference.length() == 1) {
-      throw new InterpreterException("Invalid HORN notebook binding reference: " + reference);
-    }
-    int hash = reference.indexOf('#');
-    String name = hash < 0 ? reference.substring(1) : reference.substring(1, hash);
-    String pointer = hash < 0 ? "" : reference.substring(hash + 1);
-    validateBindingName(name);
-    if (!pointer.isEmpty() && !pointer.startsWith("/")) {
-      throw new InterpreterException(
-          "HORN notebook binding selectors use JSON Pointer after #: " + reference);
-    }
-    return new BindingReference(name, pointer);
-  }
-
   private void ensureOpen() throws InterpreterException {
     if (repositoryRoot == null || npmCommand == null || celixCommand == null) {
       throw new InterpreterException("HORN interpreter is not open");
     }
+  }
+
+  private static String noteKey(InterpreterContext context) {
+    if (context == null || context.getNoteId() == null || context.getNoteId().trim().isEmpty()) {
+      return DEFAULT_NOTE_KEY;
+    }
+    return context.getNoteId();
   }
 
   private static int firstWhitespace(String value) {
@@ -673,7 +691,7 @@ public class HornInterpreter extends Interpreter {
   private static InterpreterException usage(String message) {
     return new InterpreterException(
         message
-            + "; expected: bindings | let <name> = <analysis-command>"
+            + "; expected: bindings | let <name> = <validate|query|explain|impact|diff> ..."
             + " | runtime | <render|network|audit|manifest|validate|inspect> <path.horn.json>"
             + " | query <doc.horn.json> <query.json|@binding>"
             + " | explain <doc.horn.json> <identity|@binding#/pointer> [support.json|@binding ...]"
@@ -706,31 +724,6 @@ public class HornInterpreter extends Interpreter {
     }
   }
 
-  private static String sha256(String value) {
-    try {
-      MessageDigest digest = MessageDigest.getInstance("SHA-256");
-      byte[] bytes = digest.digest(value.getBytes(StandardCharsets.UTF_8));
-      StringBuilder hex = new StringBuilder(bytes.length * 2);
-      for (byte b : bytes) {
-        hex.append(String.format(Locale.ROOT, "%02x", b & 0xff));
-      }
-      return hex.toString();
-    } catch (NoSuchAlgorithmException exception) {
-      throw new IllegalStateException("SHA-256 is not available", exception);
-    }
-  }
-
-  private static void deleteTemporaryFiles(List<Path> paths) {
-    for (Path path : paths) {
-      try {
-        Files.deleteIfExists(path);
-      } catch (IOException ignored) {
-        // Derived binding materializations are disposable. A failed cleanup must
-        // not mutate or weaken canonical HORN state.
-      }
-    }
-  }
-
   static final class HornCommand {
     final String view;
     final List<String> operands;
@@ -740,45 +733,6 @@ public class HornInterpreter extends Interpreter {
       this.view = view;
       this.operands = List.copyOf(operands);
       this.bindingName = bindingName;
-    }
-  }
-
-  private static final class BindingReference {
-    final String name;
-    final String pointer;
-
-    BindingReference(String name, String pointer) {
-      this.name = name;
-      this.pointer = pointer;
-    }
-  }
-
-  private static final class Binding {
-    final String name;
-    final String view;
-    final JsonNode value;
-    final String sha256;
-
-    Binding(String name, String view, JsonNode value, String sha256) {
-      this.name = name;
-      this.view = view;
-      this.value = value;
-      this.sha256 = sha256;
-    }
-  }
-
-  private static final class ResolvedInvocation implements AutoCloseable {
-    final List<String> args;
-    final List<Path> temporaryFiles;
-
-    ResolvedInvocation(List<String> args, List<Path> temporaryFiles) {
-      this.args = List.copyOf(args);
-      this.temporaryFiles = List.copyOf(temporaryFiles);
-    }
-
-    @Override
-    public void close() {
-      deleteTemporaryFiles(temporaryFiles);
     }
   }
 
