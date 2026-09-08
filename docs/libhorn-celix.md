@@ -38,6 +38,21 @@ canonical Horn artifacts
 
 The canonical `.horn.json` document remains the serialization authority for the authored mural. Analytical projections are derived views. They must never become a round-trip source for historical or authored geometry.
 
+## Historical calibration corpus
+
+The complete seven-map 1998 *Mapping Great Debates: Can Computers Think?* source set is registered in `corpus/cct-1998-series.sources.json`. The registry points at the original copies under `mcc0nnell/web/docs/`, by exact repository path and Git blob identity. See ADR-0016.
+
+Those posters are a calibration and counterexample corpus, not a native runtime dependency. Their purpose is to expose assumptions that only hold on one map before those assumptions become C++ authority.
+
+Source evidence follows an explicit boundary:
+
+```text
+historical source -> measured observation -> extraction decision
+                  -> semantic Horn artifact -> cartography/projection
+```
+
+A libhorn invariant should survive the complete series or be explicitly classified as map-specific, source-observed, derived, or unknown. Unknown behavior is not promoted into native semantics.
+
 ## Why the native ABI is artifact-based first
 
 The semantic-core work is still defining the pre-cartographic argument layer. Freezing C++ `Claim`, `Evidence`, `Issue`, or `Relation` structs now would create a second ontology and force the TypeScript and native implementations to evolve in lockstep.
@@ -93,6 +108,12 @@ Landed here. Proves Apache Celix packaging, container startup, service publicati
 Phase 1 is landed. Use validate:report and golden:validation; see ADR-0015.
 
 Acceptance rule: no native-specific interpretation of Horn semantics.
+
+### Phase 1.5 — complete-series calibration
+
+Use the registered seven-map CCT source set to challenge Map 1 assumptions before they become native authority. Preserve source identity, semantic correspondence, and cartographic realization as separate concepts.
+
+Acceptance rule: a behavior that has not been justified across the relevant source evidence remains map-specific or unknown; it does not become a general libhorn rule by convenience.
 
 ### Phase 2 — golden analytical projections
 
