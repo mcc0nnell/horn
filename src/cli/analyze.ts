@@ -30,7 +30,8 @@ function relationKinds(args: string[]): RelationKind[] | undefined {
   return values.length > 0 ? values : undefined;
 }
 
-const [input, operation, focusNodeId, targetNodeId, ...rest] = process.argv.slice(2);
+const [input, operation, ...args] = process.argv.slice(2);
+const focusNodeId = args[0];
 if (!input || !operation || !focusNodeId) {
   throw new Error(
     "Usage: tsx src/cli/analyze.ts <map.horn.json> <graph|counterfactual|dominators> <focus-node-id> [target-node-id] [--without-node ID] [--without-relation ID] [--relations kind,kind]",
@@ -39,11 +40,12 @@ if (!input || !operation || !focusNodeId) {
 
 const source = readFileSync(resolve(input), "utf8");
 const document = JSON.parse(source) as HornDocument;
-const kinds = relationKinds(rest);
 
 let output: unknown;
 switch (operation) {
   case "graph": {
+    const rest = args.slice(1);
+    const kinds = relationKinds(rest);
     const graph = deriveHornDialogueGraph(document, focusNodeId, {
       ...(kinds ? { relationKinds: kinds } : {}),
     });
@@ -56,6 +58,8 @@ switch (operation) {
     break;
   }
   case "counterfactual": {
+    const rest = args.slice(1);
+    const kinds = relationKinds(rest);
     output = analyzeHornCounterfactual(document, focusNodeId, {
       ...(kinds ? { relationKinds: kinds } : {}),
       suppressedNodeIds: valuesFor("--without-node", rest),
@@ -64,9 +68,12 @@ switch (operation) {
     break;
   }
   case "dominators": {
+    const targetNodeId = args[1];
     if (!targetNodeId || targetNodeId.startsWith("--")) {
       throw new Error("dominators requires a target node id");
     }
+    const rest = args.slice(2);
+    const kinds = relationKinds(rest);
     output = analyzeHornDominators(document, focusNodeId, targetNodeId, {
       ...(kinds ? { relationKinds: kinds } : {}),
     });
