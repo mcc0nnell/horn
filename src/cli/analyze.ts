@@ -7,6 +7,7 @@ import {
   deriveHornDialogueFrontier,
   deriveHornDialogueGraph,
 } from "../analysis";
+import { analyzeHornMinimumCut } from "../cut";
 import type { HornDocument, RelationKind } from "../types";
 
 function valuesFor(flag: string, args: string[]): string[] {
@@ -34,7 +35,7 @@ const [input, operation, ...args] = process.argv.slice(2);
 const focusNodeId = args[0];
 if (!input || !operation || !focusNodeId) {
   throw new Error(
-    "Usage: tsx src/cli/analyze.ts <map.horn.json> <graph|counterfactual|dominators> <focus-node-id> [target-node-id] [--without-node ID] [--without-relation ID] [--relations kind,kind]",
+    "Usage: tsx src/cli/analyze.ts <map.horn.json> <graph|counterfactual|dominators|min-cut> <focus-node-id> [target-node-id] [--without-node ID] [--without-relation ID] [--relations kind,kind]",
   );
 }
 
@@ -75,6 +76,18 @@ switch (operation) {
     const rest = args.slice(2);
     const kinds = relationKinds(rest);
     output = analyzeHornDominators(document, focusNodeId, targetNodeId, {
+      ...(kinds ? { relationKinds: kinds } : {}),
+    });
+    break;
+  }
+  case "min-cut": {
+    const targetNodeId = args[1];
+    if (!targetNodeId || targetNodeId.startsWith("--")) {
+      throw new Error("min-cut requires a target node id");
+    }
+    const rest = args.slice(2);
+    const kinds = relationKinds(rest);
+    output = analyzeHornMinimumCut(document, focusNodeId, targetNodeId, {
       ...(kinds ? { relationKinds: kinds } : {}),
     });
     break;
