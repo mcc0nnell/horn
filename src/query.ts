@@ -25,10 +25,7 @@ export type HornQueryRequest = {
   };
 };
 
-export type HornQueryProblem = {
-  code: string;
-  message: string;
-};
+export type HornQueryProblem = { code: string; message: string };
 
 export type HornQueryResult = {
   version: "horn-query-result/0.1";
@@ -60,6 +57,23 @@ function validRelationKind(value: unknown): value is RelationKind {
   );
 }
 
+function rejectUnknownKeys(
+  problems: HornQueryProblem[],
+  value: Record<string, unknown>,
+  allowed: readonly string[],
+  subject: string,
+): void {
+  const allowedSet = new Set(allowed);
+  for (const key of Object.keys(value)) {
+    if (!allowedSet.has(key)) {
+      problems.push({
+        code: "unexpected-property",
+        message: `${subject} contains unexpected property ${key}`,
+      });
+    }
+  }
+}
+
 function validateStringArray(
   problems: HornQueryProblem[],
   value: unknown,
@@ -70,10 +84,17 @@ function validateStringArray(
     problems.push({ code, message: `${subject} must be an array` });
     return;
   }
+
+  const seen = new Set<string>();
   value.forEach((entry, index) => {
     if (!nonEmptyString(entry)) {
       problems.push({ code, message: `${subject}[${index}] must be a non-empty string` });
+      return;
     }
+    if (seen.has(entry)) {
+      problems.push({ code: "duplicate-query-value", message: `${subject} repeats ${entry}` });
+    }
+    seen.add(entry);
   });
 }
 
@@ -83,6 +104,13 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     return [{ code: "invalid-query", message: "query request must be an object" }];
   }
 
+  rejectUnknownKeys(
+    problems,
+    value,
+    ["version", "operation", "focusNodeId", "targetNodeId", "relationKinds", "suppress"],
+    "query request",
+  );
+
   if (value.version !== "horn-query-request/0.1") {
     problems.push({
       code: "version",
@@ -90,11 +118,7 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     });
   }
 
-  if (
-    !["graph", "counterfactual", "dominators", "min-cut"].includes(
-      String(value.operation),
-    )
-  ) {
+  if (!["graph", "counterfactual", "dominators", "min-cut"].includes(String(value.operation))) {
     problems.push({
       code: "operation",
       message: `unsupported query operation ${String(value.operation)}`,
@@ -123,13 +147,22 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     if (!Array.isArray(value.relationKinds)) {
       problems.push({ code: "invalid-relation-kinds", message: "relationKinds must be an array" });
     } else {
+      const seen = new Set<string>();
       value.relationKinds.forEach((kind, index) => {
         if (!validRelationKind(kind)) {
           problems.push({
             code: "invalid-relation-kind",
             message: `relationKinds[${index}] is not a Horn relation kind`,
           });
+          return;
         }
+        if (seen.has(kind)) {
+          problems.push({
+            code: "duplicate-query-value",
+            message: `relationKinds repeats ${kind}`,
+          });
+        }
+        seen.add(kind);
       });
     }
   }
@@ -138,6 +171,7 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     if (!isRecord(value.suppress)) {
       problems.push({ code: "invalid-suppress", message: "suppress must be an object" });
     } else {
+      rejectUnknownKeys(problems, value.suppress, ["nodeIds", "relationIds"], "suppress");
       if (value.suppress.nodeIds !== undefined) {
         validateStringArray(
           problems,
