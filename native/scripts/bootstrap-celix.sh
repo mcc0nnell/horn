@@ -169,33 +169,18 @@ if [[ ! -f "$DEPS_PREFIX/include/zip.h" ]]; then
     -DBUILD_OSSFUZZ=OFF
 fi
 
-# --- uuid headers (libuuid is usually already on the host) ---
-if [[ ! -f /usr/include/uuid/uuid.h && ! -f "$DEPS_PREFIX/include/uuid/uuid.h" ]]; then
-  UUID_URL="$(pin_get uuidHeaderDeb.url)"
-  UUID_SHA="$(pin_get uuidHeaderDeb.sha256)"
-  UUID_DEB="$DOWNLOADS/uuid-dev.deb"
-  fetch "$UUID_URL" "$UUID_SHA" "$UUID_DEB"
-  EXTRACT="$DOWNLOADS/uuid-dev-extract"
-  rm -rf "$EXTRACT"
-  mkdir -p "$EXTRACT"
-  dpkg-deb -x "$UUID_DEB" "$EXTRACT"
-  mkdir -p "$DEPS_PREFIX/include/uuid"
-  cp "$EXTRACT/usr/include/uuid/uuid.h" "$DEPS_PREFIX/include/uuid/uuid.h"
+# --- libuuid toolchain prerequisite ---
+# Keep architecture-specific distro packages out of the content pin. The clean
+# container installs uuid-dev; other hosts must provide a compatible libuuid
+# development package through their normal toolchain provisioning.
+UUID_PROBE="$PREFIX/.horn-uuid-probe"
+if ! printf '#include <uuid/uuid.h>\nint main(void) { uuid_t u; uuid_generate(u); return 0; }\n' \
+    | "${CC:-cc}" -x c - -luuid -o "$UUID_PROBE" >/dev/null 2>&1; then
+  echo "libuuid development headers/library are required (Debian/Ubuntu: uuid-dev)." >&2
+  echo "Install the platform package, then re-run the pinned Celix bootstrap." >&2
+  exit 1
 fi
-
-if [[ ! -e "$DEPS_PREFIX/lib/libuuid.so" ]]; then
-  mkdir -p "$DEPS_PREFIX/lib"
-  if [[ -e /lib/x86_64-linux-gnu/libuuid.so.1 ]]; then
-    ln -sfn /lib/x86_64-linux-gnu/libuuid.so.1 "$DEPS_PREFIX/lib/libuuid.so"
-  elif [[ -e /usr/lib/x86_64-linux-gnu/libuuid.so.1 ]]; then
-    ln -sfn /usr/lib/x86_64-linux-gnu/libuuid.so.1 "$DEPS_PREFIX/lib/libuuid.so"
-  elif [[ -e /usr/lib/libuuid.so.1 ]]; then
-    ln -sfn /usr/lib/libuuid.so.1 "$DEPS_PREFIX/lib/libuuid.so"
-  else
-    echo "libuuid.so.1 not found. Install uuid-dev in the clean container, or put libuuid in ${DEPS_PREFIX}/lib." >&2
-    exit 1
-  fi
-fi
+rm -f "$UUID_PROBE"
 
 # --- Celix ---
 CELIX_TGZ="$DOWNLOADS/celix-$COMMIT.tar.gz"

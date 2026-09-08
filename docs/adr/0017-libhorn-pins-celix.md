@@ -20,8 +20,9 @@ libhorn pins an exact Apache Celix commit and fetches it into the native build p
 - Host-installed Celix is not consulted. The pin is usable from a clean container (`native/Dockerfile`).
 - `HORN_WITH_CELIX=OFF` still builds the analysis libraries and standalone CLIs.
 - The fetched Celix is a minimal graph: utils, framework, and RCM. Shell, remote services, HTTP admin, and examples stay off.
+- Platform toolchain prerequisites such as libuuid remain platform-provided. The clean container installs `uuid-dev`; the bootstrap verifies that `<uuid/uuid.h>` and `-luuid` work instead of downloading an architecture-specific distro package.
 
-This pin is a documented safe-default for HornContractBundle. It does not warrant that the graph is Celix's canonical, released, or universally applicable dependency state. That boundary is the same one Specimen 001 records for Celix's own SBOM.
+This pin is a documented safe-default for HornContractBundle. It does not warrant that the graph is Celix's canonical, released, or universally applicable dependency state. It pins the fetched Celix source and explicitly fetched source libraries; it does not attempt to content-address the compiler, libc, kernel, or platform development packages. That boundary is the same one Specimen 001 records for Celix's own SBOM.
 
 `horn_celix` starts a real Celix framework, installs HornContractBundle, and invokes `IValidationService`, `IProjectionService`, `IQueryService`, `IExplanationService`, `IImpactService`, and `IDiffService` through service discovery. `golden:celix` compares TypeScript, native standalone CLIs, and native-under-Celix on the same contracts.
 
@@ -29,7 +30,7 @@ GitHub Actions is still not the runtime contract. The local golden harness and `
 
 ## Consequences
 
-Celix packaging is reproducible. Analytical authority remains golden equivalence; Celix is the in-process service container, not a second ontology.
+Celix packaging is reproducible within the declared toolchain boundary. Analytical authority remains golden equivalence; Celix is the in-process service container, not a second ontology.
 
 Remaining work outside this pin:
 
