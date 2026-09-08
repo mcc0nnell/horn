@@ -1,0 +1,15 @@
+{
+  "version": "horn-evidence-impact-request/0.1",
+  "queries": [
+    {
+      "version": "horn-query-request/0.1",
+      "operation": "graph",
+      "focusNodeId": "c3-package-bound"
+    },
+    {
+      "version": "horn-query-request/0.1",
+      "operation": "graph",
+      "focusNodeId": "c6-safe-default"
+    }
+  ]
+}
