@@ -14,7 +14,7 @@
     "version": { "const": "horn-query-result/0.1" },
     "requestVersion": { "const": "horn-query-request/0.1" },
     "operation": {
-      "enum": ["graph", "counterfactual", "dominators"]
+      "enum": ["graph", "counterfactual", "dominators", "min-cut"]
     },
     "source": {
       "type": "object",
