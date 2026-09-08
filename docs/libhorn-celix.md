@@ -40,7 +40,7 @@ The canonical `.horn.json` document remains the serialization authority for the 
 
 ## Historical calibration corpus
 
-The complete seven-map 1998 *Mapping Great Debates: Can Computers Think?* source set is registered in `corpus/cct-1998-series.sources.json`. The registry points at the original copies under `mcc0nnell/web/docs/`, by exact repository path and Git blob identity. See ADR-0016.
+The complete seven-map 1998 *Mapping Great Debates: Can Computers Think?* source set is registered in `corpus/cct-1998-series.sources.json`. The registry prefers normalized `mcc0nnell/web/public/horn/` locators and records archived `docs/` aliases where the repository contains byte-identical copies. Git blob identity, not a particular pathname, identifies the calibration bytes. See ADR-0016.
 
 Those posters are a calibration and counterexample corpus, not a native runtime dependency. Their purpose is to expose assumptions that only hold on one map before those assumptions become C++ authority.
 
