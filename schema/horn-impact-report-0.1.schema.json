@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-impact-report-0.1.schema.json",
+  "title": "Horn evidence impact report",
+  "type": "object",
+  "required": [
+    "version",
+    "runtime",
+    "documentId",
+    "documentVersion",
+    "mutatesSource",
+    "directlyStale",
+    "transitivelyAffected"
+  ],
+  "properties": {
+    "version": { "const": "horn-impact-report/0.1" },
+    "runtime": { "const": "horn-runtime/0.1" },
+    "documentId": { "type": "string" },
+    "documentVersion": { "const": "horn-document/0.1" },
+    "mutatesSource": { "const": false },
+    "observedFingerprint": { "type": "string" },
+    "changedFingerprints": { "type": "array" },
+    "unchangedFingerprints": { "type": "array" },
+    "directlyStale": { "type": "array", "items": { "type": "string" } },
+    "transitivelyAffected": { "type": "array", "items": { "type": "string" } },
+    "transitivelyAffectedRelations": { "type": "array", "items": { "type": "string" } },
+    "affectedIdentities": { "type": "array", "items": { "type": "string" } },
+    "affectedProjections": { "type": "object" },
+    "unaffected": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": false
+}

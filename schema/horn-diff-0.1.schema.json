@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-diff-0.1.schema.json",
+  "title": "Horn semantic diff",
+  "type": "object",
+  "required": [
+    "version",
+    "runtime",
+    "before",
+    "after",
+    "identities",
+    "content",
+    "topology",
+    "evidenceBindings",
+    "provenance",
+    "authoredGeometry",
+    "projectionConsequences"
+  ],
+  "properties": {
+    "version": { "const": "horn-diff/0.1" },
+    "runtime": { "const": "horn-runtime/0.1" },
+    "before": { "type": "object" },
+    "after": { "type": "object" },
+    "identities": { "type": "object" },
+    "content": { "type": "array" },
+    "topology": { "type": "object" },
+    "evidenceBindings": { "type": "array" },
+    "provenance": { "type": "array" },
+    "authoredGeometry": { "type": "array" },
+    "projectionConsequences": { "type": "object" }
+  },
+  "additionalProperties": false
+}

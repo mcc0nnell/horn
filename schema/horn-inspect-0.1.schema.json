@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-inspect-0.1.schema.json",
+  "title": "Horn inspect packet",
+  "type": "object",
+  "required": ["version", "runtime", "source", "validation"],
+  "properties": {
+    "version": { "const": "horn-inspect/0.1" },
+    "runtime": { "const": "horn-runtime/0.1" },
+    "source": {
+      "type": "object",
+      "required": ["documentId", "documentVersion", "digest"],
+      "properties": {
+        "documentId": { "type": "string" },
+        "documentVersion": { "type": "string" },
+        "digest": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "validation": { "type": "object" },
+    "projections": { "type": "object" },
+    "queries": { "type": "array" },
+    "explanations": { "type": "array" },
+    "impact": {}
+  },
+  "additionalProperties": false
+}

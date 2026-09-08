@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-query-result-0.1.schema.json",
+  "title": "Horn query result",
+  "type": "object",
+  "required": ["version", "runtime", "documentId", "documentVersion", "op"],
+  "properties": {
+    "version": { "const": "horn-query-result/0.1" },
+    "runtime": { "const": "horn-runtime/0.1" },
+    "documentId": { "type": "string" },
+    "documentVersion": { "const": "horn-document/0.1" },
+    "op": { "type": "string", "minLength": 1 },
+    "ok": { "type": "boolean" }
+  },
+  "additionalProperties": true
+}

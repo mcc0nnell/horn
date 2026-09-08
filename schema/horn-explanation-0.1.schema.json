@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-explanation-0.1.schema.json",
+  "title": "Horn explanation",
+  "type": "object",
+  "required": ["version", "runtime", "documentId", "documentVersion", "identity"],
+  "properties": {
+    "version": { "const": "horn-explanation/0.1" },
+    "runtime": { "const": "horn-runtime/0.1" },
+    "documentId": { "type": "string" },
+    "documentVersion": { "const": "horn-document/0.1" },
+    "identity": { "type": "string" },
+    "kind": {
+      "type": "string",
+      "enum": ["node", "relation", "citation", "region", "unknown"]
+    },
+    "ok": { "type": "boolean" }
+  },
+  "additionalProperties": true
+}
