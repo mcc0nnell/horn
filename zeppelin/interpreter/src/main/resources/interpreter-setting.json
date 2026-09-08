@@ -9,21 +9,28 @@
         "envName": "HORN_REPO",
         "propertyName": "horn.repo",
         "defaultValue": "",
-        "description": "Absolute path to the HORN repository checkout containing canonical .horn.json documents and the TypeScript adapter.",
+        "description": "Absolute path to the HORN repository checkout containing canonical .horn.json documents, the TypeScript presentation adapter, and the native libhorn build.",
         "type": "string"
       },
       "horn.npm": {
         "envName": "HORN_NPM",
         "propertyName": "horn.npm",
         "defaultValue": "npm",
-        "description": "npm executable used to invoke the transport-neutral HORN adapter without a shell.",
+        "description": "npm executable used for presentation-only Zeppelin projections such as render, network, audit, and manifest.",
+        "type": "string"
+      },
+      "horn.celix": {
+        "envName": "HORN_CELIX",
+        "propertyName": "horn.celix",
+        "defaultValue": "build/native/horn_celix",
+        "description": "Path to the pinned libhorn Celix driver. Relative paths are resolved from horn.repo. Used by runtime, validate, and inspect.",
         "type": "string"
       },
       "horn.command.timeout.millis": {
         "envName": "HORN_COMMAND_TIMEOUT_MILLIS",
         "propertyName": "horn.command.timeout.millis",
         "defaultValue": "60000",
-        "description": "Maximum execution time for one HORN projection command.",
+        "description": "Maximum execution time for one HORN presentation or Celix-backed analysis command.",
         "type": "number"
       }
     },

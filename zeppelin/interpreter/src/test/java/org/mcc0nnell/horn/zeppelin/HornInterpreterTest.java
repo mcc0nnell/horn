@@ -33,44 +33,91 @@ class HornInterpreterTest {
     Properties properties = new Properties();
     properties.setProperty(HornInterpreter.PROP_REPO, repository.toString());
     properties.setProperty(HornInterpreter.PROP_NPM, "npm");
+    properties.setProperty(HornInterpreter.PROP_CELIX, "build/native/horn_celix");
     properties.setProperty(HornInterpreter.PROP_TIMEOUT, "5000");
     interpreter = new StubHornInterpreter(properties);
     interpreter.open();
   }
 
   @Test
-  void mapsRenderToNativeHtml() {
-    interpreter.result = new HornInterpreter.CommandResult(0, "%html\n<section>mural</section>\n");
+  void mapsRenderToNativeHtmlThroughPresentationPlane() {
+    interpreter.cliResult =
+        new HornInterpreter.CommandResult(0, "%html\n<section>mural</section>\n");
 
     InterpreterResult result = interpreter.interpret("render maps/example.horn.json", null);
 
     assertEquals(Code.SUCCESS, result.code());
     assertEquals(Type.HTML, result.message().get(0).getType());
     assertEquals("<section>mural</section>\n", result.message().get(0).getData());
-    assertEquals("render", interpreter.lastView);
-    assertEquals(Path.of("maps/example.horn.json"), interpreter.lastDocument);
+    assertEquals("render", interpreter.lastCliView);
+    assertEquals(Path.of("maps/example.horn.json"), interpreter.lastCliDocument);
+    assertEquals(null, interpreter.lastCelixView);
   }
 
   @Test
   void mapsNetworkToNativeNetworkWithoutChangingPayload() {
     String network = "{\"nodes\":[],\"edges\":[],\"directed\":true,\"types\":[]}";
-    interpreter.result = new HornInterpreter.CommandResult(0, "%network " + network + "\n");
+    interpreter.cliResult = new HornInterpreter.CommandResult(0, "%network " + network + "\n");
 
     InterpreterResult result = interpreter.interpret("network maps/example.horn.json", null);
 
     assertEquals(Code.SUCCESS, result.code());
     assertEquals(Type.NETWORK, result.message().get(0).getType());
     assertEquals(network, result.message().get(0).getData());
+    assertEquals("network", interpreter.lastCliView);
+  }
+
+  @Test
+  void runtimeProbesDiscoveredCelixServicePlaneWithoutDocument() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0, "{\"version\":\"horn-celix-probe/0.1\",\"ok\":true}\n");
+
+    InterpreterResult result = interpreter.interpret("runtime", null);
+
+    assertEquals(Code.SUCCESS, result.code());
+    assertEquals(Type.TEXT, result.message().get(0).getType());
+    assertTrue(result.message().get(0).getData().contains("horn-celix-probe/0.1"));
+    assertEquals("runtime", interpreter.lastCelixView);
+    assertEquals(null, interpreter.lastCelixDocument);
+    assertEquals(null, interpreter.lastCliView);
+  }
+
+  @Test
+  void validateRoutesThroughCelixValidationService() {
+    interpreter.celixResult =
+        new HornInterpreter.CommandResult(0, "{\"version\":\"horn-validation-report/0.1\"}\n");
+
+    InterpreterResult result = interpreter.interpret("validate maps/example.horn.json", null);
+
+    assertEquals(Code.SUCCESS, result.code());
+    assertEquals(Type.TEXT, result.message().get(0).getType());
+    assertEquals("validate", interpreter.lastCelixView);
+    assertEquals(Path.of("maps/example.horn.json"), interpreter.lastCelixDocument);
+    assertEquals(null, interpreter.lastCliView);
+  }
+
+  @Test
+  void inspectRoutesThroughCelixAnalysisServices() {
+    interpreter.celixResult =
+        new HornInterpreter.CommandResult(0, "{\"version\":\"horn-inspect/0.1\"}\n");
+
+    InterpreterResult result = interpreter.interpret("inspect maps/example.horn.json", null);
+
+    assertEquals(Code.SUCCESS, result.code());
+    assertEquals(Type.TEXT, result.message().get(0).getType());
+    assertTrue(result.message().get(0).getData().contains("horn-inspect/0.1"));
+    assertEquals("inspect", interpreter.lastCelixView);
+    assertEquals(Path.of("maps/example.horn.json"), interpreter.lastCelixDocument);
   }
 
   @Test
   void preservesSpacesInRepositoryRelativeDocumentPath() {
-    interpreter.result = new HornInterpreter.CommandResult(0, "{\"valid\":true}\n");
+    interpreter.celixResult = new HornInterpreter.CommandResult(0, "{\"valid\":true}\n");
 
     InterpreterResult result = interpreter.interpret("validate maps/with space.horn.json", null);
 
     assertEquals(Code.SUCCESS, result.code());
-    assertEquals(Path.of("maps/with space.horn.json"), interpreter.lastDocument);
+    assertEquals(Path.of("maps/with space.horn.json"), interpreter.lastCelixDocument);
   }
 
   @Test
@@ -79,7 +126,8 @@ class HornInterpreterTest {
 
     assertEquals(Code.ERROR, result.code());
     assertTrue(result.message().get(0).getData().contains("escapes the configured repository"));
-    assertEquals(null, interpreter.lastView);
+    assertEquals(null, interpreter.lastCliView);
+    assertEquals(null, interpreter.lastCelixView);
   }
 
   @Test
@@ -110,20 +158,21 @@ class HornInterpreterTest {
   }
 
   @Test
-  void propagatesAdapterFailureAsInterpreterError() {
-    interpreter.result = new HornInterpreter.CommandResult(
-        2, "{\"valid\":false,\"issues\":[{\"code\":\"invalid\"}]}\n");
+  void propagatesCelixFailureAsInterpreterError() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        1, "Celix service not found: horn::IValidationService\n");
 
     InterpreterResult result = interpreter.interpret("validate maps/example.horn.json", null);
 
     assertEquals(Code.ERROR, result.code());
     assertEquals(Type.TEXT, result.message().get(0).getType());
-    assertTrue(result.message().get(0).getData().contains("\"valid\":false"));
+    assertTrue(result.message().get(0).getData().contains("IValidationService"));
   }
 
   @Test
   void rejectsMalformedAdapterDisplayEnvelope() {
-    interpreter.result = new HornInterpreter.CommandResult(0, "<section>missing marker</section>");
+    interpreter.cliResult =
+        new HornInterpreter.CommandResult(0, "<section>missing marker</section>");
 
     InterpreterResult result = interpreter.interpret("render maps/example.horn.json", null);
 
@@ -132,9 +181,12 @@ class HornInterpreterTest {
   }
 
   private static final class StubHornInterpreter extends HornInterpreter {
-    CommandResult result = new CommandResult(0, "{}\n");
-    String lastView;
-    Path lastDocument;
+    CommandResult cliResult = new CommandResult(0, "{}\n");
+    CommandResult celixResult = new CommandResult(0, "{}\n");
+    String lastCliView;
+    Path lastCliDocument;
+    String lastCelixView;
+    Path lastCelixDocument;
 
     StubHornInterpreter(Properties properties) {
       super(properties);
@@ -142,9 +194,16 @@ class HornInterpreterTest {
 
     @Override
     protected CommandResult executeCli(String view, Path relativeDocument) {
-      lastView = view;
-      lastDocument = relativeDocument;
-      return result;
+      lastCliView = view;
+      lastCliDocument = relativeDocument;
+      return cliResult;
+    }
+
+    @Override
+    protected CommandResult executeCelix(String view, Path relativeDocument) {
+      lastCelixView = view;
+      lastCelixDocument = relativeDocument;
+      return celixResult;
     }
   }
 }

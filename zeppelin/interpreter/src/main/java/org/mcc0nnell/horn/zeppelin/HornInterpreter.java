@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -22,20 +23,24 @@ import org.apache.zeppelin.interpreter.InterpreterResult.Type;
  * Thin Apache Zeppelin interpreter for canonical HORN documents.
  *
  * <p>This class deliberately contains no HORN validation, rendering, graph,
- * provenance, or layout semantics. It validates only its execution boundary,
- * then delegates to the repository's transport-neutral TypeScript adapter.</p>
+ * provenance, or layout semantics. Presentation views delegate to the
+ * transport-neutral TypeScript adapter. Headless analysis delegates to
+ * horn_celix, which discovers the pinned libhorn services inside a real Celix
+ * framework.</p>
  */
 public class HornInterpreter extends Interpreter {
   static final String PROP_REPO = "horn.repo";
   static final String PROP_NPM = "horn.npm";
+  static final String PROP_CELIX = "horn.celix";
   static final String PROP_TIMEOUT = "horn.command.timeout.millis";
 
   private static final long DEFAULT_TIMEOUT_MILLIS = 60_000L;
-  private static final Set<String> COMMANDS =
-      Set.of("render", "network", "audit", "manifest", "validate");
+  private static final Set<String> DOCUMENT_COMMANDS =
+      Set.of("render", "network", "audit", "manifest", "validate", "inspect");
 
   private Path repositoryRoot;
   private String npmCommand;
+  private Path celixCommand;
   private long timeoutMillis;
 
   public HornInterpreter(Properties properties) {
@@ -66,6 +71,16 @@ public class HornInterpreter extends Interpreter {
 
     repositoryRoot = candidate;
     npmCommand = firstNonBlank(getProperty(PROP_NPM), System.getenv("HORN_NPM"), "npm");
+
+    String configuredCelix = firstNonBlank(getProperty(PROP_CELIX), System.getenv("HORN_CELIX"));
+    Path celixCandidate = configuredCelix == null
+        ? repositoryRoot.resolve("build/native/horn_celix")
+        : Paths.get(configuredCelix);
+    if (!celixCandidate.isAbsolute()) {
+      celixCandidate = repositoryRoot.resolve(celixCandidate);
+    }
+    celixCommand = celixCandidate.toAbsolutePath().normalize();
+
     timeoutMillis = parsePositiveLong(
         firstNonBlank(getProperty(PROP_TIMEOUT), System.getenv("HORN_COMMAND_TIMEOUT_MILLIS")),
         DEFAULT_TIMEOUT_MILLIS,
@@ -74,7 +89,8 @@ public class HornInterpreter extends Interpreter {
 
   @Override
   public void close() {
-    // No persistent runtime is owned by the interpreter.
+    // No persistent runtime is owned by the interpreter. horn_celix owns one
+    // framework for the duration of each headless command.
   }
 
   @Override
@@ -82,13 +98,20 @@ public class HornInterpreter extends Interpreter {
     try {
       ensureOpen();
       HornCommand command = parse(statement);
-      Path relativeDocument = resolveDocument(command.documentPath);
-      CommandResult commandResult = executeCli(command.view, relativeDocument);
 
-      if (commandResult.exitCode != 0) {
-        return new InterpreterResult(Code.ERROR, Type.TEXT, commandResult.output);
+      if ("runtime".equals(command.view)) {
+        CommandResult commandResult = executeCelix("runtime", null);
+        return mapCommandResult(command.view, commandResult);
       }
-      return mapResult(command.view, commandResult.output);
+
+      Path relativeDocument = resolveDocument(command.documentPath);
+      CommandResult commandResult;
+      if ("validate".equals(command.view) || "inspect".equals(command.view)) {
+        commandResult = executeCelix(command.view, relativeDocument);
+      } else {
+        commandResult = executeCli(command.view, relativeDocument);
+      }
+      return mapCommandResult(command.view, commandResult);
     } catch (InterpreterException exception) {
       return new InterpreterResult(Code.ERROR, Type.TEXT, exception.getMessage());
     } catch (IOException exception) {
@@ -118,16 +141,65 @@ public class HornInterpreter extends Interpreter {
 
   protected CommandResult executeCli(String view, Path relativeDocument)
       throws IOException, InterruptedException, InterpreterException {
+    return executeProcess(List.of(
+        npmCommand,
+        "run",
+        "--silent",
+        "horn-zeppelin",
+        "--",
+        view,
+        relativeDocument.toString()));
+  }
+
+  protected CommandResult executeCelix(String view, Path relativeDocument)
+      throws IOException, InterruptedException, InterpreterException {
+    if (!Files.isRegularFile(celixCommand)) {
+      throw new InterpreterException(
+          "Pinned libhorn Celix driver not found: " + celixCommand
+              + "; build with cmake -S native -B build/native -DHORN_WITH_CELIX=ON"
+              + " && cmake --build build/native");
+    }
+
+    List<String> args = new ArrayList<>();
+    args.add(celixCommand.toString());
+    switch (view) {
+      case "runtime":
+        args.add("probe");
+        break;
+      case "validate":
+        args.add("validate");
+        args.add(absoluteDocument(relativeDocument).toString());
+        break;
+      case "inspect":
+        args.add("inspect");
+        args.add(absoluteDocument(relativeDocument).toString());
+        args.add("--projection");
+        args.add("argument");
+        args.add("--projection");
+        args.add("timeline");
+        args.add("--projection");
+        args.add("evidence");
+        args.add("--projection");
+        args.add("frontier");
+        break;
+      default:
+        throw new InterpreterException("Unsupported Celix-backed HORN view: " + view);
+    }
+    return executeProcess(args);
+  }
+
+  private Path absoluteDocument(Path relativeDocument) throws InterpreterException {
+    if (relativeDocument == null) {
+      throw new InterpreterException("HORN document path is required");
+    }
+    return repositoryRoot.resolve(relativeDocument).normalize();
+  }
+
+  private CommandResult executeProcess(List<String> command)
+      throws IOException, InterruptedException, InterpreterException {
     Path outputFile = Files.createTempFile("horn-zeppelin-", ".out");
     try {
-      ProcessBuilder builder = new ProcessBuilder(List.of(
-          npmCommand,
-          "run",
-          "--silent",
-          "horn-zeppelin",
-          "--",
-          view,
-          relativeDocument.toString()));
+      ProcessBuilder builder = new ProcessBuilder(command);
       builder.directory(repositoryRoot.toFile());
       builder.redirectErrorStream(true);
       builder.redirectOutput(outputFile.toFile());
@@ -151,6 +223,14 @@ public class HornInterpreter extends Interpreter {
     }
   }
 
+  private InterpreterResult mapCommandResult(String view, CommandResult commandResult)
+      throws InterpreterException {
+    if (commandResult.exitCode != 0) {
+      return new InterpreterResult(Code.ERROR, Type.TEXT, commandResult.output);
+    }
+    return mapResult(view, commandResult.output);
+  }
+
   private InterpreterResult mapResult(String view, String output) throws InterpreterException {
     switch (view) {
       case "render":
@@ -162,6 +242,8 @@ public class HornInterpreter extends Interpreter {
       case "audit":
       case "manifest":
       case "validate":
+      case "inspect":
+      case "runtime":
         return new InterpreterResult(Code.SUCCESS, Type.TEXT, output);
       default:
         throw new InterpreterException("Unsupported HORN view: " + view);
@@ -183,6 +265,10 @@ public class HornInterpreter extends Interpreter {
     }
 
     String trimmed = statement.trim();
+    if ("runtime".equals(trimmed.toLowerCase(Locale.ROOT))) {
+      return new HornCommand("runtime", null);
+    }
+
     int separator = firstWhitespace(trimmed);
     if (separator < 0) {
       throw usage("HORN paragraph is missing a document path");
@@ -190,7 +276,7 @@ public class HornInterpreter extends Interpreter {
 
     String view = trimmed.substring(0, separator).toLowerCase(Locale.ROOT);
     String documentPath = trimmed.substring(separator).trim();
-    if (!COMMANDS.contains(view)) {
+    if (!DOCUMENT_COMMANDS.contains(view)) {
       throw usage("Unknown HORN view: " + view);
     }
     if (documentPath.isEmpty()) {
@@ -227,7 +313,7 @@ public class HornInterpreter extends Interpreter {
   }
 
   private void ensureOpen() throws InterpreterException {
-    if (repositoryRoot == null || npmCommand == null) {
+    if (repositoryRoot == null || npmCommand == null || celixCommand == null) {
       throw new InterpreterException("HORN interpreter is not open");
     }
   }
@@ -243,7 +329,8 @@ public class HornInterpreter extends Interpreter {
 
   private static InterpreterException usage(String message) {
     return new InterpreterException(
-        message + "; expected: <render|network|audit|manifest|validate> <path.horn.json>");
+        message
+            + "; expected: runtime | <render|network|audit|manifest|validate|inspect> <path.horn.json>");
   }
 
   private static String firstNonBlank(String... values) {
