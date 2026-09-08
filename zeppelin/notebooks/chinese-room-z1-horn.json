@@ -3,7 +3,7 @@
   "paragraphs": [
     {
       "title": "About",
-      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution. Derived notebook bindings are ephemeral and never become authored state."
+      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution; Celix owns ephemeral reasoning composition."
     },
     {
       "title": "Runtime",
@@ -63,7 +63,7 @@
     },
     {
       "title": "Authority boundary",
-      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation, query, explanation, impact, diff, and inspection use the pinned Celix-discovered libhorn services. Notebook bindings are derived, note-local, and disposable. They may feed later service operands but can never replace canonical `.horn.json` document operands."
+      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation, query, explanation, impact, diff, and inspection use the pinned Celix-discovered libhorn services. For composed paragraphs, Zeppelin transports an opaque note-scoped `horn-reasoning-session/0.1` envelope while `IReasoningSessionService` owns binding resolution and service dispatch. Derived results can feed later service operands but can never replace canonical `.horn.json` document operands."
     }
   ]
 }
