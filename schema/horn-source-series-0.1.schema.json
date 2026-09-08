@@ -15,7 +15,7 @@
     "companionSources"
   ],
   "$defs": {
-    "sourceLocator": {
+    "sourceLocatorFields": {
       "type": "object",
       "required": ["path", "gitBlobSha1", "bytes"],
       "properties": {
@@ -35,8 +35,13 @@
           "type": "string",
           "minLength": 1
         }
-      },
-      "additionalProperties": false
+      }
+    },
+    "sourceLocator": {
+      "allOf": [
+        { "$ref": "#/$defs/sourceLocatorFields" }
+      ],
+      "unevaluatedProperties": false
     }
   },
   "properties": {
@@ -69,7 +74,7 @@
       "minItems": 1,
       "items": {
         "allOf": [
-          { "$ref": "#/$defs/sourceLocator" },
+          { "$ref": "#/$defs/sourceLocatorFields" },
           {
             "type": "object",
             "required": ["map", "id", "question"],
@@ -80,14 +85,15 @@
               "relatedSource": { "$ref": "#/$defs/sourceLocator" }
             }
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       }
     },
     "companionSources": {
       "type": "array",
       "items": {
         "allOf": [
-          { "$ref": "#/$defs/sourceLocator" },
+          { "$ref": "#/$defs/sourceLocatorFields" },
           {
             "type": "object",
             "required": ["id"],
@@ -95,7 +101,8 @@
               "id": { "type": "string", "minLength": 1 }
             }
           }
-        ]
+        ],
+        "unevaluatedProperties": false
       }
     }
   },
