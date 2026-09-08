@@ -78,13 +78,16 @@ assert_note() {
   local manifest_out="$2"
   local signature_out="$3"
 
-  local runtime manifest validate inspect query explain impact diff network audit mural digest expected_pin
+  local runtime manifest validate inspect query explain composed_query composed_explain bindings impact diff network audit mural digest expected_pin
   runtime="$(paragraph_data "$note_file" "%horn runtime" "TEXT")"
   manifest="$(paragraph_data "$note_file" "%horn manifest" "TEXT")"
   validate="$(paragraph_data "$note_file" "%horn validate" "TEXT")"
   inspect="$(paragraph_data "$note_file" "%horn inspect" "TEXT")"
   query="$(paragraph_data "$note_file" "%horn query" "TEXT")"
   explain="$(paragraph_data "$note_file" "%horn explain" "TEXT")"
+  composed_query="$(paragraph_data "$note_file" "%horn let lookup" "TEXT")"
+  composed_explain="$(paragraph_data "$note_file" "%horn let explanation" "TEXT")"
+  bindings="$(paragraph_data "$note_file" "%horn bindings" "TEXT")"
   impact="$(paragraph_data "$note_file" "%horn impact" "TEXT")"
   diff="$(paragraph_data "$note_file" "%horn diff" "TEXT")"
   mural="$(paragraph_data "$note_file" "%horn render" "HTML")"
@@ -95,6 +98,9 @@ assert_note() {
   [[ -n "$runtime" ]] || fail "%horn runtime did not produce Celix probe output"
   [[ -n "$query" ]] || fail "%horn query did not produce TEXT output"
   [[ -n "$explain" ]] || fail "%horn explain did not produce TEXT output"
+  [[ -n "$composed_query" ]] || fail "%horn let lookup did not produce TEXT output"
+  [[ -n "$composed_explain" ]] || fail "%horn let explanation did not produce TEXT output"
+  [[ -n "$bindings" ]] || fail "%horn bindings did not produce TEXT output"
   [[ -n "$impact" ]] || fail "%horn impact did not produce TEXT output"
   [[ -n "$diff" ]] || fail "%horn diff did not produce TEXT output"
   [[ -n "$mural" ]] || fail "%horn render did not produce native HTML"
@@ -141,6 +147,28 @@ assert_note() {
     and .identity == "c1-machines-can-think"
   ' <<<"$explain" >/dev/null \
     || fail "Celix explanation did not return the expected identity contract"
+  jq -e '
+    .version == "horn-query-result/0.1"
+    and .ok == true
+    and .node.id == "c1-machines-can-think"
+  ' <<<"$composed_query" >/dev/null \
+    || fail "bound query did not preserve the query result contract"
+  jq -e '
+    .version == "horn-explanation/0.1"
+    and .ok == true
+    and .identity == "c1-machines-can-think"
+  ' <<<"$composed_explain" >/dev/null \
+    || fail "composed explanation did not consume @lookup#/node/id"
+  jq -e '
+    .version == "horn-zeppelin-bindings/0.1"
+    and .ephemeral == true
+    and ([.bindings[].name] | index("lookup") != null)
+    and ([.bindings[].name] | index("explanation") != null)
+    and ([.bindings[] | select(.name == "lookup")][0].contract == "horn-query-result/0.1")
+    and ([.bindings[] | select(.name == "explanation")][0].contract == "horn-explanation/0.1")
+    and all(.bindings[]; (.sha256 | test("^[0-9a-f]{64}$")))
+  ' <<<"$bindings" >/dev/null \
+    || fail "notebook binding registry did not preserve ephemeral composition metadata"
   jq -e '
     .version == "horn-impact-report/0.1"
     and .runtime == "horn-runtime/0.1"

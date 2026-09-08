@@ -14,6 +14,7 @@
     <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <zeppelin.version>0.12.0</zeppelin.version>
+    <jackson.version>2.22.2</jackson.version>
     <slf4j.version>1.7.35</slf4j.version>
     <reload4j.version>1.2.25</reload4j.version>
     <commons.exec.version>1.3</commons.exec.version>
@@ -26,6 +27,18 @@
       <artifactId>zeppelin-interpreter</artifactId>
       <version>${zeppelin.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <!--
+      Composition bindings use a JSON tree only in the Zeppelin adapter. This
+      dependency does not enter libhorn or define HORN semantics. Pin it so
+      binding selectors and materialization are reproducible in third-party
+      interpreter processes.
+    -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson.version}</version>
     </dependency>
 
     <!--

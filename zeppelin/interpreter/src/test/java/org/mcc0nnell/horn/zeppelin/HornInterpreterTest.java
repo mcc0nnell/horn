@@ -1,6 +1,7 @@
 package org.mcc0nnell.horn.zeppelin;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -163,6 +164,104 @@ class HornInterpreterTest {
   }
 
   @Test
+  void composesQueryIntoExplanationThroughEphemeralScalarSelector() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0,
+        "{\"version\":\"horn-query-result/0.1\",\"ok\":true,"
+            + "\"node\":{\"id\":\"c1-machines-can-think\",\"kind\":\"claim\"}}\n");
+
+    InterpreterResult lookup = interpreter.interpret(
+        "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null);
+    assertEquals(Code.SUCCESS, lookup.code());
+
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0, "{\"version\":\"horn-explanation/0.1\",\"ok\":true}\n");
+    InterpreterResult explanation = interpreter.interpret(
+        "explain maps/example.horn.json @lookup#/node/id", null);
+
+    assertEquals(Code.SUCCESS, explanation.code());
+    assertEquals("explain", interpreter.lastCelixView);
+    assertEquals("c1-machines-can-think", interpreter.lastCelixArgs.get(2));
+
+    InterpreterResult bindings = interpreter.interpret("bindings", null);
+    assertEquals(Code.SUCCESS, bindings.code());
+    assertTrue(bindings.message().get(0).getData().contains("horn-zeppelin-bindings/0.1"));
+    assertTrue(bindings.message().get(0).getData().contains("\"name\" : \"lookup\""));
+    assertTrue(bindings.message().get(0).getData().contains("horn-query-result/0.1"));
+  }
+
+  @Test
+  void materializesDerivedJsonOnlyForDurationOfNativeInvocation() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0,
+        "{\"version\":\"horn-query-result/0.1\",\"ok\":true,"
+            + "\"node\":{\"id\":\"c1\",\"kind\":\"claim\"}}\n");
+    assertEquals(Code.SUCCESS,
+        interpreter.interpret(
+            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
+
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0, "{\"version\":\"horn-query-result/0.1\",\"ok\":true}\n");
+    InterpreterResult result = interpreter.interpret(
+        "query maps/example.horn.json @lookup#/node", null);
+
+    assertEquals(Code.SUCCESS, result.code());
+    assertTrue(interpreter.lastMaterializedJson.contains("\"id\":\"c1\""));
+    assertFalse(Files.exists(interpreter.lastMaterializedPath));
+  }
+
+  @Test
+  void rejectsUnknownBindingSelectorBeforeNativeExecution() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0,
+        "{\"version\":\"horn-query-result/0.1\",\"node\":{\"id\":\"c1\"}}\n");
+    assertEquals(Code.SUCCESS,
+        interpreter.interpret(
+            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
+    int callCount = interpreter.celixCallCount;
+
+    InterpreterResult result = interpreter.interpret(
+        "explain maps/example.horn.json @lookup#/node/missing", null);
+
+    assertEquals(Code.ERROR, result.code());
+    assertTrue(result.message().get(0).getData().contains("selector did not resolve"));
+    assertEquals(callCount, interpreter.celixCallCount);
+  }
+
+  @Test
+  void neverAllowsDerivedBindingToBecomeCanonicalDocumentOperand() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(
+        0, "{\"version\":\"horn-query-result/0.1\",\"node\":{\"id\":\"c1\"}}\n");
+    assertEquals(Code.SUCCESS,
+        interpreter.interpret(
+            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
+    int callCount = interpreter.celixCallCount;
+
+    InterpreterResult result = interpreter.interpret(
+        "diff @lookup maps/after.horn.json", null);
+
+    assertEquals(Code.ERROR, result.code());
+    assertTrue(result.message().get(0).getData().contains("cannot be used as HORN documents"));
+    assertEquals(callCount, interpreter.celixCallCount);
+  }
+
+  @Test
+  void failedOrNonJsonResultsAreNotBound() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(1, "service failed\n");
+    assertEquals(Code.ERROR,
+        interpreter.interpret(
+            "let failed = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
+    assertFalse(interpreter.interpret("bindings", null).message().get(0).getData().contains("failed"));
+
+    interpreter.celixResult = new HornInterpreter.CommandResult(0, "not-json\n");
+    InterpreterResult invalid = interpreter.interpret(
+        "let invalid = query maps/example.horn.json \"requests/node lookup.json\"", null);
+    assertEquals(Code.ERROR, invalid.code());
+    assertTrue(invalid.message().get(0).getData().contains("not a JSON value"));
+    assertFalse(interpreter.interpret("bindings", null).message().get(0).getData().contains("invalid"));
+  }
+
+  @Test
   void preservesSpacesInSingleDocumentPathAndQuotedMultiOperandPath() {
     interpreter.celixResult = new HornInterpreter.CommandResult(0, "{}\n");
 
@@ -255,6 +354,9 @@ class HornInterpreterTest {
     Path lastCliDocument;
     String lastCelixView;
     List<String> lastCelixArgs;
+    int celixCallCount;
+    Path lastMaterializedPath;
+    String lastMaterializedJson;
 
     StubHornInterpreter(Properties properties) {
       super(properties);
@@ -271,6 +373,18 @@ class HornInterpreterTest {
     protected CommandResult executeCelix(String view, List<String> nativeArgs) {
       lastCelixView = view;
       lastCelixArgs = List.copyOf(nativeArgs);
+      celixCallCount += 1;
+      if ("query".equals(view) && nativeArgs.size() > 2) {
+        Path candidate = Path.of(nativeArgs.get(2));
+        if (candidate.getFileName().toString().startsWith("horn-zeppelin-binding-")) {
+          try {
+            lastMaterializedPath = candidate;
+            lastMaterializedJson = Files.readString(candidate);
+          } catch (IOException exception) {
+            throw new AssertionError(exception);
+          }
+        }
+      }
       return celixResult;
     }
   }

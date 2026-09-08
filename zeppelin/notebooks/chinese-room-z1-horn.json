@@ -3,7 +3,7 @@
   "paragraphs": [
     {
       "title": "About",
-      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution."
+      "text": "%md\n# HORN-Z1 — Chinese Room\n\nThis note executes the canonical `maps/chinese-room-slice.horn.json` artifact through the native `%horn` interpreter. HORN owns meaning and authored geometry; Zeppelin owns interaction and execution. Derived notebook bindings are ephemeral and never become authored state."
     },
     {
       "title": "Runtime",
@@ -30,6 +30,18 @@
       "text": "%horn explain maps/chinese-room-slice.horn.json c1-machines-can-think"
     },
     {
+      "title": "Bind lookup",
+      "text": "%horn let lookup = query maps/chinese-room-slice.horn.json golden/reactor/queries/node-lookup.json"
+    },
+    {
+      "title": "Compose explanation",
+      "text": "%horn let explanation = explain maps/chinese-room-slice.horn.json @lookup#/node/id"
+    },
+    {
+      "title": "Bindings",
+      "text": "%horn bindings"
+    },
+    {
       "title": "Impact",
       "text": "%horn impact maps/celix-845-specimen-001.horn.json experiments/celix-845/evidence/sbom-physical-evidence.json experiments/celix-845/evidence/bindings.json"
     },
@@ -51,7 +63,7 @@
     },
     {
       "title": "Authority boundary",
-      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation, query, explanation, impact, diff, and inspection use the pinned Celix-discovered libhorn services. The network remains a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
+      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation, query, explanation, impact, diff, and inspection use the pinned Celix-discovered libhorn services. Notebook bindings are derived, note-local, and disposable. They may feed later service operands but can never replace canonical `.horn.json` document operands."
     }
   ]
 }
