@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcc0nnell.org/horn/schema/horn-tape-plan-0.1.schema.json",
+  "title": "Horn Tape Plan 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "actions"],
+  "properties": {
+    "version": { "const": "horn-tape-plan/0.1" },
+    "actions": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"type":"object","additionalProperties":false,"required":["kind","nodeId"],"properties":{"kind":{"const":"focus-node"},"nodeId":{"type":"string","minLength":1}}},
+          {"type":"object","additionalProperties":false,"required":["kind","relationId"],"properties":{"kind":{"const":"follow-relation"},"relationId":{"type":"string","minLength":1}}},
+          {"type":"object","additionalProperties":false,"required":["kind","citationId"],"properties":{"kind":{"const":"open-citation"},"citationId":{"type":"string","minLength":1}}},
+          {"type":"object","additionalProperties":false,"required":["kind","label"],"properties":{"kind":{"const":"checkpoint"},"label":{"type":"string"}}}
+        ]
+      }
+    }
+  }
+}

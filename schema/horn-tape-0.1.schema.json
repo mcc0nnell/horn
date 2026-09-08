@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcc0nnell.org/horn/schema/horn-tape-0.1.schema.json",
+  "title": "Horn Tape 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "replayVersion", "document", "direction", "genesisDigest", "events", "terminal", "id"],
+  "properties": {
+    "version": { "const": "horn-tape/0.1" },
+    "replayVersion": { "const": "horn-tape-replay/0.1" },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sha256"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "direction": { "const": "reader" },
+    "genesisDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["version", "seq", "previousDigest", "payload", "receiptDigest"],
+        "properties": {
+          "version": { "const": "horn-tape-event/0.1" },
+          "seq": { "type": "integer", "minimum": 1 },
+          "previousDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "receiptDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+          "payload": {
+            "oneOf": [
+              {"type":"object","additionalProperties":false,"required":["kind","nodeId"],"properties":{"kind":{"const":"focus-node"},"nodeId":{"type":"string","minLength":1}}},
+              {"type":"object","additionalProperties":false,"required":["kind","relationId","fromNodeId","toNodeId"],"properties":{"kind":{"const":"follow-relation"},"relationId":{"type":"string","minLength":1},"fromNodeId":{"type":"string","minLength":1},"toNodeId":{"type":"string","minLength":1}}},
+              {"type":"object","additionalProperties":false,"required":["kind","nodeId","citationId"],"properties":{"kind":{"const":"open-citation"},"nodeId":{"type":"string","minLength":1},"citationId":{"type":"string","minLength":1}}},
+              {"type":"object","additionalProperties":false,"required":["kind","nodeId","label"],"properties":{"kind":{"const":"checkpoint"},"nodeId":{"type":["string","null"]},"label":{"type":"string"}}}
+            ]
+          }
+        }
+      }
+    },
+    "terminal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodeId", "digest"],
+      "properties": {
+        "nodeId": { "type": ["string", "null"] },
+        "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "id": { "type": "string", "pattern": "^horn-tape:[a-f0-9]{64}$" }
+  }
+}

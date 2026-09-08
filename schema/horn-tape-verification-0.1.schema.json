@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://mcc0nnell.org/horn/schema/horn-tape-verification-0.1.schema.json",
+  "title": "Horn Tape Verification 0.1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "valid", "tapeId", "expectedTapeId", "sourceDigest", "terminalNodeId", "terminalDigest", "replayedEvents", "issues"],
+  "properties": {
+    "version": { "const": "horn-tape-verification/0.1" },
+    "valid": { "type": "boolean" },
+    "tapeId": { "type": "string" },
+    "expectedTapeId": { "type": "string", "pattern": "^horn-tape:[a-f0-9]{64}$" },
+    "sourceDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "terminalNodeId": { "type": ["string", "null"] },
+    "terminalDigest": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "replayedEvents": { "type": "integer", "minimum": 0 },
+    "issues": { "type": "array", "items": { "type": "string" } }
+  }
+}

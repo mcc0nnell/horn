@@ -13,6 +13,9 @@ inline constexpr std::string_view QUERY_REQUEST_CONTRACT = "horn-query-request/0
 inline constexpr std::string_view QUERY_RESULT_CONTRACT = "horn-query-result/0.1";
 inline constexpr std::string_view PROOF_CONTRACT = "horn-proof/0.1";
 inline constexpr std::string_view PROOF_VERIFICATION_CONTRACT = "horn-proof-verification/0.1";
+inline constexpr std::string_view TAPE_PLAN_CONTRACT = "horn-tape-plan/0.1";
+inline constexpr std::string_view TAPE_CONTRACT = "horn-tape/0.1";
+inline constexpr std::string_view TAPE_VERIFICATION_CONTRACT = "horn-tape-verification/0.1";
 
 enum class ProjectionView {
     Argument,
@@ -116,6 +119,26 @@ public:
     [[nodiscard]] virtual std::string verifyProof(
         std::string_view canonicalHornDocumentJson,
         std::string_view hornProofJson) const = 0;
+};
+
+/**
+ * Native reasoning-tape seam.
+ *
+ * A tape records receipt-chained traversal over canonical Horn identities. It
+ * is derived replay evidence rather than authored Horn truth. Keep this seam
+ * provider-free until TypeScript/native golden equivalence is demonstrated.
+ */
+class ITapeService {
+public:
+    virtual ~ITapeService() noexcept = default;
+
+    [[nodiscard]] virtual std::string recordTape(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view hornTapePlanJson) const = 0;
+
+    [[nodiscard]] virtual std::string verifyTape(
+        std::string_view canonicalHornDocumentJson,
+        std::string_view hornTapeJson) const = 0;
 };
 
 } // namespace horn
