@@ -100,11 +100,27 @@ test("artifact counterfactual reports disconnected structure", () => {
   assert.deepEqual(result.result["disconnectedNodeIds"], ["reply"]);
 });
 
-test("dominators request requires a target", () => {
-  const problems = validateHornQueryRequest({
+test("targeted operations require a target", () => {
+  for (const operation of ["dominators", "min-cut"] as const) {
+    const problems = validateHornQueryRequest({
+      version: "horn-query-request/0.1",
+      operation,
+      focusNodeId: "focus",
+    });
+    assert.ok(problems.some((problem) => problem.code === "missing-target"));
+  }
+});
+
+test("minimum-cut query reports direct response as internally uncuttable", () => {
+  const result = executeHornQuery(document, {
     version: "horn-query-request/0.1",
-    operation: "dominators",
+    operation: "min-cut",
     focusNodeId: "focus",
+    targetNodeId: "reply",
   });
-  assert.ok(problems.some((problem) => problem.code === "missing-target"));
+
+  assert.equal(result.operation, "min-cut");
+  assert.equal(result.result["finite"], false);
+  assert.equal(result.result["cardinality"], null);
+  assert.deepEqual(result.result["cutNodeIds"], []);
 });
