@@ -150,6 +150,7 @@ public:
         collect<horn::IExplanationService>(services);
         collect<horn::IImpactService>(services);
         collect<horn::IDiffService>(services);
+        collect<horn::IReasoningSessionService>(services);
         std::sort(services.begin(), services.end(), [](const horn::json& a, const horn::json& b) {
             return a.at("interface").get<std::string>() < b.at("interface").get<std::string>();
         });
@@ -175,7 +176,7 @@ public:
 
         horn::json out = horn::json::object();
         out["bundle"] = bundle;
-        out["ok"] = services.size() >= 7;
+        out["ok"] = services.size() >= 8;
         out["pin"] = pin;
         out["projectionViews"] = views;
         out["runtime"] = std::string{horn::RUNTIME_API_VERSION};
@@ -264,7 +265,7 @@ private:
 
 void usage() {
     std::cerr
-        << "Usage: horn_celix <validate|project|query|explain|impact|diff|inspect|probe> ...\n"
+        << "Usage: horn_celix <validate|project|query|explain|impact|diff|inspect|session|probe> ...\n"
            "  horn_celix validate <document>\n"
            "  horn_celix project <document> <argument|timeline|evidence|frontier>\n"
            "  horn_celix query <document> <query.json>\n"
@@ -273,6 +274,7 @@ void usage() {
            "  horn_celix diff <before> <after>\n"
            "  horn_celix inspect <document> [--projection view]... [--explain-all]\n"
            "             [--evidence file] [--bindings file] [--query file]\n"
+           "  horn_celix session <reasoning-session-request.json>\n"
            "  horn_celix probe\n";
 }
 
@@ -288,6 +290,16 @@ int main(int argc, char** argv) {
         CelixRuntime runtime;
         if (op == "probe") {
             std::cout << horn::dumpNormalized(runtime.probe());
+            return 0;
+        }
+        if (op == "session") {
+            if (argc != 3) {
+                usage();
+                return 2;
+            }
+            const std::string request = horn::readFileUtf8(argv[2]);
+            std::cout << runtime.use<horn::IReasoningSessionService>(
+                [&](horn::IReasoningSessionService& svc) { return svc.execute(request); });
             return 0;
         }
         if (op == "validate") {
