@@ -1,0 +1,89 @@
+{
+  "version": "horn-source-series/0.1",
+  "id": "cct-1998",
+  "title": "Mapping Great Debates: Can Computers Think?",
+  "creator": "Robert E. Horn",
+  "year": 1998,
+  "authority": {
+    "role": "historical calibration corpus",
+    "rule": "Source artifacts constrain extraction and reconstruction; they do not directly define libhorn runtime semantics."
+  },
+  "sourceRepository": {
+    "repository": "mcc0nnell/web",
+    "ref": "main",
+    "pathPolicy": "Use the original source copies under docs/ for calibration."
+  },
+  "maps": [
+    {
+      "map": 1,
+      "id": "cct-1998-map-01",
+      "question": "Can computers think?",
+      "path": "docs/ •HORN-1998 CCT-MAP 1-WHATisTHIS-1998.pdf",
+      "gitBlobSha1": "2a69837ef2f43e96f5dd722540b61115709ca07c",
+      "bytes": 7512112
+    },
+    {
+      "map": 2,
+      "id": "cct-1998-map-02",
+      "question": "Can the Turing Test determine whether computers can think?",
+      "path": "docs/•MAP 2 152-ORANGE [Converted].pdf",
+      "gitBlobSha1": "bc88383308ad19e8c03750d0dad60023ab78ae05",
+      "bytes": 3023227
+    },
+    {
+      "map": 3,
+      "id": "cct-1998-map-03",
+      "question": "Can physical symbol systems think?",
+      "path": "docs/•MAP 3 355-GREEN -Converted.pdf",
+      "gitBlobSha1": "c5a8bbdf10528977bde539545bfee60456ca4f0e",
+      "bytes": 3112146
+    },
+    {
+      "map": 4,
+      "id": "cct-1998-map-04",
+      "question": "Can Chinese rooms think?",
+      "path": "docs/•MAP 4 255 PURPLE [Converted].pdf",
+      "gitBlobSha1": "e490d6f09760b944e3eb8c6a7f1837b1a91290b1",
+      "bytes": 3091669,
+      "relatedSource": {
+        "path": "docs/drgmCHINESE ROOM.ai",
+        "gitBlobSha1": "373e4fa3b6e8acf0cd93cd2552fe9d2031a16313",
+        "bytes": 1269654,
+        "role": "vector authoring source"
+      }
+    },
+    {
+      "map": 5,
+      "id": "cct-1998-map-05",
+      "question": "Can connectionist networks think?",
+      "path": "docs/•MAP 5 154 BROWN -Converted.pdf",
+      "gitBlobSha1": "3b75f68d98da7e15ddf7ca246ac36e28c3f9caea",
+      "bytes": 3674835
+    },
+    {
+      "map": 6,
+      "id": "cct-1998-map-06",
+      "question": "Do computers have to be conscious to think?",
+      "path": "docs/•MAP 6 TURQ 321 [Converted].pdf",
+      "gitBlobSha1": "cf635fe32369ff81cb1ad5ab4146f152c0031acd",
+      "bytes": 3245071
+    },
+    {
+      "map": 7,
+      "id": "cct-1998-map-07",
+      "question": "Are thinking computers mathematically possible?",
+      "path": "docs/•MAP 7 105 OLIVE [Converted].pdf",
+      "gitBlobSha1": "f100c7803865bc4a1c63d369a39f675e8b444fe3",
+      "bytes": 3515509
+    }
+  ],
+  "companionSources": [
+    {
+      "id": "cct-1998-handbook",
+      "path": "docs/•CCT-CanComputersThink Handbook copy.pdf",
+      "gitBlobSha1": "c176591977cc06bc45e763447ea883006b5b0520e",
+      "bytes": 170791,
+      "role": "series handbook"
+    }
+  ]
+}
