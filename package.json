@@ -28,7 +28,7 @@
     "golden:projection": "node golden/projection/compare.mjs",
     "golden:reactor": "node golden/reactor/compare.mjs",
     "golden:torture": "node golden/reactor/torture.mjs",
-    "golden:celix": "node golden/celix/compare.mjs"
+    "golden:celix": "node golden/celix/compare.mjs && node golden/celix/session.mjs"
   },
   "dependencies": {
     "echarts": "^6.1.0"
