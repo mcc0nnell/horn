@@ -22,6 +22,22 @@
       "text": "%horn inspect maps/chinese-room-slice.horn.json"
     },
     {
+      "title": "Query",
+      "text": "%horn query maps/chinese-room-slice.horn.json golden/reactor/queries/node-lookup.json"
+    },
+    {
+      "title": "Explain",
+      "text": "%horn explain maps/chinese-room-slice.horn.json c1-machines-can-think"
+    },
+    {
+      "title": "Impact",
+      "text": "%horn impact maps/celix-845-specimen-001.horn.json experiments/celix-845/evidence/sbom-physical-evidence.json experiments/celix-845/evidence/bindings.json"
+    },
+    {
+      "title": "Diff",
+      "text": "%horn diff maps/chinese-room-slice.horn.json maps/chinese-room-slice.horn.json"
+    },
+    {
       "title": "Mural",
       "text": "%horn render maps/chinese-room-slice.horn.json"
     },
@@ -35,7 +51,7 @@
     },
     {
       "title": "Authority boundary",
-      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation and inspection use the pinned Celix-discovered libhorn services. The network remains a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
+      "text": "%md\n## Authority boundary\n\nThe `%horn` interpreter is deliberately thin. Presentation views use the TypeScript adapter; headless validation, query, explanation, impact, diff, and inspection use the pinned Celix-discovered libhorn services. The network remains a lossy semantic/debug projection; authored geometry and route authority remain only in the canonical HORN document."
     }
   ]
 }

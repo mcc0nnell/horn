@@ -35,8 +35,12 @@ public class HornInterpreter extends Interpreter {
   static final String PROP_TIMEOUT = "horn.command.timeout.millis";
 
   private static final long DEFAULT_TIMEOUT_MILLIS = 60_000L;
-  private static final Set<String> DOCUMENT_COMMANDS =
-      Set.of("render", "network", "audit", "manifest", "validate", "inspect");
+  private static final Set<String> PRESENTATION_COMMANDS =
+      Set.of("render", "network", "audit", "manifest");
+  private static final Set<String> SINGLE_DOCUMENT_ANALYSIS_COMMANDS =
+      Set.of("validate", "inspect");
+  private static final Set<String> MULTI_OPERAND_ANALYSIS_COMMANDS =
+      Set.of("query", "explain", "impact", "diff");
 
   private Path repositoryRoot;
   private String npmCommand;
@@ -99,17 +103,12 @@ public class HornInterpreter extends Interpreter {
       ensureOpen();
       HornCommand command = parse(statement);
 
-      if ("runtime".equals(command.view)) {
-        CommandResult commandResult = executeCelix("runtime", null);
-        return mapCommandResult(command.view, commandResult);
-      }
-
-      Path relativeDocument = resolveDocument(command.documentPath);
       CommandResult commandResult;
-      if ("validate".equals(command.view) || "inspect".equals(command.view)) {
-        commandResult = executeCelix(command.view, relativeDocument);
-      } else {
+      if (PRESENTATION_COMMANDS.contains(command.view)) {
+        Path relativeDocument = resolveDocument(command.operands.get(0));
         commandResult = executeCli(command.view, relativeDocument);
+      } else {
+        commandResult = executeCelix(command.view, buildCelixArgs(command));
       }
       return mapCommandResult(command.view, commandResult);
     } catch (InterpreterException exception) {
@@ -151,7 +150,7 @@ public class HornInterpreter extends Interpreter {
         relativeDocument.toString()));
   }
 
-  protected CommandResult executeCelix(String view, Path relativeDocument)
+  protected CommandResult executeCelix(String view, List<String> nativeArgs)
       throws IOException, InterruptedException, InterpreterException {
     if (!Files.isRegularFile(celixCommand)) {
       throw new InterpreterException(
@@ -160,19 +159,25 @@ public class HornInterpreter extends Interpreter {
               + " && cmake --build build/native");
     }
 
+    List<String> command = new ArrayList<>();
+    command.add(celixCommand.toString());
+    command.addAll(nativeArgs);
+    return executeProcess(command);
+  }
+
+  private List<String> buildCelixArgs(HornCommand command) throws InterpreterException {
     List<String> args = new ArrayList<>();
-    args.add(celixCommand.toString());
-    switch (view) {
+    switch (command.view) {
       case "runtime":
         args.add("probe");
         break;
       case "validate":
         args.add("validate");
-        args.add(absoluteDocument(relativeDocument).toString());
+        args.add(absoluteDocument(command.operands.get(0)).toString());
         break;
       case "inspect":
         args.add("inspect");
-        args.add(absoluteDocument(relativeDocument).toString());
+        args.add(absoluteDocument(command.operands.get(0)).toString());
         args.add("--projection");
         args.add("argument");
         args.add("--projection");
@@ -182,17 +187,42 @@ public class HornInterpreter extends Interpreter {
         args.add("--projection");
         args.add("frontier");
         break;
+      case "query":
+        args.add("query");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(resolveJsonFile("HORN query request", command.operands.get(1)).toString());
+        break;
+      case "explain":
+        args.add("explain");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(command.operands.get(1));
+        for (int index = 2; index < command.operands.size(); index++) {
+          args.add(resolveJsonFile("HORN explanation support", command.operands.get(index)).toString());
+        }
+        break;
+      case "impact":
+        args.add("impact");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(resolveJsonFile("HORN evidence", command.operands.get(1)).toString());
+        args.add(resolveJsonFile("HORN bindings", command.operands.get(2)).toString());
+        break;
+      case "diff":
+        args.add("diff");
+        args.add(absoluteDocument(command.operands.get(0)).toString());
+        args.add(absoluteDocument(command.operands.get(1)).toString());
+        break;
       default:
-        throw new InterpreterException("Unsupported Celix-backed HORN view: " + view);
+        throw new InterpreterException("Unsupported Celix-backed HORN view: " + command.view);
     }
-    return executeProcess(args);
+    return args;
   }
 
-  private Path absoluteDocument(Path relativeDocument) throws InterpreterException {
-    if (relativeDocument == null) {
-      throw new InterpreterException("HORN document path is required");
-    }
-    return repositoryRoot.resolve(relativeDocument).normalize();
+  private Path absoluteDocument(String documentPath) throws InterpreterException {
+    return repositoryRoot.resolve(resolveDocument(documentPath)).normalize();
+  }
+
+  private Path resolveJsonFile(String label, String path) throws InterpreterException {
+    return resolveRepositoryFile(label, path, ".json");
   }
 
   private CommandResult executeProcess(List<String> command)
@@ -244,6 +274,10 @@ public class HornInterpreter extends Interpreter {
       case "validate":
       case "inspect":
       case "runtime":
+      case "query":
+      case "explain":
+      case "impact":
+      case "diff":
         return new InterpreterResult(Code.SUCCESS, Type.TEXT, output);
       default:
         throw new InterpreterException("Unsupported HORN view: " + view);
@@ -266,50 +300,141 @@ public class HornInterpreter extends Interpreter {
 
     String trimmed = statement.trim();
     if ("runtime".equals(trimmed.toLowerCase(Locale.ROOT))) {
-      return new HornCommand("runtime", null);
+      return new HornCommand("runtime", List.of());
     }
 
     int separator = firstWhitespace(trimmed);
     if (separator < 0) {
-      throw usage("HORN paragraph is missing a document path");
+      throw usage("HORN paragraph is missing operands");
     }
 
     String view = trimmed.substring(0, separator).toLowerCase(Locale.ROOT);
-    String documentPath = trimmed.substring(separator).trim();
-    if (!DOCUMENT_COMMANDS.contains(view)) {
-      throw usage("Unknown HORN view: " + view);
-    }
-    if (documentPath.isEmpty()) {
-      throw usage("HORN paragraph is missing a document path");
+    String remainder = trimmed.substring(separator).trim();
+    if (remainder.isEmpty()) {
+      throw usage("HORN paragraph is missing operands");
     }
 
-    return new HornCommand(view, documentPath);
+    if (PRESENTATION_COMMANDS.contains(view) || SINGLE_DOCUMENT_ANALYSIS_COMMANDS.contains(view)) {
+      return new HornCommand(view, List.of(remainder));
+    }
+    if (!MULTI_OPERAND_ANALYSIS_COMMANDS.contains(view)) {
+      throw usage("Unknown HORN view: " + view);
+    }
+
+    List<String> operands = tokenizeOperands(remainder);
+    switch (view) {
+      case "query":
+        requireOperandCount(view, operands, 2, 2);
+        break;
+      case "explain":
+        requireOperandCount(view, operands, 2, Integer.MAX_VALUE);
+        break;
+      case "impact":
+        requireOperandCount(view, operands, 3, 3);
+        break;
+      case "diff":
+        requireOperandCount(view, operands, 2, 2);
+        break;
+      default:
+        throw usage("Unknown HORN view: " + view);
+    }
+    return new HornCommand(view, operands);
+  }
+
+  private static List<String> tokenizeOperands(String input) throws InterpreterException {
+    List<String> tokens = new ArrayList<>();
+    StringBuilder current = new StringBuilder();
+    char quote = 0;
+    boolean escaping = false;
+    boolean tokenStarted = false;
+
+    for (int index = 0; index < input.length(); index++) {
+      char c = input.charAt(index);
+      if (escaping) {
+        current.append(c);
+        escaping = false;
+        tokenStarted = true;
+        continue;
+      }
+      if (c == '\\') {
+        escaping = true;
+        tokenStarted = true;
+        continue;
+      }
+      if (quote != 0) {
+        if (c == quote) {
+          quote = 0;
+        } else {
+          current.append(c);
+        }
+        tokenStarted = true;
+        continue;
+      }
+      if (c == '"' || c == '\'') {
+        quote = c;
+        tokenStarted = true;
+        continue;
+      }
+      if (Character.isWhitespace(c)) {
+        if (tokenStarted) {
+          tokens.add(current.toString());
+          current.setLength(0);
+          tokenStarted = false;
+        }
+        continue;
+      }
+      current.append(c);
+      tokenStarted = true;
+    }
+
+    if (escaping) {
+      throw usage("HORN paragraph ends with an incomplete escape");
+    }
+    if (quote != 0) {
+      throw usage("HORN paragraph contains an unterminated quoted operand");
+    }
+    if (tokenStarted) {
+      tokens.add(current.toString());
+    }
+    return tokens;
+  }
+
+  private static void requireOperandCount(
+      String view, List<String> operands, int minimum, int maximum) throws InterpreterException {
+    if (operands.size() < minimum || operands.size() > maximum) {
+      throw usage("Wrong operand count for HORN " + view);
+    }
   }
 
   private Path resolveDocument(String documentPath) throws InterpreterException {
+    Path resolved = resolveRepositoryFile("HORN document", documentPath, ".horn.json");
+    return repositoryRoot.relativize(resolved);
+  }
+
+  private Path resolveRepositoryFile(String label, String path, String requiredSuffix)
+      throws InterpreterException {
     Path requested;
     try {
-      requested = Paths.get(documentPath);
+      requested = Paths.get(path);
     } catch (RuntimeException exception) {
-      throw new InterpreterException("Invalid HORN document path: " + documentPath);
+      throw new InterpreterException("Invalid " + label + " path: " + path);
     }
 
     if (requested.isAbsolute()) {
-      throw new InterpreterException("HORN document paths must be repository-relative");
+      throw new InterpreterException(label + " paths must be repository-relative");
     }
-    if (!documentPath.endsWith(".horn.json")) {
-      throw new InterpreterException("HORN document path must end with .horn.json");
+    if (!path.endsWith(requiredSuffix)) {
+      throw new InterpreterException(label + " path must end with " + requiredSuffix);
     }
 
     Path resolved = repositoryRoot.resolve(requested).normalize();
     if (!resolved.startsWith(repositoryRoot)) {
-      throw new InterpreterException("HORN document path escapes the configured repository");
+      throw new InterpreterException(label + " path escapes the configured repository");
     }
     if (!Files.isRegularFile(resolved)) {
-      throw new InterpreterException("HORN document does not exist: " + documentPath);
+      throw new InterpreterException(label + " does not exist: " + path);
     }
-
-    return repositoryRoot.relativize(resolved);
+    return resolved;
   }
 
   private void ensureOpen() throws InterpreterException {
@@ -330,7 +455,11 @@ public class HornInterpreter extends Interpreter {
   private static InterpreterException usage(String message) {
     return new InterpreterException(
         message
-            + "; expected: runtime | <render|network|audit|manifest|validate|inspect> <path.horn.json>");
+            + "; expected: runtime | <render|network|audit|manifest|validate|inspect> <path.horn.json>"
+            + " | query <doc.horn.json> <query.json>"
+            + " | explain <doc.horn.json> <identity> [support.json ...]"
+            + " | impact <doc.horn.json> <evidence.json> <bindings.json>"
+            + " | diff <before.horn.json> <after.horn.json>");
   }
 
   private static String firstNonBlank(String... values) {
@@ -360,11 +489,11 @@ public class HornInterpreter extends Interpreter {
 
   static final class HornCommand {
     final String view;
-    final String documentPath;
+    final List<String> operands;
 
-    HornCommand(String view, String documentPath) {
+    HornCommand(String view, List<String> operands) {
       this.view = view;
-      this.documentPath = documentPath;
+      this.operands = List.copyOf(operands);
     }
   }
 

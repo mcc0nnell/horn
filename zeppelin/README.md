@@ -8,24 +8,34 @@ The authority boundary is unchanged: `.horn.json` is the canonical document. Zep
 
 The primary Zeppelin interface is the thin Java interpreter in [`interpreter/`](interpreter/). It does not implement HORN semantics.
 
-The interpreter now has two explicit execution planes:
+The interpreter has two explicit execution planes:
 
 - **Presentation plane** — `render`, `network`, `audit`, and `manifest` delegate to the transport-neutral TypeScript adapter in `src/zeppelin/`. These remain Zeppelin-facing projections.
-- **Analysis plane** — `runtime`, `validate`, and `inspect` execute `horn_celix`. That driver boots the pinned Apache Celix framework and discovers libhorn services before invoking them. Zeppelin does not reimplement or bypass the service contracts.
+- **Analysis plane** — `runtime`, `validate`, `inspect`, `query`, `explain`, `impact`, and `diff` execute `horn_celix`. That driver boots the pinned Apache Celix framework and discovers libhorn services before invoking them. Zeppelin does not reimplement or bypass the service contracts.
 
-Supported paragraphs are:
+Supported paragraphs include:
 
 ```text
 %horn runtime
 %horn validate maps/chinese-room-slice.horn.json
 %horn inspect maps/chinese-room-slice.horn.json
+%horn query maps/chinese-room-slice.horn.json golden/reactor/queries/node-lookup.json
+%horn explain maps/chinese-room-slice.horn.json c1-machines-can-think
+%horn impact maps/celix-845-specimen-001.horn.json experiments/celix-845/evidence/sbom-physical-evidence.json experiments/celix-845/evidence/bindings.json
+%horn diff maps/chinese-room-slice.horn.json maps/chinese-room-slice.horn.json
 %horn manifest maps/chinese-room-slice.horn.json
 %horn render maps/chinese-room-slice.horn.json
 %horn network maps/chinese-room-slice.horn.json
 %horn audit maps/chinese-room-slice.horn.json
 ```
 
-`runtime` emits the `horn-celix-probe/0.1` service-discovery record, including the exact pinned Celix identity and registered libhorn service interfaces. `validate` invokes `IValidationService`. `inspect` composes validation, all four analytical projections, and the headless inspection packet through the Celix-backed runtime.
+`runtime` emits the `horn-celix-probe/0.1` service-discovery record, including the exact pinned Celix identity and registered libhorn service interfaces. `validate` invokes `IValidationService`. `inspect` composes validation and the four analytical projections. `query`, `explain`, `impact`, and `diff` invoke `IQueryService`, `IExplanationService`, `IImpactService`, and `IDiffService` respectively.
+
+The direct reasoning commands are intentionally file-oriented. HORN documents and JSON request/support/evidence files must be repository-relative and are resolved before `ProcessBuilder` is invoked. No shell is used. Multi-operand commands accept single- or double-quoted operands, so paths containing spaces remain usable, for example:
+
+```text
+%horn query maps/chinese-room-slice.horn.json "golden/reactor/queries/node lookup.json"
+```
 
 `render` becomes a native Zeppelin `HTML` result. `network` becomes a native `NETWORK` result. The network remains an explicitly lossy semantic/debug projection and is never accepted as HORN serialization input.
 
@@ -76,7 +86,7 @@ export HORN_REPO=/absolute/path/to/horn
 
 Restart Zeppelin after installation. `HORN_REPO` identifies the checkout containing the canonical maps, TypeScript presentation adapter, and native build. `HORN_CELIX` may override the default `build/native/horn_celix` path. `HORN_NPM` and `HORN_COMMAND_TIMEOUT_MILLIS` correspond to interpreter properties `horn.npm` and `horn.command.timeout.millis`.
 
-The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). [`integration/run-z1-native-interpreter.sh`](integration/run-z1-native-interpreter.sh) ensures the pinned native runtime is built, probes its service plane before Zeppelin starts, executes `%horn runtime`, Celix-backed validation and inspection, and the presentation projections, then exports/re-imports the note and rechecks the runtime and semantic boundaries.
+The native fixture is [`notebooks/chinese-room-z1-horn.json`](notebooks/chinese-room-z1-horn.json). [`integration/run-z1-native-interpreter.sh`](integration/run-z1-native-interpreter.sh) ensures the pinned native runtime is built, probes its service plane before Zeppelin starts, executes every `%horn` paragraph in the fixture, exports/re-imports the note, and executes every paragraph again. A failed direct reasoning command therefore fails the integration note even though the runtime contract goldens remain independently owned by `golden:celix`.
 
 ## Z1-A shell bridge
 
