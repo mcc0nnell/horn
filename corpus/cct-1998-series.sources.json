@@ -11,79 +11,88 @@
   "sourceRepository": {
     "repository": "mcc0nnell/web",
     "ref": "main",
-    "pathPolicy": "Use the original source copies under docs/ for calibration."
+    "pathPolicy": "Prefer normalized public/horn paths when they are byte-identical mirrors of archived docs copies; Git blob identity is authoritative."
   },
   "maps": [
     {
       "map": 1,
       "id": "cct-1998-map-01",
       "question": "Can computers think?",
-      "path": "docs/ •HORN-1998 CCT-MAP 1-WHATisTHIS-1998.pdf",
+      "path": "public/horn/maps/01-can-computers-think.pdf",
       "gitBlobSha1": "2a69837ef2f43e96f5dd722540b61115709ca07c",
-      "bytes": 7512112
+      "bytes": 7512112,
+      "aliases": ["docs/ •HORN-1998 CCT-MAP 1-WHATisTHIS-1998.pdf"]
     },
     {
       "map": 2,
       "id": "cct-1998-map-02",
       "question": "Can the Turing Test determine whether computers can think?",
-      "path": "docs/•MAP 2 152-ORANGE [Converted].pdf",
+      "path": "public/horn/maps/02-can-the-turing-test-determine-whether-computers-can-think.pdf",
       "gitBlobSha1": "bc88383308ad19e8c03750d0dad60023ab78ae05",
-      "bytes": 3023227
+      "bytes": 3023227,
+      "aliases": ["docs/•MAP 2 152-ORANGE [Converted].pdf"]
     },
     {
       "map": 3,
       "id": "cct-1998-map-03",
       "question": "Can physical symbol systems think?",
-      "path": "docs/•MAP 3 355-GREEN -Converted.pdf",
+      "path": "public/horn/maps/03-can-physical-symbol-systems-think.pdf",
       "gitBlobSha1": "c5a8bbdf10528977bde539545bfee60456ca4f0e",
-      "bytes": 3112146
+      "bytes": 3112146,
+      "aliases": ["docs/•MAP 3 355-GREEN -Converted.pdf"]
     },
     {
       "map": 4,
       "id": "cct-1998-map-04",
       "question": "Can Chinese rooms think?",
-      "path": "docs/•MAP 4 255 PURPLE [Converted].pdf",
+      "path": "public/horn/maps/04-can-chinese-rooms-think.pdf",
       "gitBlobSha1": "e490d6f09760b944e3eb8c6a7f1837b1a91290b1",
       "bytes": 3091669,
+      "aliases": ["docs/•MAP 4 255 PURPLE [Converted].pdf"],
       "relatedSource": {
-        "path": "docs/drgmCHINESE ROOM.ai",
+        "path": "public/horn/source/map-04-chinese-room.ai",
         "gitBlobSha1": "373e4fa3b6e8acf0cd93cd2552fe9d2031a16313",
         "bytes": 1269654,
-        "role": "vector authoring source"
+        "role": "vector authoring source",
+        "aliases": ["docs/drgmCHINESE ROOM.ai"]
       }
     },
     {
       "map": 5,
       "id": "cct-1998-map-05",
       "question": "Can connectionist networks think?",
-      "path": "docs/•MAP 5 154 BROWN -Converted.pdf",
+      "path": "public/horn/maps/05-can-connectionist-networks-think.pdf",
       "gitBlobSha1": "3b75f68d98da7e15ddf7ca246ac36e28c3f9caea",
-      "bytes": 3674835
+      "bytes": 3674835,
+      "aliases": ["docs/•MAP 5 154 BROWN -Converted.pdf"]
     },
     {
       "map": 6,
       "id": "cct-1998-map-06",
       "question": "Do computers have to be conscious to think?",
-      "path": "docs/•MAP 6 TURQ 321 [Converted].pdf",
+      "path": "public/horn/maps/06-do-computers-have-to-be-conscious-to-think.pdf",
       "gitBlobSha1": "cf635fe32369ff81cb1ad5ab4146f152c0031acd",
-      "bytes": 3245071
+      "bytes": 3245071,
+      "aliases": ["docs/•MAP 6 TURQ 321 [Converted].pdf"]
     },
     {
       "map": 7,
       "id": "cct-1998-map-07",
       "question": "Are thinking computers mathematically possible?",
-      "path": "docs/•MAP 7 105 OLIVE [Converted].pdf",
+      "path": "public/horn/maps/07-are-thinking-computers-mathematically-possible.pdf",
       "gitBlobSha1": "f100c7803865bc4a1c63d369a39f675e8b444fe3",
-      "bytes": 3515509
+      "bytes": 3515509,
+      "aliases": ["docs/•MAP 7 105 OLIVE [Converted].pdf"]
     }
   ],
   "companionSources": [
     {
       "id": "cct-1998-handbook",
-      "path": "docs/•CCT-CanComputersThink Handbook copy.pdf",
-      "gitBlobSha1": "c176591977cc06bc45e763447ea883006b5b0520",
+      "path": "public/horn/library/can-computers-think-handbook-1998.pdf",
+      "gitBlobSha1": "c176591977cc06bc45e763447ea883006b5b0520e",
       "bytes": 170791,
-      "role": "series handbook"
+      "role": "series handbook",
+      "aliases": ["docs/•CCT-CanComputersThink Handbook copy.pdf"]
     }
   ]
 }
