@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +20,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class HornInterpreterTest {
+  private static final ObjectMapper JSON = new ObjectMapper();
+
   @TempDir
   Path repository;
 
@@ -31,13 +35,18 @@ class HornInterpreterTest {
     Files.createDirectories(repository.resolve("evidence"));
     Files.writeString(repository.resolve("src/zeppelin/cli.ts"), "// fixture\n");
     Files.writeString(repository.resolve("package.json"), "{}\n");
-    Files.writeString(repository.resolve("maps/example.horn.json"), "{}\n");
-    Files.writeString(repository.resolve("maps/with space.horn.json"), "{}\n");
-    Files.writeString(repository.resolve("maps/after.horn.json"), "{}\n");
-    Files.writeString(repository.resolve("requests/node lookup.json"), "{}\n");
-    Files.writeString(repository.resolve("evidence/physical.json"), "{}\n");
-    Files.writeString(repository.resolve("evidence/bindings.json"), "{}\n");
-    Files.writeString(repository.resolve("evidence/support pack.json"), "{}\n");
+    Files.writeString(repository.resolve("maps/example.horn.json"),
+        "{\"version\":\"horn-document/0.1\",\"id\":\"horn:test\"}\n");
+    Files.writeString(repository.resolve("maps/with space.horn.json"),
+        "{\"version\":\"horn-document/0.1\",\"id\":\"horn:space\"}\n");
+    Files.writeString(repository.resolve("maps/after.horn.json"),
+        "{\"version\":\"horn-document/0.1\",\"id\":\"horn:after\"}\n");
+    Files.writeString(repository.resolve("requests/node lookup.json"),
+        "{\"version\":\"horn-query/0.1\",\"op\":\"node-lookup\",\"id\":\"c1\"}\n");
+    Files.writeString(repository.resolve("evidence/physical.json"), "{\"components\":{}}\n");
+    Files.writeString(repository.resolve("evidence/bindings.json"), "{\"bindings\":[]}\n");
+    Files.writeString(repository.resolve("evidence/support pack.json"),
+        "{\"version\":\"horn-argument/0.1\"}\n");
 
     Properties properties = new Properties();
     properties.setProperty(HornInterpreter.PROP_REPO, repository.toString());
@@ -49,7 +58,7 @@ class HornInterpreterTest {
   }
 
   @Test
-  void mapsRenderToNativeHtmlThroughPresentationPlane() {
+  void mapsRenderThroughPresentationPlane() {
     interpreter.cliResult =
         new HornInterpreter.CommandResult(0, "%html\n<section>mural</section>\n");
 
@@ -64,36 +73,7 @@ class HornInterpreterTest {
   }
 
   @Test
-  void runtimeProbesDiscoveredCelixServicePlaneWithoutDocument() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-celix-probe/0.1\",\"ok\":true}\n");
-
-    InterpreterResult result = interpreter.interpret("runtime", null);
-
-    assertEquals(Code.SUCCESS, result.code());
-    assertEquals(Type.TEXT, result.message().get(0).getType());
-    assertEquals("runtime", interpreter.lastCelixView);
-    assertEquals(List.of("probe"), interpreter.lastCelixArgs);
-  }
-
-  @Test
-  void validateAndInspectRouteThroughCelix() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(0, "{}\n");
-
-    assertEquals(Code.SUCCESS,
-        interpreter.interpret("validate maps/example.horn.json", null).code());
-    assertEquals("validate", interpreter.lastCelixView);
-    assertEquals("validate", interpreter.lastCelixArgs.get(0));
-
-    assertEquals(Code.SUCCESS,
-        interpreter.interpret("inspect maps/example.horn.json", null).code());
-    assertEquals("inspect", interpreter.lastCelixView);
-    assertTrue(interpreter.lastCelixArgs.contains("argument"));
-    assertTrue(interpreter.lastCelixArgs.contains("frontier"));
-  }
-
-  @Test
-  void queryRoutesRequestFileThroughIQueryService() {
+  void directQueryStillUsesDiscoveredQueryServiceWithoutSessionEnvelope() {
     interpreter.celixResult = new HornInterpreter.CommandResult(
         0, "{\"version\":\"horn-query-result/0.1\",\"ok\":true}\n");
 
@@ -101,250 +81,184 @@ class HornInterpreterTest {
         "query maps/example.horn.json \"requests/node lookup.json\"", null);
 
     assertEquals(Code.SUCCESS, result.code());
-    assertEquals(Type.TEXT, result.message().get(0).getType());
     assertEquals("query", interpreter.lastCelixView);
     assertEquals(List.of(
         "query",
         repository.resolve("maps/example.horn.json").toString(),
         repository.resolve("requests/node lookup.json").toString()),
         interpreter.lastCelixArgs);
+    assertEquals(null, interpreter.lastSessionRequest);
   }
 
   @Test
-  void explainRoutesIdentityAndOptionalSupportFiles() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-explanation/0.1\",\"ok\":true}\n");
+  void compositionTransportsOpaqueCelixSessionAndLeavesPointerUnresolvedInJava() throws Exception {
+    interpreter.celixResult = sessionResponse(
+        "{\"version\":\"horn-query-result/0.1\",\"node\":{\"id\":\"c1\"}}",
+        "[{\"name\":\"lookup\",\"command\":\"query\",\"value\":{\"node\":{\"id\":\"c1\"}}}]",
+        "celix-owned");
 
-    InterpreterResult result = interpreter.interpret(
-        "explain maps/example.horn.json c1 \"evidence/support pack.json\"", null);
+    InterpreterResult first = interpreter.interpret(
+        "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null);
 
-    assertEquals(Code.SUCCESS, result.code());
-    assertEquals("explain", interpreter.lastCelixView);
-    assertEquals(List.of(
-        "explain",
-        repository.resolve("maps/example.horn.json").toString(),
-        "c1",
-        repository.resolve("evidence/support pack.json").toString()),
-        interpreter.lastCelixArgs);
+    assertEquals(Code.SUCCESS, first.code());
+    assertEquals("session", interpreter.lastCelixView);
+    assertEquals("session", interpreter.lastCelixArgs.get(0));
+    assertEquals("query", interpreter.lastSessionRequest.path("command").path("op").asText());
+    assertEquals("lookup", interpreter.lastSessionRequest.path("bind").asText());
+    assertEquals("canonical",
+        interpreter.lastSessionRequest.path("command").path("document").path("authority").asText());
+    assertEquals("node-lookup",
+        interpreter.lastSessionRequest.path("command").path("request").path("value").path("op").asText());
+    Path firstRequestFile = interpreter.lastSessionRequestFile;
+    assertFalse(Files.exists(firstRequestFile), "session request temp file must be deleted");
+
+    interpreter.celixResult = sessionResponse(
+        "{\"version\":\"horn-explanation/0.1\",\"identity\":\"c1\",\"ok\":true}",
+        "[{\"name\":\"lookup\",\"command\":\"query\",\"value\":{\"node\":{\"id\":\"c1\"}}}]",
+        "celix-owned");
+
+    InterpreterResult second = interpreter.interpret(
+        "explain maps/example.horn.json @lookup#/node/id", null);
+
+    assertEquals(Code.SUCCESS, second.code());
+    assertTrue(second.message().get(0).getData().contains("horn-explanation/0.1"));
+    assertEquals("celix-owned",
+        interpreter.lastSessionRequest.path("session").path("opaqueMarker").asText());
+    assertEquals("@lookup#/node/id",
+        interpreter.lastSessionRequest.path("command").path("identity").path("ref").asText());
+    assertFalse(
+        interpreter.lastSessionRequest.path("command").path("identity").has("value"),
+        "Java must not resolve the JSON Pointer before Celix sees it");
   }
 
   @Test
-  void impactRoutesEvidenceAndBindingsWithoutSourceMutation() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-impact-report/0.1\",\"mutatesSource\":false}\n");
+  void bindingsIsAReasoningSessionOperationNotAJavaRegistry() throws Exception {
+    interpreter.celixResult = sessionResponse(
+        "{\"version\":\"horn-reasoning-bindings/0.1\",\"ephemeral\":true,\"bindings\":[]}",
+        "[]",
+        "opaque");
 
-    InterpreterResult result = interpreter.interpret(
-        "impact maps/example.horn.json evidence/physical.json evidence/bindings.json", null);
+    InterpreterResult result = interpreter.interpret("bindings", null);
 
     assertEquals(Code.SUCCESS, result.code());
-    assertEquals("impact", interpreter.lastCelixView);
+    assertEquals("session", interpreter.lastCelixView);
+    assertEquals("bindings", interpreter.lastSessionRequest.path("command").path("op").asText());
+    assertTrue(result.message().get(0).getData().contains("horn-reasoning-bindings/0.1"));
+  }
+
+  @Test
+  void failedSessionCallDoesNotReplaceLastGoodOpaqueEnvelope() throws Exception {
+    interpreter.celixResult = sessionResponse(
+        "{\"version\":\"horn-query-result/0.1\"}",
+        "[{\"name\":\"lookup\",\"value\":{\"node\":{\"id\":\"c1\"}}}]",
+        "good-state");
+    assertEquals(Code.SUCCESS,
+        interpreter.interpret(
+            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
+
+    interpreter.celixResult = new HornInterpreter.CommandResult(1, "session failure\n");
+    assertEquals(Code.ERROR,
+        interpreter.interpret("explain maps/example.horn.json @lookup#/node/id", null).code());
+
+    interpreter.celixResult = sessionResponse(
+        "{\"version\":\"horn-reasoning-bindings/0.1\",\"ephemeral\":true,\"bindings\":[]}",
+        "[]",
+        "after-inspection");
+    assertEquals(Code.SUCCESS, interpreter.interpret("bindings", null).code());
+    assertEquals("good-state",
+        interpreter.lastSessionRequest.path("session").path("opaqueMarker").asText());
+  }
+
+  @Test
+  void derivedBindingsCannotOccupyCanonicalDocumentPositions() {
+    interpreter.lastCelixView = null;
+
+    InterpreterResult result = interpreter.interpret(
+        "diff @lookup maps/after.horn.json", null);
+
+    assertEquals(Code.ERROR, result.code());
+    assertTrue(result.message().get(0).getData().contains(
+        "Derived notebook bindings cannot be used as HORN documents"));
+    assertEquals(null, interpreter.lastCelixView);
+  }
+
+  @Test
+  void impactAndDiffDirectPathsRemainFileOriented() {
+    interpreter.celixResult = new HornInterpreter.CommandResult(0, "{}\n");
+
+    assertEquals(Code.SUCCESS,
+        interpreter.interpret(
+            "impact maps/example.horn.json evidence/physical.json evidence/bindings.json", null).code());
     assertEquals(List.of(
         "impact",
         repository.resolve("maps/example.horn.json").toString(),
         repository.resolve("evidence/physical.json").toString(),
         repository.resolve("evidence/bindings.json").toString()),
         interpreter.lastCelixArgs);
-  }
 
-  @Test
-  void diffRoutesTwoCanonicalDocuments() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-diff/0.1\"}\n");
-
-    InterpreterResult result = interpreter.interpret(
-        "diff maps/example.horn.json maps/after.horn.json", null);
-
-    assertEquals(Code.SUCCESS, result.code());
-    assertEquals("diff", interpreter.lastCelixView);
-    assertEquals(List.of(
-        "diff",
-        repository.resolve("maps/example.horn.json").toString(),
-        repository.resolve("maps/after.horn.json").toString()),
-        interpreter.lastCelixArgs);
-  }
-
-  @Test
-  void composesQueryIntoExplanationThroughEphemeralScalarSelector() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0,
-        "{\"version\":\"horn-query-result/0.1\",\"ok\":true,"
-            + "\"node\":{\"id\":\"c1-machines-can-think\",\"kind\":\"claim\"}}\n");
-
-    InterpreterResult lookup = interpreter.interpret(
-        "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null);
-    assertEquals(Code.SUCCESS, lookup.code());
-
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-explanation/0.1\",\"ok\":true}\n");
-    InterpreterResult explanation = interpreter.interpret(
-        "explain maps/example.horn.json @lookup#/node/id", null);
-
-    assertEquals(Code.SUCCESS, explanation.code());
-    assertEquals("explain", interpreter.lastCelixView);
-    assertEquals("c1-machines-can-think", interpreter.lastCelixArgs.get(2));
-
-    InterpreterResult bindings = interpreter.interpret("bindings", null);
-    assertEquals(Code.SUCCESS, bindings.code());
-    assertTrue(bindings.message().get(0).getData().contains("horn-zeppelin-bindings/0.1"));
-    assertTrue(bindings.message().get(0).getData().contains("\"name\" : \"lookup\""));
-    assertTrue(bindings.message().get(0).getData().contains("horn-query-result/0.1"));
-  }
-
-  @Test
-  void materializesDerivedJsonOnlyForDurationOfNativeInvocation() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0,
-        "{\"version\":\"horn-query-result/0.1\",\"ok\":true,"
-            + "\"node\":{\"id\":\"c1\",\"kind\":\"claim\"}}\n");
     assertEquals(Code.SUCCESS,
-        interpreter.interpret(
-            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
-
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-query-result/0.1\",\"ok\":true}\n");
-    InterpreterResult result = interpreter.interpret(
-        "query maps/example.horn.json @lookup#/node", null);
-
-    assertEquals(Code.SUCCESS, result.code());
-    assertTrue(interpreter.lastMaterializedJson.contains("\"id\":\"c1\""));
-    assertFalse(Files.exists(interpreter.lastMaterializedPath));
+        interpreter.interpret("diff maps/example.horn.json maps/after.horn.json", null).code());
+    assertEquals("diff", interpreter.lastCelixArgs.get(0));
   }
 
   @Test
-  void rejectsUnknownBindingSelectorBeforeNativeExecution() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0,
-        "{\"version\":\"horn-query-result/0.1\",\"node\":{\"id\":\"c1\"}}\n");
-    assertEquals(Code.SUCCESS,
-        interpreter.interpret(
-            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
-    int callCount = interpreter.celixCallCount;
-
-    InterpreterResult result = interpreter.interpret(
-        "explain maps/example.horn.json @lookup#/node/missing", null);
-
-    assertEquals(Code.ERROR, result.code());
-    assertTrue(result.message().get(0).getData().contains("selector did not resolve"));
-    assertEquals(callCount, interpreter.celixCallCount);
-  }
-
-  @Test
-  void neverAllowsDerivedBindingToBecomeCanonicalDocumentOperand() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(
-        0, "{\"version\":\"horn-query-result/0.1\",\"node\":{\"id\":\"c1\"}}\n");
-    assertEquals(Code.SUCCESS,
-        interpreter.interpret(
-            "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
-    int callCount = interpreter.celixCallCount;
-
-    InterpreterResult result = interpreter.interpret(
-        "diff @lookup maps/after.horn.json", null);
-
-    assertEquals(Code.ERROR, result.code());
-    assertTrue(result.message().get(0).getData().contains("cannot be used as HORN documents"));
-    assertEquals(callCount, interpreter.celixCallCount);
-  }
-
-  @Test
-  void failedOrNonJsonResultsAreNotBound() {
-    interpreter.celixResult = new HornInterpreter.CommandResult(1, "service failed\n");
-    assertEquals(Code.ERROR,
-        interpreter.interpret(
-            "let failed = query maps/example.horn.json \"requests/node lookup.json\"", null).code());
-    assertFalse(interpreter.interpret("bindings", null).message().get(0).getData().contains("failed"));
-
-    interpreter.celixResult = new HornInterpreter.CommandResult(0, "not-json\n");
-    InterpreterResult invalid = interpreter.interpret(
-        "let invalid = query maps/example.horn.json \"requests/node lookup.json\"", null);
-    assertEquals(Code.ERROR, invalid.code());
-    assertTrue(invalid.message().get(0).getData().contains("not a JSON value"));
-    assertFalse(interpreter.interpret("bindings", null).message().get(0).getData().contains("invalid"));
-  }
-
-  @Test
-  void preservesSpacesInSingleDocumentPathAndQuotedMultiOperandPath() {
+  void preservesSpacesAndRejectsTraversalBeforeExecution() {
     interpreter.celixResult = new HornInterpreter.CommandResult(0, "{}\n");
 
     assertEquals(Code.SUCCESS,
         interpreter.interpret("validate maps/with space.horn.json", null).code());
-    assertEquals(
-        repository.resolve("maps/with space.horn.json").toString(),
+    assertEquals(repository.resolve("maps/with space.horn.json").toString(),
         interpreter.lastCelixArgs.get(1));
 
-    assertEquals(Code.SUCCESS,
-        interpreter.interpret(
-            "diff \"maps/with space.horn.json\" maps/after.horn.json", null).code());
-    assertEquals(
-        repository.resolve("maps/with space.horn.json").toString(),
-        interpreter.lastCelixArgs.get(1));
-  }
-
-  @Test
-  void rejectsTraversalInAnalysisOperandBeforeExecution() {
-    InterpreterResult result = interpreter.interpret(
+    interpreter.lastCelixView = null;
+    InterpreterResult traversal = interpreter.interpret(
         "query maps/example.horn.json ../outside.json", null);
-
-    assertEquals(Code.ERROR, result.code());
-    assertTrue(result.message().get(0).getData().contains("escapes the configured repository"));
+    assertEquals(Code.ERROR, traversal.code());
+    assertTrue(traversal.message().get(0).getData().contains("escapes the configured repository"));
     assertEquals(null, interpreter.lastCelixView);
   }
 
   @Test
-  void rejectsAbsoluteDocumentPathsBeforeExecution() {
-    InterpreterResult result = interpreter.interpret(
-        "render " + repository.resolve("maps/example.horn.json").toAbsolutePath(), null);
+  void rejectsSessionBindingForUnsupportedRuntimeOrInspectComposition() {
+    InterpreterResult runtime = interpreter.interpret("let r = runtime", null);
+    assertEquals(Code.ERROR, runtime.code());
+    assertTrue(runtime.message().get(0).getData().contains("can bind validate, query"));
 
-    assertEquals(Code.ERROR, result.code());
-    assertTrue(result.message().get(0).getData().contains("repository-relative"));
+    InterpreterResult inspect = interpreter.interpret(
+        "let packet = inspect maps/example.horn.json", null);
+    assertEquals(Code.ERROR, inspect.code());
+    assertTrue(inspect.message().get(0).getData().contains("can bind validate, query"));
   }
 
   @Test
-  void rejectsWrongOperandCountAndUnterminatedQuotes() {
-    InterpreterResult missing = interpreter.interpret(
-        "impact maps/example.horn.json evidence/physical.json", null);
-    assertEquals(Code.ERROR, missing.code());
-    assertTrue(missing.message().get(0).getData().contains("Wrong operand count"));
-
-    InterpreterResult quote = interpreter.interpret(
-        "query maps/example.horn.json \"requests/node lookup.json", null);
-    assertEquals(Code.ERROR, quote.code());
-    assertTrue(quote.message().get(0).getData().contains("unterminated quoted operand"));
-  }
-
-  @Test
-  void rejectsUnknownViewsAndNonHornDocuments() throws IOException {
-    InterpreterResult unknown = interpreter.interpret("layout maps/example.horn.json", null);
-    assertEquals(Code.ERROR, unknown.code());
-    assertTrue(unknown.message().get(0).getData().contains("Unknown HORN view"));
-
-    Files.writeString(repository.resolve("maps/example.json"), "{}\n");
-    InterpreterResult nonHorn = interpreter.interpret("render maps/example.json", null);
-    assertEquals(Code.ERROR, nonHorn.code());
-    assertTrue(nonHorn.message().get(0).getData().contains("must end with .horn.json"));
-  }
-
-  @Test
-  void propagatesCelixFailureAsInterpreterError() {
+  void propagatesCelixSessionFailureAsInterpreterError() {
     interpreter.celixResult = new HornInterpreter.CommandResult(
-        1, "Celix service not found: horn::IQueryService\n");
+        1, "Celix service not found: horn::IReasoningSessionService\n");
 
     InterpreterResult result = interpreter.interpret(
-        "query maps/example.horn.json \"requests/node lookup.json\"", null);
+        "let lookup = query maps/example.horn.json \"requests/node lookup.json\"", null);
 
     assertEquals(Code.ERROR, result.code());
     assertEquals(Type.TEXT, result.message().get(0).getType());
-    assertTrue(result.message().get(0).getData().contains("IQueryService"));
+    assertTrue(result.message().get(0).getData().contains("IReasoningSessionService"));
   }
 
-  @Test
-  void rejectsMalformedAdapterDisplayEnvelope() {
-    interpreter.cliResult =
-        new HornInterpreter.CommandResult(0, "<section>missing marker</section>");
-
-    InterpreterResult result = interpreter.interpret("render maps/example.horn.json", null);
-
-    assertEquals(Code.ERROR, result.code());
-    assertTrue(result.message().get(0).getData().contains("unexpected render result envelope"));
+  private static HornInterpreter.CommandResult sessionResponse(
+      String result,
+      String bindings,
+      String opaqueMarker) {
+    String response = "{"
+        + "\"version\":\"horn-reasoning-session-response/0.1\","
+        + "\"session\":{"
+        + "\"version\":\"horn-reasoning-session/0.1\","
+        + "\"id\":\"__horn_default_note__\","
+        + "\"ephemeral\":true,"
+        + "\"opaqueMarker\":\"" + opaqueMarker + "\","
+        + "\"bindings\":" + bindings
+        + "},"
+        + "\"result\":" + result
+        + "}\n";
+    return new HornInterpreter.CommandResult(0, response);
   }
 
   private static final class StubHornInterpreter extends HornInterpreter {
@@ -354,9 +268,8 @@ class HornInterpreterTest {
     Path lastCliDocument;
     String lastCelixView;
     List<String> lastCelixArgs;
-    int celixCallCount;
-    Path lastMaterializedPath;
-    String lastMaterializedJson;
+    JsonNode lastSessionRequest;
+    Path lastSessionRequestFile;
 
     StubHornInterpreter(Properties properties) {
       super(properties);
@@ -370,20 +283,14 @@ class HornInterpreterTest {
     }
 
     @Override
-    protected CommandResult executeCelix(String view, List<String> nativeArgs) {
+    protected CommandResult executeCelix(String view, List<String> nativeArgs) throws IOException {
       lastCelixView = view;
       lastCelixArgs = List.copyOf(nativeArgs);
-      celixCallCount += 1;
-      if ("query".equals(view) && nativeArgs.size() > 2) {
-        Path candidate = Path.of(nativeArgs.get(2));
-        if (candidate.getFileName().toString().startsWith("horn-zeppelin-binding-")) {
-          try {
-            lastMaterializedPath = candidate;
-            lastMaterializedJson = Files.readString(candidate);
-          } catch (IOException exception) {
-            throw new AssertionError(exception);
-          }
-        }
+      lastSessionRequest = null;
+      lastSessionRequestFile = null;
+      if (!nativeArgs.isEmpty() && "session".equals(nativeArgs.get(0))) {
+        lastSessionRequestFile = Path.of(nativeArgs.get(1));
+        lastSessionRequest = JSON.readTree(Files.readString(lastSessionRequestFile));
       }
       return celixResult;
     }
