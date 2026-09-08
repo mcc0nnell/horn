@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-proof-0.1.schema.json",
+  "title": "Horn replayable deterministic query proof",
+  "type": "object",
+  "required": [
+    "id",
+    "version",
+    "algorithm",
+    "source",
+    "request",
+    "result",
+    "dependencies"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^horn-proof:[0-9a-f]{64}$"
+    },
+    "version": { "const": "horn-proof/0.1" },
+    "algorithm": { "const": "horn-query-replay/0.1" },
+    "source": {
+      "type": "object",
+      "required": ["documentId", "documentVersion", "canonicalSha256"],
+      "properties": {
+        "documentId": { "type": "string", "minLength": 1 },
+        "documentVersion": { "const": "horn-document/0.1" },
+        "canonicalSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "request": {
+      "$ref": "./horn-query-request-0.1.schema.json"
+    },
+    "result": {
+      "$ref": "./horn-query-result-0.1.schema.json"
+    },
+    "dependencies": {
+      "type": "object",
+      "required": [
+        "version",
+        "nodeFields",
+        "relationFields",
+        "nodes",
+        "relations",
+        "canonicalSha256"
+      ],
+      "properties": {
+        "version": { "const": "horn-query-dependencies/0.1" },
+        "nodeFields": {
+          "const": ["id", "number"]
+        },
+        "relationFields": {
+          "const": ["id", "kind", "from", "to"]
+        },
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "number"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "number": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "relations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "kind", "from", "to"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "kind": { "type": "string", "minLength": 1 },
+              "from": { "type": "string", "minLength": 1 },
+              "to": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        },
+        "canonicalSha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
