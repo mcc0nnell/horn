@@ -1,0 +1,3 @@
+INPUT FROM hornCorpus[path="global-argument-graph.json"]
+| hornMapArgument[map_number=1, geometry_path="corpus/cct-1998-map1-geometry.json"]
+| hornWriteJson[path="generated/cct-map1.echarts.json"]

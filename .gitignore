@@ -3,3 +3,5 @@ dist/
 build/
 *.tsbuildinfo
 .DS_Store
+# TalkPipe-generated local corpus projections
+generated/cct-map1.echarts.json
