@@ -280,6 +280,7 @@ try {
     "horn::IImpactService",
     "horn::IProjectionService",
     "horn::IQueryService",
+    "horn::IReasoningSessionService",
     "horn::IRuntimeDescriptor",
     "horn::IValidationService",
   ];
