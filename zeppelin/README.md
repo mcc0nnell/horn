@@ -37,9 +37,9 @@ The direct reasoning commands are intentionally file-oriented. HORN documents an
 %horn query "path/to/map with space.horn.json" "path/to/query with space.json"
 ```
 
-### Ephemeral composition
+### Celix-owned ephemeral composition
 
-`%horn` can bind successful Celix-backed analysis results to notebook-local names and reference them from later paragraphs:
+`%horn` can bind successful analysis results and reference them from later paragraphs:
 
 ```text
 %horn let lookup = query maps/chinese-room-slice.horn.json golden/reactor/queries/node-lookup.json
@@ -47,15 +47,24 @@ The direct reasoning commands are intentionally file-oriented. HORN documents an
 %horn bindings
 ```
 
-A reference has the form `@name` for the entire derived JSON value or `@name#/json/pointer` for a selected value. Scalar selectors can feed scalar operands such as `explain` identities. JSON objects or arrays can be materialized into disposable temporary files for service operands that already accept JSON files.
+The composition semantics live in `horn::IReasoningSessionService`, not in the Zeppelin interpreter. A reference has the form `@name` for a complete derived JSON value or `@name#/json/pointer` for a selected value. The Celix service resolves the reference, applies JSON Pointer selection, invokes the next discovered Horn service, replaces bindings on rerun, computes binding digests, and returns the updated session envelope.
 
-Bindings are scoped to the current Zeppelin note, are replaced when the same `let` paragraph is rerun, and disappear when the interpreter process closes. `%horn bindings` reports each name, originating command, result contract version, and SHA-256 under `horn-zeppelin-bindings/0.1`.
+The session contracts are:
 
-Composition does **not** weaken HORN authority. A binding can never be used as a document operand. `validate`, `inspect`, `query`, `explain`, `impact`, and `diff` still require canonical document operands to resolve to repository `.horn.json` files. Temporary JSON materializations are deleted after the native invocation. Exporting a Zeppelin note stores the paragraphs, not the binding values; rerunning the imported note reconstructs them from the same service calls.
+- `horn-reasoning-session/0.1`
+- `horn-reasoning-session-request/0.1`
+- `horn-reasoning-session-response/0.1`
+- `horn-reasoning-bindings/0.1`
+
+The service is state-carrying by envelope rather than process-persistent. Zeppelin keeps the returned session envelope opaquely for the current note and sends it back with the next composed operation. It does not inspect binding values or resolve selectors. Exporting a Zeppelin note stores paragraphs, not session values; rerunning an imported note reconstructs the session by replaying Celix calls.
+
+Composition does **not** weaken HORN authority. Canonical document operands are explicit canonical values and can never be satisfied by a derived binding reference. Zeppelin also rejects binding tokens in document-path positions as an early transport guard, while `IReasoningSessionService` independently enforces the same rule for callers that bypass Zeppelin.
+
+`%horn bindings` is itself a Celix reasoning-session operation. It returns `horn-reasoning-bindings/0.1` metadata including the binding name, producing command, result contract, and SHA-256. That metadata is derived session state, not evidence admission.
 
 `render` becomes a native Zeppelin `HTML` result. `network` becomes a native Zeppelin `NETWORK` result. The network remains an explicitly lossy semantic/debug projection and is never accepted as HORN serialization input.
 
-This split is deliberate: renderer concerns stay outside libhorn, while headless reasoning goes through the same Celix service plane exercised by `golden:celix`.
+This split is deliberate: renderer concerns stay outside libhorn, while headless reasoning and composition go through the same Celix service plane exercised by `golden:celix`.
 
 ### Build
 
@@ -77,13 +86,15 @@ cmake --build build/native
 npm run golden:celix
 ```
 
+`npm run golden:celix` includes both the three-way TypeScript/native/Celix equivalence suite and a Celix reasoning-session chain that proves `query -> @lookup#/node/id -> explanation`, then requires Celix to reject an attempt to use a derived binding as a canonical document.
+
 Then build and test the interpreter:
 
 ```sh
 mvn --file zeppelin/interpreter/pom.xml verify
 ```
 
-The Maven package phase also places the interpreter's runtime bootstrap dependencies in `zeppelin/interpreter/target/lib/`. Zeppelin's third-party interpreter launcher needs those dependencies beside the interpreter JAR before its remote process can start. Jackson databind is pinned only for the Zeppelin composition adapter; it is not linked into libhorn and does not define HORN semantics.
+The Maven package phase also places the interpreter's runtime bootstrap dependencies in `zeppelin/interpreter/target/lib/`. Zeppelin's third-party interpreter launcher needs those dependencies beside the interpreter JAR before its remote process can start. Jackson databind is used only to package repository values into reasoning-session requests and transport the returned opaque envelope; it does not implement binding or HORN semantics.
 
 ### Install into Zeppelin 0.12
 
@@ -120,4 +131,4 @@ npm run --silent horn-zeppelin -- audit maps/chinese-room-slice.horn.json
 
 The shell bridge's `validate` command still exercises the TypeScript reference implementation. The native `%horn validate` command deliberately exercises the Celix-discovered `IValidationService`, giving the two paths independent value.
 
-Both paths enforce the same rule: **HORN owns meaning and geometry. Zeppelin owns interaction and execution.**
+Both paths enforce the same rule: **HORN owns meaning and geometry. Zeppelin owns interaction and execution. Celix owns ephemeral reasoning composition.**
