@@ -44,12 +44,12 @@ function nonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function validBlobSha1(value: unknown): value is string {
-  return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
+function positiveInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isSafeInteger(value) && value > 0;
 }
 
-function validByteLength(value: unknown): value is number {
-  return Number.isSafeInteger(value) && Number(value) > 0;
+function validBlobSha1(value: unknown): value is string {
+  return typeof value === "string" && /^[0-9a-f]{40}$/.test(value);
 }
 
 function validateLocator(
@@ -78,7 +78,7 @@ function validateLocator(
     });
   }
 
-  if (!validByteLength(value.bytes)) {
+  if (!positiveInteger(value.bytes)) {
     issues.push({
       code: "invalid-source-size",
       message: `${subject} needs a positive integer byte length`,
@@ -106,7 +106,7 @@ export function validateHornSourceSeries(value: unknown): HornSourceSeriesIssue[
     }
   }
 
-  if (!Number.isInteger(value.year) || Number(value.year) < 1) {
+  if (!positiveInteger(value.year)) {
     issues.push({ code: "invalid-year", message: "Source series needs a positive integer year" });
   }
 
@@ -152,14 +152,13 @@ export function validateHornSourceSeries(value: unknown): HornSourceSeriesIssue[
         return;
       }
 
-      if (!Number.isInteger(entry.map) || Number(entry.map) < 1) {
+      if (!positiveInteger(entry.map)) {
         issues.push({ code: "invalid-map-number", message: `${subject} needs a positive integer map number` });
       } else {
-        const mapNumber = Number(entry.map);
-        if (mapNumbers.has(mapNumber)) {
-          issues.push({ code: "duplicate-map-number", message: `Duplicate map number ${mapNumber}` });
+        if (mapNumbers.has(entry.map)) {
+          issues.push({ code: "duplicate-map-number", message: `Duplicate map number ${entry.map}` });
         }
-        mapNumbers.add(mapNumber);
+        mapNumbers.add(entry.map);
       }
 
       if (!nonEmptyString(entry.id)) {
