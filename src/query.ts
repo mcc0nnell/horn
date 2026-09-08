@@ -4,9 +4,14 @@ import {
   deriveHornDialogueFrontier,
   deriveHornDialogueGraph,
 } from "./analysis";
+import { analyzeHornMinimumCut } from "./cut";
 import type { HornDocument, RelationKind } from "./types";
 
-export type HornQueryOperation = "graph" | "counterfactual" | "dominators";
+export type HornQueryOperation =
+  | "graph"
+  | "counterfactual"
+  | "dominators"
+  | "min-cut";
 
 export type HornQueryRequest = {
   version: "horn-query-request/0.1";
@@ -85,7 +90,11 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     });
   }
 
-  if (!["graph", "counterfactual", "dominators"].includes(String(value.operation))) {
+  if (
+    !["graph", "counterfactual", "dominators", "min-cut"].includes(
+      String(value.operation),
+    )
+  ) {
     problems.push({
       code: "operation",
       message: `unsupported query operation ${String(value.operation)}`,
@@ -96,10 +105,13 @@ export function validateHornQueryRequest(value: unknown): HornQueryProblem[] {
     problems.push({ code: "missing-focus", message: "query request needs focusNodeId" });
   }
 
-  if (value.operation === "dominators" && !nonEmptyString(value.targetNodeId)) {
+  if (
+    (value.operation === "dominators" || value.operation === "min-cut") &&
+    !nonEmptyString(value.targetNodeId)
+  ) {
     problems.push({
       code: "missing-target",
-      message: "dominators query needs targetNodeId",
+      message: `${String(value.operation)} query needs targetNodeId`,
     });
   }
 
@@ -178,7 +190,7 @@ export function executeHornQuery(
     ? { relationKinds: request.relationKinds }
     : {};
 
-  let result: Record<string, unknown>;
+  let result: Record<string, unknown> = {};
   switch (request.operation) {
     case "graph": {
       const graph = deriveHornDialogueGraph(document, request.focusNodeId, commonOptions);
@@ -206,6 +218,17 @@ export function executeHornQuery(
     }
     case "dominators": {
       const analysis = analyzeHornDominators(
+        document,
+        request.focusNodeId,
+        request.targetNodeId!,
+        commonOptions,
+      );
+      const { version: _version, source: _source, ...payload } = analysis;
+      result = payload;
+      break;
+    }
+    case "min-cut": {
+      const analysis = analyzeHornMinimumCut(
         document,
         request.focusNodeId,
         request.targetNodeId!,
