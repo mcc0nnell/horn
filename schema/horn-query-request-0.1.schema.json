@@ -7,7 +7,7 @@
   "properties": {
     "version": { "const": "horn-query-request/0.1" },
     "operation": {
-      "enum": ["graph", "counterfactual", "dominators"]
+      "enum": ["graph", "counterfactual", "dominators", "min-cut"]
     },
     "focusNodeId": { "type": "string", "minLength": 1 },
     "targetNodeId": { "type": "string", "minLength": 1 },
@@ -48,13 +48,18 @@
   },
   "allOf": [
     {
-      "if": { "properties": { "operation": { "const": "dominators" } } },
+      "if": {
+        "properties": {
+          "operation": { "enum": ["dominators", "min-cut"] }
+        },
+        "required": ["operation"]
+      },
       "then": { "required": ["targetNodeId"] }
     },
     {
       "if": {
         "properties": {
-          "operation": { "enum": ["graph", "dominators"] }
+          "operation": { "enum": ["graph", "dominators", "min-cut"] }
         },
         "required": ["operation"]
       },
