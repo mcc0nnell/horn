@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-query-request-0.1.schema.json",
+  "title": "Horn deterministic query request",
+  "type": "object",
+  "required": ["version", "operation", "focusNodeId"],
+  "properties": {
+    "version": { "const": "horn-query-request/0.1" },
+    "operation": {
+      "enum": ["graph", "counterfactual", "dominators"]
+    },
+    "focusNodeId": { "type": "string", "minLength": 1 },
+    "targetNodeId": { "type": "string", "minLength": 1 },
+    "relationKinds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "anyOf": [
+          {
+            "enum": [
+              "supports",
+              "disputes",
+              "warrants",
+              "addresses",
+              "interprets-as"
+            ]
+          },
+          { "type": "string", "pattern": "^x-.+" }
+        ]
+      }
+    },
+    "suppress": {
+      "type": "object",
+      "properties": {
+        "nodeIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "relationIds": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "operation": { "const": "dominators" } } },
+      "then": { "required": ["targetNodeId"] }
+    },
+    {
+      "if": {
+        "properties": {
+          "operation": { "enum": ["graph", "dominators"] }
+        },
+        "required": ["operation"]
+      },
+      "then": { "not": { "required": ["suppress"] } }
+    }
+  ],
+  "additionalProperties": false
+}
