@@ -19,7 +19,7 @@ test("CCT 1998 source registry is structurally valid", () => {
   assert.deepEqual(validateHornSourceSeries(series), []);
 });
 
-test("CCT calibration is the complete seven-map docs source set", () => {
+test("CCT calibration is the complete seven-map normalized mirror set", () => {
   const series = loadSeries();
 
   assert.equal(series.id, "cct-1998");
@@ -27,8 +27,8 @@ test("CCT calibration is the complete seven-map docs source set", () => {
   assert.equal(series.sourceRepository.ref, "main");
   assert.deepEqual(series.maps.map((entry) => entry.map), [1, 2, 3, 4, 5, 6, 7]);
   assert.equal(series.maps.length, 7);
-  assert.ok(series.maps.every((entry) => entry.path.startsWith("docs/")));
-  assert.ok(series.companionSources.every((entry) => entry.path.startsWith("docs/")));
+  assert.ok(series.maps.every((entry) => entry.path.startsWith("public/horn/maps/")));
+  assert.ok(series.maps.every((entry) => entry.aliases?.some((path) => path.startsWith("docs/"))));
 });
 
 test("CCT map source identities are unique and immutable-shaped", () => {
@@ -38,13 +38,25 @@ test("CCT map source identities are unique and immutable-shaped", () => {
   assert.equal(new Set(blobIds).size, 7);
   assert.ok(blobIds.every((sha) => /^[0-9a-f]{40}$/.test(sha)));
   assert.equal(series.maps[3]?.relatedSource?.gitBlobSha1, "373e4fa3b6e8acf0cd93cd2552fe9d2031a16313");
+  assert.equal(
+    series.companionSources[0]?.gitBlobSha1,
+    "c176591977cc06bc45e763447ea883006b5b0520e",
+  );
 });
 
-test("source-series validation refuses calibration paths outside docs", () => {
+test("source-series validation accepts archived and normalized roots", () => {
+  const series = loadSeries();
+  const archived = structuredClone(series) as HornSourceSeries;
+  archived.maps[0]!.path = archived.maps[0]!.aliases![0]!;
+
+  assert.deepEqual(validateHornSourceSeries(archived), []);
+});
+
+test("source-series validation refuses paths outside registered source roots", () => {
   const series = loadSeries();
   const mutated = structuredClone(series) as HornSourceSeries;
-  mutated.maps[0]!.path = "public/horn/maps/01-can-computers-think.pdf";
+  mutated.maps[0]!.path = "tmp/01-can-computers-think.pdf";
 
   const issues = validateHornSourceSeries(mutated);
-  assert.ok(issues.some((issue) => issue.code === "source-outside-docs"));
+  assert.ok(issues.some((issue) => issue.code === "source-outside-registry-roots"));
 });
