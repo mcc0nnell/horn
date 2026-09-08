@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/mcc0nnell/horn/schema/horn-evidence-impact-0.1.schema.json",
+  "title": "Horn proof-aware evidence impact report",
+  "type": "object",
+  "required": [
+    "version",
+    "source",
+    "evidence",
+    "staleNodeIds",
+    "unknownBoundNodeIds",
+    "queryImpacts"
+  ],
+  "properties": {
+    "version": { "const": "horn-evidence-impact/0.1" },
+    "source": {
+      "type": "object",
+      "required": ["documentId", "documentVersion"],
+      "properties": {
+        "documentId": { "type": "string", "minLength": 1 },
+        "documentVersion": { "const": "horn-document/0.1" }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["observedFingerprint", "invalidations"],
+      "properties": {
+        "observedFingerprint": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$"
+        },
+        "invalidations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "evidenceId",
+              "expectedFingerprint",
+              "observedFingerprint",
+              "staleNodeIds",
+              "rationale"
+            ],
+            "properties": {
+              "evidenceId": { "type": "string", "minLength": 1 },
+              "expectedFingerprint": { "type": "string", "minLength": 1 },
+              "observedFingerprint": { "type": "string", "minLength": 1 },
+              "staleNodeIds": {
+                "type": "array",
+                "uniqueItems": true,
+                "items": { "type": "string", "minLength": 1 }
+              },
+              "rationale": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "staleNodeIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "unknownBoundNodeIds": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "queryImpacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "requestIndex",
+          "operation",
+          "focusNodeId",
+          "proofId",
+          "dependencySha256",
+          "affected",
+          "staleDependencyNodeIds"
+        ],
+        "properties": {
+          "requestIndex": { "type": "integer", "minimum": 0 },
+          "operation": {
+            "enum": ["graph", "counterfactual", "dominators", "min-cut"]
+          },
+          "focusNodeId": { "type": "string", "minLength": 1 },
+          "targetNodeId": { "type": "string", "minLength": 1 },
+          "proofId": {
+            "type": "string",
+            "pattern": "^horn-proof:[0-9a-f]{64}$"
+          },
+          "dependencySha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "affected": { "type": "boolean" },
+          "staleDependencyNodeIds": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
