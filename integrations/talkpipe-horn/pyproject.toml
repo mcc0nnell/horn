@@ -1,0 +1,20 @@
+[project]
+name = "talkpipe-horn"
+version = "0.1.0"
+description = "TalkPipe authoring/compile boundary for Horn semantic arguments"
+requires-python = ">=3.11"
+dependencies = ["talkpipe>=1.0.1"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project.entry-points."talkpipe.sources"]
+hornCorpus = "talkpipe_horn.components:horn_corpus"
+
+[project.entry-points."talkpipe.segments"]
+hornMapArgument = "talkpipe_horn.components:horn_map_argument"
+hornWriteJson = "talkpipe_horn.components:horn_write_json"
+
+[tool.setuptools.packages.find]
+where = ["src"]
