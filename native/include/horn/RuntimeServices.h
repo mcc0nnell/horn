@@ -17,6 +17,14 @@ inline constexpr std::string_view DIFF_CONTRACT = "horn-diff/0.1";
 inline constexpr std::string_view INSPECT_CONTRACT = "horn-inspect/0.1";
 inline constexpr std::string_view VALIDATION_REPORT_CONTRACT =
     "horn-validation-report/0.1";
+inline constexpr std::string_view REASONING_SESSION_CONTRACT =
+    "horn-reasoning-session/0.1";
+inline constexpr std::string_view REASONING_SESSION_REQUEST_CONTRACT =
+    "horn-reasoning-session-request/0.1";
+inline constexpr std::string_view REASONING_SESSION_RESPONSE_CONTRACT =
+    "horn-reasoning-session-response/0.1";
+inline constexpr std::string_view REASONING_BINDINGS_CONTRACT =
+    "horn-reasoning-bindings/0.1";
 
 enum class ProjectionView {
     Argument,
@@ -136,6 +144,23 @@ public:
     [[nodiscard]] virtual std::string diff(
         std::string_view beforeHornDocumentJson,
         std::string_view afterHornDocumentJson) const = 0;
+};
+
+/**
+ * Ephemeral orchestration seam for composing derived reasoning results.
+ *
+ * The request carries the previous session envelope plus one operation. The
+ * service resolves binding references and dispatches to discovered Horn
+ * services, then returns the updated envelope. Session state is transported,
+ * not persisted by the service. Canonical document operands are explicit
+ * values and may never be satisfied by a derived binding reference.
+ */
+class IReasoningSessionService {
+public:
+    virtual ~IReasoningSessionService() noexcept = default;
+
+    [[nodiscard]] virtual std::string execute(
+        std::string_view reasoningSessionRequestJson) const = 0;
 };
 
 } // namespace horn
