@@ -116,6 +116,7 @@ assert_note() {
     and ([.services[].interface] | index("horn::IExplanationService") != null)
     and ([.services[].interface] | index("horn::IImpactService") != null)
     and ([.services[].interface] | index("horn::IDiffService") != null)
+    and ([.services[].interface] | index("horn::IReasoningSessionService") != null)
   ' <<<"$runtime" >/dev/null \
     || fail "runtime probe did not expose the pinned libhorn Celix service plane"
   jq -e '.projectionContract == "horn-zeppelin/0.1" and .renderer == "horn-svg"' <<<"$manifest" >/dev/null \
@@ -152,23 +153,23 @@ assert_note() {
     and .ok == true
     and .node.id == "c1-machines-can-think"
   ' <<<"$composed_query" >/dev/null \
-    || fail "bound query did not preserve the query result contract"
+    || fail "Celix session query did not preserve the query result contract"
   jq -e '
     .version == "horn-explanation/0.1"
     and .ok == true
     and .identity == "c1-machines-can-think"
   ' <<<"$composed_explain" >/dev/null \
-    || fail "composed explanation did not consume @lookup#/node/id"
+    || fail "Celix session did not resolve @lookup#/node/id into the explanation service"
   jq -e '
-    .version == "horn-zeppelin-bindings/0.1"
+    .version == "horn-reasoning-bindings/0.1"
     and .ephemeral == true
     and ([.bindings[].name] | index("lookup") != null)
     and ([.bindings[].name] | index("explanation") != null)
     and ([.bindings[] | select(.name == "lookup")][0].contract == "horn-query-result/0.1")
     and ([.bindings[] | select(.name == "explanation")][0].contract == "horn-explanation/0.1")
-    and all(.bindings[]; (.sha256 | test("^[0-9a-f]{64}$")))
+    and all(.bindings[]; (.sha256 | test("^sha256:[0-9a-f]{64}$")))
   ' <<<"$bindings" >/dev/null \
-    || fail "notebook binding registry did not preserve ephemeral composition metadata"
+    || fail "Celix reasoning session did not preserve ephemeral binding metadata"
   jq -e '
     .version == "horn-impact-report/0.1"
     and .runtime == "horn-runtime/0.1"
